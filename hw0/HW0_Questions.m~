@@ -32,13 +32,16 @@
 % </latex>
 
 %% 
-%Adding workspace path
 addpath(genpath('/Users/jalpanchal/git/be521'));
 
-%create session
-% dataset I521_A0001_D001.
-session = IEEGSession('I521_A0001_D001', 'jalpanchal', 'jal_ieeglogin.bin')
+%access key
+abc = IEEGSession.createPwdFile('jalpanchal','PonchoBci%20');
 
+%create session
+% dataset I521 A0007 D001.
+session = IEEGSession('I521_A0007_D001', 'jalpanchal', 'tca_ieeglogin.bin');
+
+session.openDataSet('I521 A0007 D002');
 
 %% 
 % <latex>
