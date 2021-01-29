@@ -48,7 +48,7 @@ session = IEEGSession('I521_A0001_D001', 'jalpanchal', 'jal_ieeglogin.bin')
 % </latex>
 
 %%
-% ANSWER HERE
+sampling_frequency_hz = session.data.sampleRate
 
 %% 
 % <latex>
@@ -56,7 +56,8 @@ session = IEEGSession('I521_A0001_D001', 'jalpanchal', 'jal_ieeglogin.bin')
 % </latex>
 
 %%
-% ANSWER HERE
+duration_in_usec = session.data(1).rawChannels(1).get_tsdetails.getDuration;
+duration_in_sec = duration_in_usec/1e6 
 
 %% 
 % <latex>
@@ -69,7 +70,18 @@ session = IEEGSession('I521_A0001_D001', 'jalpanchal', 'jal_ieeglogin.bin')
 % </latex>
 
 %%
-% ANSWER HERE
+start_time_sec = 4.6;
+window_size_sec = 0.5;
+channel_select = 1;
+eeg_data_window = session.data.getvalues(start_time_sec * 1e6, window_size_sec * 1e6, channel_select);
+
+figure();
+time_frame = start_time_sec : 1/sampling_frequency_hz : start_time_sec + window_size_sec;
+plot(time_frame, eeg_data_window);
+ylabel('Amplitude (\mu V)');
+xlabel('Time (sec)');
+title('Multi-unit signal');
+
 
 %% 
 % <latex>
@@ -79,15 +91,55 @@ session = IEEGSession('I521_A0001_D001', 'jalpanchal', 'jal_ieeglogin.bin')
 % </latex>
 
 %%
-% ANSWER HERE
+%To detect peaks, we will find the 1st derivative of the signal and detect
+%where the signal of the signal changes from positive to negative. This
+%detection will be done by calculating the second derivative
 
+first_derivative = diff(eeg_data_window);
+%Here we identify points whose first deivative changes from +ve to -ve sign
+%which indicate a local maxima
+second_derivative = diff(first_derivative < 0 );
+
+%Next we will filter the data above our desired threshold
+threshold = 50;
+data_above_threshold = eeg_data_window(2:end-1) >threshold;
+
+%Next from the filtered data we find indexes  of the peaks
+peak_index = find(second_derivative .* data_above_threshold);
+
+%We will now plot the peaks on the signal
+figure();
+plot(time_frame, eeg_data_window);
+hold on;
+plot(start_time_sec + (peak_index/sampling_frequency_hz), eeg_data_window(peak_index+1), 'rx');
+ylabel('Amplitude (\mu V)');
+xlabel('Time (sec)');
+title('Multi-unit signal');
 %% 
 % <latex>
 % 	\item How many spikes do you detect in the entire data sample? (1 pt)\\
 % </latex>
 
 %%
-% ANSWER HERE
+
+%Let us first fetch the complete dataset
+eeg_data= session.data.getvalues(0, 10 * 1e6, channel_select);
+
+%We will next follow the same steps as above to find peaks
+first_derivative = diff(eeg_data);
+second_derivative = diff(first_derivative < 0 );
+
+%Next we will filter the data above our desired threshold
+threshold = 50;
+data_above_threshold = eeg_data(2:end-1) >threshold;
+
+%Next from the filtered data we find indexes  of the peaks
+peak_index = find(second_derivative .* data_above_threshold);
+
+number_of_total_peaks = length(peak_index)
+
+
+
 
 %% 
 % <latex>
@@ -100,7 +152,10 @@ session = IEEGSession('I521_A0001_D001', 'jalpanchal', 'jal_ieeglogin.bin')
 % </latex>
 
 %%
-% ANSWER HERE
+
+%<latex>
+%  \item The 10-20 systems calls for the placement of electrodes
+%</latex>
 
 %% 
 % <latex>
