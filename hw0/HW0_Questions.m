@@ -1,7 +1,7 @@
 %%
 % <latex>
-% \title{BE 521: Homework 0 Questions\\{\normalsize Introduction}\\{\normalsize Spring 2021}}
-% \author{15 points}
+% \title{BE 521: Homework 0\\{\normalsize Introduction}\\{\normalsize Spring 2021}}
+% \author{Jal Mahendra Panchal}
 % \date{Due: Thursday 1/28/2021 11:59 PM}
 % \maketitle
 % \textbf{Objective:} Working with the IEEG Portal, basic matlab commands, publishing LaTeX
@@ -21,8 +21,7 @@
 
 %% 
 % Include screenshot:
-
-%\includegraphics[scale=0.3]{screenshot.png}\\
+%\includegraphics[scale=0.25]{screenshot.png}\\
 
 %%
 % <latex>
@@ -151,11 +150,31 @@ number_of_total_peaks = length(peak_index)
 % 	of the number at a given site? (1 pt)\\
 % </latex>
 
-%%
+%% 
+% <latex>
+% 	The 10-20 system is a standard for placement of electrodes on the
+% 	scalp. The "10" and the "20" correspond to the the distance between
+% 	adjacent electrodes. This distance is to be either 10\% or 20\% of the
+% 	measured coronal, sagittal, and circumferential arcs between landmarks on
+% 	the cranium. \\ \\
+%   The electrodes are named depending on the position on the head. The
+%   letter corresponds to the lobe they are on. 
+%   \begin{itemize}
+%       \item Fp : Frontal-polar
+%       \item F : Frontal
+%       \item C : Central
+%       \item P : Parietal
+%       \item T : Temporal
+%       \item O : Occipital \\
+%   \end{itemize}
+%   Further, the odd numbers refer to electrodes on the left side of the
+%   head and the even numbers to those on the right side. The z denotes an
+%   electrode placed on the mid-line. There is an additional
+%   electrode labelled isoground which is placed at a relatively neutral
+%   site on the head, usually on the mid-line forehead. \\
+% </latex>
 
-%<latex>
-%  \item The 10-20 systems calls for the placement of electrodes
-%</latex>
+
 
 %% 
 % <latex>
