@@ -28,7 +28,7 @@ addpath(genpath('/Users/jalpanchal/git/be521'));
 
 %create session
 % dataset I521_A0001_D002.
-session_sez = IEEGSession('I521_A0001_D002', 'jalpanchal', 'jal_ieeglogin.bin');
+% session_sez = IEEGSession('I521_A0001_D002', 'jalpanchal', 'jal_ieeglogin.bin');
 
 %Calculate sampling frequency in Hz
 sampling_frequency_hz = session_sez.data.sampleRate
@@ -63,93 +63,93 @@ disp("This resording has a duration of 644.995s as compared to 10s for I521_A000
 %%
 % <latex>
 % \begin{enumerate}
-%   \item The signal in I521_A0001_D002 has higher signal amplitude (Close
-%   to peak-peak amplitude of 4500 uV) while the I521_A0001_D001 signal has a
-%   much lower signal amplitude of about 180 uV peak-peak.
-%   \item The \\
-% 
+%   \item The signal in I521\_A0001\_D002 has higher signal amplitude (Close
+%    to peak-peak amplitude of 4500 $\mu$V) while the I521\_A0001\_D001 signal has a
+%    much lower signal amplitude of about 180$\mu$V peak-peak.\\
+%   \item The
+% \end{enumerate}
 % </latex>
 
 %To plot frequency spectrum of each of the signals
 %I521_A0001_D002
 
-fs = sampling_frequency_hz;
-len = duration_in_sec;
-t = 0:1/fs:len-1/fs;
-x = session_sez.data.getvalues(1, len * 1e6, 1);
-y = fft(x);
-n = length (x);
-f = (0:n-1)*(fs/n);
-power = abs(y).^2/n;
-
-figure();
-subplot(3,2,3);
-plot(f(1:floor(n/2)),power(1:floor(n/2)))
-title('Power Spectrum - I521\_A0001\_D002')
-xlabel('Frequency (Hz)')
-ylabel('Power (\mu V^2)')
-
-%Plot of signal in time domain
-subplot(3,2,1);
-plot(t, x);
-ylabel('Amplitude (\mu V)');
-xlabel('Time (sec)');
-title('Multi-unit signal - I521\_A0001\_D002');
-
-%plotting a spectogram
-subplot(3,2,5);
-[p,f,t] = pspectrum(x,fs,'spectrogram');
-waterfall(f,t,p');
-xlabel('Frequency (Hz)')
-ylabel('Time (seconds)')
-zlabel('Normalized Power (\mu V^2)')
-title('Spectogram - I521\_A0001\_D002');
-wtf = gca;
-wtf.XDir = 'reverse';
-view([30 45])
-
-
-%I521_A0001_D001
-
-%Plot of Power Spectrum
-session_1 = IEEGSession('I521_A0001_D001', 'jalpanchal', 'jal_ieeglogin.bin');
-sampling_frequency_hz_1 = session_1.data.sampleRate;
-duration_in_sec_1 = session_1.data(1).rawChannels(1).get_tsdetails.getDuration/1e6;
-
-fs = sampling_frequency_hz_1;
-len = duration_in_sec_1;
-t = 0:1/fs:len-1/fs;
-x = session_1.data.getvalues(1, len * 1e6, 1);
-y = fft(x);
-n = length (x);
-f = (0:n-1)*(fs/n);
-power = abs(y).^2/n;
-
-%Plotting power spectrum
-subplot(3,2,4);
-plot(f(1:floor(n/2)),power(1:floor(n/2)))
-title('Power Spectrum - I521\_A0001\_D001')
-xlabel('Frequency (Hz)')
-ylabel('Power (\mu V^2)')
-
-%Plot of signal in time domain
-subplot(3,2,2);
-plot(t, x);
-ylabel('Amplitude (\mu V)');
-xlabel('Time (sec)');
-title('Multi-unit signal - I521\_A0001\_D001');
-
-%plotting a spectogram
-subplot(3,2,6);
-[p,f,t] = pspectrum(x,fs,'spectrogram');
-waterfall(f,t,p');
-xlabel('Frequency (Hz)')
-ylabel('Time (seconds)')
-zlabel('Normalized Power (\mu V^2)')
-title('Spectogram - I521\_A0001\_D001');
-wtf = gca;
-wtf.XDir = 'reverse';
-view([30 45])
+% fs = sampling_frequency_hz;
+% len = duration_in_sec;
+% t = 0:1/fs:len-1/fs;
+% x = session_sez.data.getvalues(1, len * 1e6, 1);
+% y = fft(x);
+% n = length (x);
+% f = (0:n-1)*(fs/n);
+% power = abs(y).^2/n;
+% 
+% figure();
+% subplot(3,2,3);
+% plot(f(1:floor(n/2)),power(1:floor(n/2)))
+% title('Power Spectrum - I521\_A0001\_D002')
+% xlabel('Frequency (Hz)')
+% ylabel('Power (\mu V^2)')
+% 
+% %Plot of signal in time domain
+% subplot(3,2,1);
+% plot(t, x);
+% ylabel('Amplitude (\mu V)');
+% xlabel('Time (sec)');
+% title('Multi-unit signal - I521\_A0001\_D002');
+% 
+% %plotting a spectogram
+% subplot(3,2,5);
+% [p,f,t] = pspectrum(x,fs,'spectrogram');
+% waterfall(f,t,p');
+% xlabel('Frequency (Hz)')
+% ylabel('Time (seconds)')
+% zlabel('Normalized Power (\mu V^2)')
+% title('Spectogram - I521\_A0001\_D002');
+% wtf = gca;
+% wtf.XDir = 'reverse';
+% view([30 45])
+% 
+% 
+% %I521_A0001_D001
+% 
+% %Plot of Power Spectrum
+% % session_1 = IEEGSession('I521_A0001_D001', 'jalpanchal', 'jal_ieeglogin.bin');
+% sampling_frequency_hz_1 = session_1.data.sampleRate;
+% duration_in_sec_1 = session_1.data(1).rawChannels(1).get_tsdetails.getDuration/1e6;
+% 
+% fs = sampling_frequency_hz_1;
+% len = duration_in_sec_1;
+% t = 0:1/fs:len-1/fs;
+% x = session_1.data.getvalues(1, len * 1e6, 1);
+% y = fft(x);
+% n = length (x);
+% f = (0:n-1)*(fs/n);
+% power = abs(y).^2/n;
+% 
+% %Plotting power spectrum
+% subplot(3,2,4);
+% plot(f(1:floor(n/2)),power(1:floor(n/2)))
+% title('Power Spectrum - I521\_A0001\_D001')
+% xlabel('Frequency (Hz)')
+% ylabel('Power (\mu V^2)')
+% 
+% %Plot of signal in time domain
+% subplot(3,2,2);
+% plot(t, x);
+% ylabel('Amplitude (\mu V)');
+% xlabel('Time (sec)');
+% title('Multi-unit signal - I521\_A0001\_D001');
+% 
+% %plotting a spectogram
+% subplot(3,2,6);
+% [p,f,t] = pspectrum(x,fs,'spectrogram');
+% waterfall(f,t,p');
+% xlabel('Frequency (Hz)')
+% ylabel('Time (seconds)')
+% zlabel('Normalized Power (\mu V^2)')
+% title('Spectogram - I521\_A0001\_D001');
+% wtf = gca;
+% wtf.XDir = 'reverse';
+% view([30 45])
 
 
 
@@ -188,9 +188,34 @@ view([30 45])
 % </latex>
 
 %%
+
+%%
 % <latex>
 %  \item Retrieve the \texttt{ep} and \texttt{stim} channel data in MATLAB. What is the average latency (in ms) of the peak response to the stimulus onset over all trials? (Assume stimuli occurs at exactly 1 second intervals)(3 pts)
 % </latex>
+
+%%
+% session_ep = IEEGSession('I521_A0001_D003', 'jalpanchal', 'jal_ieeglogin.bin');
+sampling_frequency_hz_ep = session_ep.data.sampleRate
+duration_in_sec_ep = session_ep.data(1).rawChannels(1).get_tsdetails.getDuration/1e6
+
+ep_data = session_ep.data.getvalues(0, duration_in_sec_ep * 1e6, 1);
+stimulus_data = session_ep.data.getvalues(0, duration_in_sec_ep * 1e6, 2);
+
+
+ep_data_cut = reshape(ep_data, ce(duration_in_sec_ep), sampling_frequency_hz_ep);
+
+%Plot D003
+% time_frame = 0 : 1/sampling_frequency_hz_ep : duration_in_sec_ep;
+% figure();
+% plot(time_frame', ep_data);
+% hold on
+% plot(time_frame', stimulus_data);
+% ylabel('Amplitude (\mu V)');
+% xlabel('Time (sec)');
+% title('Multi-unit signal');
+
+
 
 %%
 % <latex>

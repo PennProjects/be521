@@ -28,7 +28,7 @@ addpath(genpath('/Users/jalpanchal/git/be521'));
 
 %create session
 % dataset I521_A0001_D002.
-session_sez = IEEGSession('I521_A0001_D002', 'jalpanchal', 'jal_ieeglogin.bin');
+% session_sez = IEEGSession('I521_A0001_D002', 'jalpanchal', 'jal_ieeglogin.bin');
 
 %Calculate sampling frequency in Hz
 sampling_frequency_hz = session_sez.data.sampleRate
@@ -73,83 +73,83 @@ disp("This resording has a duration of 644.995s as compared to 10s for I521_A000
 %To plot frequency spectrum of each of the signals
 %I521_A0001_D002
 
-fs = sampling_frequency_hz;
-len = duration_in_sec;
-t = 0:1/fs:len-1/fs;
-x = session_sez.data.getvalues(1, len * 1e6, 1);
-y = fft(x);
-n = length (x);
-f = (0:n-1)*(fs/n);
-power = abs(y).^2/n;
-
-figure();
-subplot(3,2,3);
-plot(f(1:floor(n/2)),power(1:floor(n/2)))
-title('Power Spectrum - I521\_A0001\_D002')
-xlabel('Frequency (Hz)')
-ylabel('Power (\mu V^2)')
-
-%Plot of signal in time domain
-subplot(3,2,1);
-plot(t, x);
-ylabel('Amplitude (\mu V)');
-xlabel('Time (sec)');
-title('Multi-unit signal - I521\_A0001\_D002');
-
-%plotting a spectogram
-subplot(3,2,5);
-[p,f,t] = pspectrum(x,fs,'spectrogram');
-waterfall(f,t,p');
-xlabel('Frequency (Hz)')
-ylabel('Time (seconds)')
-zlabel('Normalized Power (\mu V^2)')
-title('Spectogram - I521\_A0001\_D002');
-wtf = gca;
-wtf.XDir = 'reverse';
-view([30 45])
-
-
-%I521_A0001_D001
-
-%Plot of Power Spectrum
-session_1 = IEEGSession('I521_A0001_D001', 'jalpanchal', 'jal_ieeglogin.bin');
-sampling_frequency_hz_1 = session_1.data.sampleRate;
-duration_in_sec_1 = session_1.data(1).rawChannels(1).get_tsdetails.getDuration/1e6;
-
-fs = sampling_frequency_hz_1;
-len = duration_in_sec_1;
-t = 0:1/fs:len-1/fs;
-x = session_1.data.getvalues(1, len * 1e6, 1);
-y = fft(x);
-n = length (x);
-f = (0:n-1)*(fs/n);
-power = abs(y).^2/n;
-
-%Plotting power spectrum
-subplot(3,2,4);
-plot(f(1:floor(n/2)),power(1:floor(n/2)))
-title('Power Spectrum - I521\_A0001\_D001')
-xlabel('Frequency (Hz)')
-ylabel('Power (\mu V^2)')
-
-%Plot of signal in time domain
-subplot(3,2,2);
-plot(t, x);
-ylabel('Amplitude (\mu V)');
-xlabel('Time (sec)');
-title('Multi-unit signal - I521\_A0001\_D001');
-
-%plotting a spectogram
-subplot(3,2,6);
-[p,f,t] = pspectrum(x,fs,'spectrogram');
-waterfall(f,t,p');
-xlabel('Frequency (Hz)')
-ylabel('Time (seconds)')
-zlabel('Normalized Power (\mu V^2)')
-title('Spectogram - I521\_A0001\_D001');
-wtf = gca;
-wtf.XDir = 'reverse';
-view([30 45])
+% fs = sampling_frequency_hz;
+% len = duration_in_sec;
+% t = 0:1/fs:len-1/fs;
+% x = session_sez.data.getvalues(1, len * 1e6, 1);
+% y = fft(x);
+% n = length (x);
+% f = (0:n-1)*(fs/n);
+% power = abs(y).^2/n;
+% 
+% figure();
+% subplot(3,2,3);
+% plot(f(1:floor(n/2)),power(1:floor(n/2)))
+% title('Power Spectrum - I521\_A0001\_D002')
+% xlabel('Frequency (Hz)')
+% ylabel('Power (\mu V^2)')
+% 
+% %Plot of signal in time domain
+% subplot(3,2,1);
+% plot(t, x);
+% ylabel('Amplitude (\mu V)');
+% xlabel('Time (sec)');
+% title('Multi-unit signal - I521\_A0001\_D002');
+% 
+% %plotting a spectogram
+% subplot(3,2,5);
+% [p,f,t] = pspectrum(x,fs,'spectrogram');
+% waterfall(f,t,p');
+% xlabel('Frequency (Hz)')
+% ylabel('Time (seconds)')
+% zlabel('Normalized Power (\mu V^2)')
+% title('Spectogram - I521\_A0001\_D002');
+% wtf = gca;
+% wtf.XDir = 'reverse';
+% view([30 45])
+% 
+% 
+% %I521_A0001_D001
+% 
+% %Plot of Power Spectrum
+% % session_1 = IEEGSession('I521_A0001_D001', 'jalpanchal', 'jal_ieeglogin.bin');
+% sampling_frequency_hz_1 = session_1.data.sampleRate;
+% duration_in_sec_1 = session_1.data(1).rawChannels(1).get_tsdetails.getDuration/1e6;
+% 
+% fs = sampling_frequency_hz_1;
+% len = duration_in_sec_1;
+% t = 0:1/fs:len-1/fs;
+% x = session_1.data.getvalues(1, len * 1e6, 1);
+% y = fft(x);
+% n = length (x);
+% f = (0:n-1)*(fs/n);
+% power = abs(y).^2/n;
+% 
+% %Plotting power spectrum
+% subplot(3,2,4);
+% plot(f(1:floor(n/2)),power(1:floor(n/2)))
+% title('Power Spectrum - I521\_A0001\_D001')
+% xlabel('Frequency (Hz)')
+% ylabel('Power (\mu V^2)')
+% 
+% %Plot of signal in time domain
+% subplot(3,2,2);
+% plot(t, x);
+% ylabel('Amplitude (\mu V)');
+% xlabel('Time (sec)');
+% title('Multi-unit signal - I521\_A0001\_D001');
+% 
+% %plotting a spectogram
+% subplot(3,2,6);
+% [p,f,t] = pspectrum(x,fs,'spectrogram');
+% waterfall(f,t,p');
+% xlabel('Frequency (Hz)')
+% ylabel('Time (seconds)')
+% zlabel('Normalized Power (\mu V^2)')
+% title('Spectogram - I521\_A0001\_D001');
+% wtf = gca;
+% wtf.XDir = 'reverse';
+% view([30 45])
 
 
 
@@ -188,15 +188,62 @@ view([30 45])
 % </latex>
 
 %%
+
+%%
 % <latex>
 %  \item Retrieve the \texttt{ep} and \texttt{stim} channel data in MATLAB. What is the average latency (in ms) of the peak response to the stimulus onset over all trials? (Assume stimuli occurs at exactly 1 second intervals)(3 pts)
 % </latex>
+
+%%
+% session_ep = IEEGSession('I521_A0001_D003', 'jalpanchal', 'jal_ieeglogin.bin');
+sampling_frequency_hz_ep = session_ep.data.sampleRate
+duration_in_sec_ep = session_ep.data(1).rawChannels(1).get_tsdetails.getDuration/1e6
+
+ep_data = session_ep.data.getvalues(0, duration_in_sec_ep * 1e6, 1);
+stimulus_data = session_ep.data.getvalues(0, duration_in_sec_ep * 1e6, 2);
+
+%Making the vector size divisible by frequency to create a rectangular
+%matrix of width = frequency
+ep_data = [ep_data; 0];
+stimulus_data = [stimulus_data; 0];
+
+%We now have each roe in the matric as a 1 sec segment of the signal
+ep_data_cut = reshape(ep_data, sampling_frequency_hz_ep, [])';
+stimulus_data_cut = reshape(stimulus_data, sampling_frequency_hz_ep, [])';
+
+
+
+%Plot D003
+time_frame = 0 : 1/sampling_frequency_hz_ep : 1-1/sampling_frequency_hz_ep;
+figure();
+plot(time_frame', ep_data_cut(2,:));
+hold on
+plot(time_frame', stimulus_data_cut(2,:));
+ylabel('Amplitude (\mu V)');
+xlabel('Time (sec)');
+title('Multi-unit signal');
+
+
 
 %%
 % <latex>
 %  \item In neuroscience, we often need to isolate a small neural signal buried under an appreciable amount of noise.  One technique to accomplish this is called the spike triggered average, sometimes called signal averaging. This technique assumes that the neural response to a repetitive stimulus is constant (or nearly so), while the noise fluctuates from trial to trial - therefore averaging the evoked response over many trials will isolate the signal and average out the noise.
 %  Construct a spike triggered average plot for the data in \texttt{I521\_A0001\_D003}.  Plot the average EP in red.  Using the commands \texttt{hold on} and \texttt{hold off} as well as \texttt{errorbar} and \texttt{plot}, overlay error bars at each time point on the plot to indicate the standard deviation of the responses at any given time point.  Plot the standard deviation error bars in gray (RGB value: [0.7 0.7 0.7]). Make sure to give a proper legend along with your labels. (4 pts)
 % </latex>
+
+%%
+
+ep_data_mean_resp = mean(ep_data_cut,1);
+stimulus_data_mean = mean(stimulus_data_cut,1);
+
+figure();
+plot(time_frame', ep_data_mean_resp);
+hold on
+plot(time_frame', stimulus_data_mean);
+ylabel('Amplitude (\mu V)');
+xlabel('Time (sec)');
+title('Mean signal');
+
 
 %%
 % <latex>
