@@ -334,101 +334,101 @@
 
 %%
 % We can first begin by plotting the frequency response of the signal
-
-
-fs = sampling_frequency_hz_ep;
-len = duration_in_sec_ep;
-t = 0:1/fs:len-1/fs;
-x = session_ep.data.getvalues(1, len * 1e6, 1);
-y = fft(x);
-n = length (x);
-f = (0:n-1)*(fs/n);
-power = abs(y).^2/n;
-
-%Plotting power spectrum
-figure();
-plot(f(1:floor(n/2)),power(1:floor(n/2)))
-title('Power Spectrum - I521\_A0001\_D003')
-xlabel('Frequency (Hz)')
-ylabel('Power (\mu V^2)')
-
-%% 
-% <latex>
-% Let us zoom in  to the lower frequencies
-% </latex>
-
-%Plotting power spectrum
-figure();
-plot(f(1:floor(n/2)),power(1:floor(n/2)))
-title('Power Spectrum - I521\_A0001\_D003')
-xlabel('Frequency (Hz)')
-ylabel('Power (\mu V^2)')
-xlim([0,50])
-
-%%
-% <latex>
-% From the FFT of the signal we can see that the ep signal has some low
-% frequency niose which is causing the baseline wander and some high
-% frequency noise that can be seen throughout the signal. \\
-% to preserve the peaks, we can clean the signal by :
-% \begin{enumerate}
-%       \item Subtacting the mean of the whole segment removing any DC shift.
-%       \item Next we can pass the signal through a Band-pass filter to remove
-%   low and high frequency noise. From the FFT we can choose the values
-%   Lower cut-off : 1Hz and Upper cut-off : 50 Hz. \\
-% \end{enumerate}
-% </latex>
-
-
-
-
-%%
-% <latex>
-% 	\item Show with a few of the EPs (plots and/or otherwise) that your method gives reasonable results. (1 pt)
-% </latex>
-
-%%
-%We will remove the noise from the signal by first removing the mean from
-%the signal and then using a band pass filter with a lower cut-off of 1Hz
-%and a upper cut-off of 50 Hz
-
-ep_data_mean_sub = ep_data - mean(ep_data);
-
-%Using a bandpass filter 
-cut_off_freq  = [1 50];
-x = ep_data_mean_sub;
-fs = sampling_frequency_hz_ep;
-len = size(ep_data_mean_sub,1);
-t = 0:1/fs:duration_in_sec_ep+1/fs;
-
-ep_filtered = bandpass(x, cut_off_freq, fs);
-y = ep_filtered;
-ep_noise = ep_data - ep_filtered;
-
-%Selecting plotting range : 20-50s of signal
-figure();
-plotting_range = sampling_frequency_hz_ep*20:1:sampling_frequency_hz_ep*50;
-subplot(3,1,1);
-plot(t(plotting_range)',x(plotting_range));
-title('Raw signal = I521\_A0001\_D003')
-xlabel('Time (sec)')
-ylabel('Amplitude (\mu V)')
-xlim([20,50])
-subplot(3,1,2);
-plot(t(plotting_range)',y(plotting_range));
-title('Filtered Data - I521\_A0001\_D003. Bandpass [1, 50] Hz')
-xlabel('Time (sec)')
-ylabel('Amplitude (\mu V)')
-xlim([20,50])
-subplot(3,1,3);
-plot(t(plotting_range)',ep_noise(plotting_range));
-title('Noise - I521\_A0001\_D003. Filer : Bandpass [1, 50] Hz')
-xlabel('Time (sec)')
-ylabel('Amplitude (\mu V)')
-xlim([20,50])
-
-
-
+% 
+% 
+% fs = sampling_frequency_hz_ep;
+% len = duration_in_sec_ep;
+% t = 0:1/fs:len-1/fs;
+% x = session_ep.data.getvalues(1, len * 1e6, 1);
+% y = fft(x);
+% n = length (x);
+% f = (0:n-1)*(fs/n);
+% power = abs(y).^2/n;
+% 
+% %Plotting power spectrum
+% figure();
+% plot(f(1:floor(n/2)),power(1:floor(n/2)))
+% title('Power Spectrum - I521\_A0001\_D003')
+% xlabel('Frequency (Hz)')
+% ylabel('Power (\mu V^2)')
+% 
+% %% 
+% % <latex>
+% % Let us zoom in  to the lower frequencies
+% % </latex>
+% 
+% %Plotting power spectrum
+% figure();
+% plot(f(1:floor(n/2)),power(1:floor(n/2)))
+% title('Power Spectrum - I521\_A0001\_D003')
+% xlabel('Frequency (Hz)')
+% ylabel('Power (\mu V^2)')
+% xlim([0,50])
+% 
+% %%
+% % <latex>
+% % From the FFT of the signal we can see that the ep signal has some low
+% % frequency niose which is causing the baseline wander and some high
+% % frequency noise that can be seen throughout the signal. \\
+% % to preserve the peaks, we can clean the signal by :
+% % \begin{enumerate}
+% %       \item Subtacting the mean of the whole segment removing any DC shift.
+% %       \item Next we can pass the signal through a Band-pass filter to remove
+% %   low and high frequency noise. From the FFT we can choose the values
+% %   Lower cut-off : 1Hz and Upper cut-off : 50 Hz. \\
+% % \end{enumerate}
+% % </latex>
+% 
+% 
+% 
+% 
+% %%
+% % <latex>
+% % 	\item Show with a few of the EPs (plots and/or otherwise) that your method gives reasonable results. (1 pt)
+% % </latex>
+% 
+% %%
+% %We will remove the noise from the signal by first removing the mean from
+% %the signal and then using a band pass filter with a lower cut-off of 1Hz
+% %and a upper cut-off of 50 Hz
+% 
+% ep_data_mean_sub = ep_data - mean(ep_data);
+% 
+% %Using a bandpass filter 
+% cut_off_freq  = [1 50];
+% x = ep_data_mean_sub;
+% fs = sampling_frequency_hz_ep;
+% len = size(ep_data_mean_sub,1);
+% t = 0:1/fs:duration_in_sec_ep+1/fs;
+% 
+% ep_filtered = bandpass(x, cut_off_freq, fs);
+% y = ep_filtered;
+% ep_noise = ep_data - ep_filtered;
+% 
+% %Selecting plotting range : 20-50s of signal
+% figure();
+% plotting_range = sampling_frequency_hz_ep*20:1:sampling_frequency_hz_ep*50;
+% subplot(3,1,1);
+% plot(t(plotting_range)',x(plotting_range));
+% title('Raw signal = I521\_A0001\_D003')
+% xlabel('Time (sec)')
+% ylabel('Amplitude (\mu V)')
+% xlim([20,50])
+% subplot(3,1,2);
+% plot(t(plotting_range)',y(plotting_range));
+% title('Filtered Data - I521\_A0001\_D003. Bandpass [1, 50] Hz')
+% xlabel('Time (sec)')
+% ylabel('Amplitude (\mu V)')
+% xlim([20,50])
+% subplot(3,1,3);
+% plot(t(plotting_range)',ep_noise(plotting_range));
+% title('Noise - I521\_A0001\_D003. Filer : Bandpass [1, 50] Hz')
+% xlabel('Time (sec)')
+% ylabel('Amplitude (\mu V)')
+% xlim([20,50])
+% 
+% 
+% 
 
 %%
 % <latex>
@@ -437,15 +437,42 @@ xlim([20,50])
 %         \item Apply your method on each individual trial and report the mean noise amplitude across all trials. (1 pt)
 % </latex>
 
-
-%%
-disp("Mean of noise across all trials in \mu V")
-mean_ep_noise_uV = mean(ep_noise)
-
-disp("This value includes the low frequency baseline modulations, which is also noise")
-disp("")
-
-
+% 
+% %%
+% disp("Mean of noise across all trials in \mu V")
+% mean_ep_noise_uV = mean(ep_noise)
+% 
+% % <latex>
+% % This value includes the low frequency baseline modulations, which is also
+% % noise. \\
+% % If we want only the the high-frequency noise, we cant pass the noise
+% % though a high-pass filter. \\
+% % </latex>
+% 
+% %Extracting only high-frequency noise
+% fs = sampling_frequency_hz_ep;
+% x = ep_noise;
+% ep_noise_highpass = highpass(x,1, fs);
+% 
+% 
+% %Plotting the difference after filtering
+% plotting_range = sampling_frequency_hz_ep*20:1:sampling_frequency_hz_ep*50;
+% t = 0:1/fs:duration_in_sec_ep+1/fs;
+% subplot(2,1,1);
+% plot(t(plotting_range)',ep_noise(plotting_range));
+% title('Noise - I521\_A0001\_D003.')
+% xlabel('Time (sec)')
+% ylabel('Amplitude (\mu V)')
+% xlim([20,50])
+% subplot(2,1,2);
+% plot(t(plotting_range)',ep_noise_highpass(plotting_range));
+% title('Filtered Noise - I521\_A0001\_D003. Filer : High-pass 1 Hz')
+% xlabel('Time (sec)')
+% ylabel('Amplitude (\mu V)')
+% xlim([20,50])
+% 
+% disp("Mean of high frequency noise in \mu V")
+% mean_ep_noise_highfrequency_uV = mean(ep_noise_highpass)
 
 %%
 % <latex>
@@ -482,6 +509,51 @@ plot(plotting_range',ep_mean_noise);
 title('Noise - I521\_A0001\_D003. Filer : Bandpass [1, 50] Hz')
 xlabel('Time (sec)')
 ylabel('Amplitude (\mu V)')
+
+% <latex>
+% Here we see that due to the window of the filter function, the Average
+% signal is distorted when filtered. \\
+% One way we cna fix this is to modify the window or take qa longer sample
+% of average signal. We can duplicate it 10 times to minimize window impact
+% </latex> 
+
+%Duplicating signal 10 times and filtering
+ep_mean_bin_replicas = [];
+for i = 1:10
+    ep_mean_bin_replicas = [ep_mean_bin_replicas,ep_data_mean_bin];
+end
+
+%Filtering the new average signal which has 10 1s signals stecthed together
+
+cut_off_freq  = [1 50];
+x = ep_mean_bin_replicas;
+fs = sampling_frequency_hz_ep;
+len = size(x,2);
+t = 0:1/fs:10;
+
+ep_mean_replica_filtered = bandpass(x, cut_off_freq, fs);
+y = ep_mean_replica_filtered;
+ep_mean_filtered_noise = ep_mean_bin_replicas - ep_mean_replica_filtered;
+
+%Selecting plotting range : 20-50s of signal
+figure();
+plotting_range = t(1:end-1);
+subplot(3,1,1);
+plot(plotting_range',x);
+title('Raw signal = I521\_A0001\_D003')
+xlabel('Time (sec)')
+ylabel('Amplitude (\mu V)')
+subplot(3,1,2);
+plot(plotting_range',y);
+title('Filtered Data - I521\_A0001\_D003. Bandpass [1, 50] Hz')
+xlabel('Time (sec)')
+ylabel('Amplitude (\mu V)')
+subplot(3,1,3);
+plot(plotting_range',ep_mean_filtered_noise);
+title('Noise - I521\_A0001\_D003. Filer : Bandpass [1, 50] Hz')
+xlabel('Time (sec)')
+ylabel('Amplitude (\mu V)')
+
 %%
 % <latex>
 % 	    \item Do these two values make sense? Explain. (1 pt)
