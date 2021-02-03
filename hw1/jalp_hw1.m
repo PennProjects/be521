@@ -171,7 +171,7 @@ view([30 45])
 % Answer : \\
 % \begin{enumerate}
 %   \item As the power of frequency band decrease with increase in
-%   frequences of a signal, this tell us why the power of the
+%   frequences of a signal, this tells us why the power of the
 %   I521\_A0001\_D001 signal is lower as compared to I521\_A0001\_D002.
 %  \item The I521\_A0001\_D001 looks to have been filtered above 100 Hz
 %  while for the I521\_A0001\_D002 signal, most of the signal lies below 50
@@ -211,7 +211,7 @@ view([30 45])
 % electrodes) or about 40 microns in diameter at very high frequency
 % (sometimes upto 30 kHz). While for LFP, the electrodes
 % can be larger (50 microns - 350 microns, at time even 0.5-3mm) and the
-% recording is done at a much lower sampling frequency, usually \< 300Hz.
+% recording is done at a much lower sampling frequency, usually below 300Hz.
 % Having the human iEEG electrodes be larger, with lower sampling would
 % cause them to record LFP. \\
 % </latex>
@@ -293,8 +293,6 @@ ylabel('Amplitude (\mu V)');
 xlabel('Time (sec)');
 title('Finding response peaks - I521\_A0001\_D003');
 
-
-%%%%%%%%%%%%
 
 %%
 % <latex>
@@ -494,8 +492,6 @@ ep_mean_filtered = bandpass(x, cut_off_freq, fs);
 y = ep_mean_filtered;
 ep_mean_noise = ep_mean_bin_mean_sub - ep_mean_filtered;
 
-ep_mean_noise_level = mean(ep_mean_noise);
-
 %Selecting plotting range : 20-50s of signal
 figure();
 plotting_range = t(1:end-1);
@@ -515,53 +511,19 @@ title('Noise - I521\_A0001\_D003. Filer : Bandpass [1, 50] Hz')
 xlabel('Time (sec)')
 ylabel('Amplitude (\mu V)')
 
+disp("Mean noise level from the Average response signal is");
+ep_mean_noise_level = mean(ep_mean_noise)
+
 %%
 % <latex>
 % Here we see that due to the window of the filter function, the Average
-% signal is distorted when filtered. \\
-% One way we cna fix this is to modify the window or take qa longer sample
-% of average signal. We can duplicate it 10 times to minimize window impact
-% </latex> 
+% response signal is distorted when filtered. \\
+% We can fix this by modifying the window or taking a longer sample
+% of average signal by duplicating it multiple times. \\
+% To keep the process consistent between the complete siganl and the
+% average signal, this modification will not be performed.\\
+% </latex>
 
-%%
-%Duplicating signal 10 times and filtering
-ep_mean_bin_replicas = [];
-for i = 1:10
-    ep_mean_bin_replicas = [ep_mean_bin_replicas,ep_mean_bin_mean_sub];
-end
-
-%Filtering the new average signal which has 10 1s signals stecthed together
-
-cut_off_freq  = [0.1 100];
-x = ep_mean_bin_replicas;
-fs = sampling_frequency_hz_ep;
-len = size(x,2);
-t = 0:1/fs:10;
-
-ep_mean_replica_filtered = bandpass(x, cut_off_freq, fs);
-y = ep_mean_replica_filtered;
-ep_mean_filtered_noise = ep_mean_bin_replicas - ep_mean_replica_filtered;
-
-ep_mean_filtered_noise;
-
-%Selecting plotting range : 20-50s of signal
-figure();
-plotting_range = t(1:end-1);
-subplot(3,1,1);
-plot(plotting_range',x);
-title('Raw signal = I521\_A0001\_D003')
-xlabel('Time (sec)')
-ylabel('Amplitude (\mu V)')
-subplot(3,1,2);
-plot(plotting_range',y);
-title('Filtered Data - I521\_A0001\_D003. Bandpass [1, 50] Hz')
-xlabel('Time (sec)')
-ylabel('Amplitude (\mu V)')
-subplot(3,1,3);
-plot(plotting_range',ep_mean_filtered_noise);
-title('Noise - I521\_A0001\_D003. Filer : Bandpass [1, 50] Hz')
-xlabel('Time (sec)')
-ylabel('Amplitude (\mu V)')
 
 %%
 % <latex>
@@ -569,7 +531,18 @@ ylabel('Amplitude (\mu V)')
 % </latex>
 
 %%
-%
+% <latex>
+% Answer :\\
+% \begin{enumerate}
+%  \item The noise value of the filtered signal with low frequency noise is
+%  high as expected due to basline fluctuations.
+%   \item With the noise filtered above 1Hz, we again see an expected noise
+%   signal of high frequency and a very low amplitude 
+% \item The noise level from the filtered average response signal was quite
+% high due to the flaw with the filtering technique. It needs improved
+% windowing and finetuning to work with shorter time samples.
+% \end{enumerate}
+% </latex>
 
 %%
 % <latex>
