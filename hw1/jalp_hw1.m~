@@ -331,7 +331,7 @@
 %   \begin{enumerate}
 % 	\item We often want to get a sense for the amplitude of the noise in a single trial. Propose a method to do this (there are a few reasonably simple methods, so no need to get too complicated). Note: do not assume that the signal averaged EP is the ``true'' signal and just subtract it from that of each trial, because whatever method you propose should be able to work on the signal from a single trial or from the average of the trials. (4 pts)
 % </latex>
-
+%
 %%
 % We can first begin by plotting the frequency response of the signal
 % 
@@ -480,16 +480,20 @@
 % </latex>
 
 %%
+%%%%%%%%%%%%%%%
 
-cut_off_freq  = [1 50];
-x = ep_data_mean_bin;
+ep_data_mean_sub_test = ep_data_mean_sub - mean(ep_data_mean_sub);
+cut_off_freq  = [0.1 100];
+x = ep_data_mean_sub_test;
 fs = sampling_frequency_hz_ep;
-len = size(x,2);
-t = 0:1/fs:1;
+len = size(x,1);
+t = 0:1/fs:duration_in_sec_ep+1/fs;
 
 ep_mean_filtered = bandpass(x, cut_off_freq, fs);
 y = ep_mean_filtered;
-ep_mean_noise = ep_data_mean_bin - ep_mean_filtered;
+ep_mean_noise = ep_mean_bin_mean_sub - ep_mean_filtered;
+
+ep_mean_noise_level = mean(ep_mean_noise);
 
 %Selecting plotting range : 20-50s of signal
 figure();
@@ -510,6 +514,42 @@ title('Noise - I521\_A0001\_D003. Filer : Bandpass [1, 50] Hz')
 xlabel('Time (sec)')
 ylabel('Amplitude (\mu V)')
 
+
+%%%%%%%%%%%%%
+% First we will substract the mean of the signal
+
+% ep_mean_bin_mean_sub = ep_data_mean_bin - mean(ep_data_mean_bin);
+% cut_off_freq  = [0.1 100];
+% x = ep_mean_bin_mean_sub;
+% fs = sampling_frequency_hz_ep;
+% len = size(x,2);
+% t = 0:1/fs:1;
+% 
+% ep_mean_filtered = bandpass(x, cut_off_freq, fs);
+% y = ep_mean_filtered;
+% ep_mean_noise = ep_mean_bin_mean_sub - ep_mean_filtered;
+% 
+% ep_mean_noise_level = mean(ep_mean_noise);
+% 
+% %Selecting plotting range : 20-50s of signal
+% figure();
+% plotting_range = t(1:end-1);
+% subplot(3,1,1);
+% plot(plotting_range',x);
+% title('Raw signal = I521\_A0001\_D003')
+% xlabel('Time (sec)')
+% ylabel('Amplitude (\mu V)')
+% subplot(3,1,2);
+% plot(plotting_range',y);
+% title('Filtered Data - I521\_A0001\_D003. Bandpass [1, 50] Hz')
+% xlabel('Time (sec)')
+% ylabel('Amplitude (\mu V)')
+% subplot(3,1,3);
+% plot(plotting_range',ep_mean_noise);
+% title('Noise - I521\_A0001\_D003. Filer : Bandpass [1, 50] Hz')
+% xlabel('Time (sec)')
+% ylabel('Amplitude (\mu V)')
+
 % <latex>
 % Here we see that due to the window of the filter function, the Average
 % signal is distorted when filtered. \\
@@ -520,12 +560,12 @@ ylabel('Amplitude (\mu V)')
 %Duplicating signal 10 times and filtering
 ep_mean_bin_replicas = [];
 for i = 1:10
-    ep_mean_bin_replicas = [ep_mean_bin_replicas,ep_data_mean_bin];
+    ep_mean_bin_replicas = [ep_mean_bin_replicas,ep_mean_bin_mean_sub];
 end
 
 %Filtering the new average signal which has 10 1s signals stecthed together
 
-cut_off_freq  = [1 50];
+cut_off_freq  = [0.1 100];
 x = ep_mean_bin_replicas;
 fs = sampling_frequency_hz_ep;
 len = size(x,2);
@@ -534,6 +574,8 @@ t = 0:1/fs:10;
 ep_mean_replica_filtered = bandpass(x, cut_off_freq, fs);
 y = ep_mean_replica_filtered;
 ep_mean_filtered_noise = ep_mean_bin_replicas - ep_mean_replica_filtered;
+
+ep_mean_filtered_noise;
 
 %Selecting plotting range : 20-50s of signal
 figure();
@@ -558,6 +600,9 @@ ylabel('Amplitude (\mu V)')
 % <latex>
 % 	    \item Do these two values make sense? Explain. (1 pt)
 % </latex>
+
+%%
+%
 
 %%
 % <latex>

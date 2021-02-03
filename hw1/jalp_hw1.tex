@@ -98,6 +98,7 @@ This resording has a duration of 644.995s as compared to 10s for I521_A0001_D001
  \item Compare the activity in this sample with the data from HW0.  What differences do you notice in the amplitude and frequency characteristics? (2 pts)
 
 
+Answer : \\
 \begin{enumerate}
   \item The signal in I521\_A0001\_D002 has higher signal amplitude (Close
    to peak-peak amplitude of 4500 $\mu$V) while the I521\_A0001\_D001 signal has a
@@ -210,7 +211,8 @@ Client password: ****
  \item The unit activity sample in \texttt{(I521\_A0001\_D001)} was high-pass filtered to remove low-frequency content. Assume that the seizure activity in \texttt{(I521\_A0001\_D002)} has not been high-pass filtered. Given that the power of a frequency band scales roughly as $1/f$, how might these differences in preprocessing contribute to the differences you noted in the previous question? (There is no need to get into specific calculations here. We just want general ideas.) (3 pts)
 
 
-\begin{itemize}
+Answer : \\
+\begin{enumerate}
   \item As the power of frequency band decrease with increase in
   frequences of a signal, this tell us why the power of the
   I521\_A0001\_D001 signal is lower as compared to I521\_A0001\_D002.
@@ -222,12 +224,13 @@ Client password: ****
  would also contribute to the baseline low-frequenccy base-line
  fluctuations seen in the signal as compared to the more stabel baseline
  of I521\_A0001\_D001.\\
- \end{itemize}
+ \end{enumerate}
 
 
  \item Two common methods of human iEEG are known as electrocorticography (ECoG) and stereoelectroencephalography (SEEG). For either of these paradigms (please indicate which you choose), find and report at least two of the following electrode characteristics: shape, material, size. Please note that exact numbers aren't required, and please cite any sources used. (3 pts)
 
 
+Answer : \\
 Electrocorticogram (ECoG) refers to the signal obtained from macroelectrodes
 (typically 2–3 mm in diameter) placed directly on the pial surface of
 cortex of epileptic patients for localization of the seizure focus \cite{lesser2010subdural}.\\
@@ -238,14 +241,15 @@ of Platinum \cite{Dubey4299}. \\
  \item What is a local field potential? How might the  characteristics of human iEEG electrodes cause them to record local field potentials as opposed to multiunit activity, which was the signal featured in HW0 as recorded from 40 micron Pt-Ir microwire electrodes? (2 pts)
 
 
+Answer : \\
 Local field potential (LFP) is the electric potential recorded in the
 extracellular space in bain tissue \cite{Destexhe:2013}.\\ \\
 For multi-unit activity, one would usually use tetrodes(set of 4
 electrodes) or about 40 microns in diameter at very high frequency
 (sometimes upto 30 kHz). While for LFP, the electrodes
 can be larger (50 microns - 350 microns, at time even 0.5-3mm) and the
-recording is done at a much lower sampling frequency, usually < 300Hz.
-Having the human iEEg electrodes be larger, with lower sampling would
+recording is done at a much lower sampling frequency, usually \< 300Hz.
+Having the human iEEG electrodes be larger, with lower sampling would
 cause them to record LFP. \\
 
 
@@ -261,12 +265,13 @@ Once again, play around with the data on the IEEG Portal, in particular paying a
  \item Based on your observations, should we use all of the data or omit some of it? (There's no right answer, here, just make your case either way in a few sentences.) (2 pts)
 
 
+Answer : \\
 For the first 8 secs of data the stimulus signal seems to have a sloping
 trend in the signal. Though the trigger looks to be consistently at the
-second mark, this data should be ignored to keep the stimulus consistent
+second mark, this data can be ignored to keep the stimulus consistent
 throughout the sample.\\ \\
 The rest of the signal has a consistent stimulus signal and a response
-following it so can be used for further analysis.
+following it so can be used for further analysis.\\
 \includegraphics[scale=0.25]{screenshot_q2.1_hw1.png}\\
 
 
@@ -314,6 +319,9 @@ plot((10:14) + (ep_data_max_indx(10:14)./sampling_frequency_hz_ep)', temp_, 'rx'
 ylabel('Amplitude (\mu V)');
 xlabel('Time (sec)');
 title('Finding response peaks - I521\_A0001\_D003');
+
+
+%%%%%%%%%%%%
 \end{lstlisting}
 
 \color{lightgray} \begin{lstlisting}IEEGSETUP: Adding 'ieeg-matlab.jar' to dynamic classpath
@@ -343,14 +351,19 @@ ep_data_peak_mean_delay_ms =
 ep_data_mean_bin = mean(ep_data_bin,1);
 stimulus_data_mean_bin = mean(stimulus_data_bin,1);
 
+ep_stddev_timepoint = std(ep_data_bin);
+
 time_frame = 0 : 1/sampling_frequency_hz_ep : 1-1/sampling_frequency_hz_ep;
 figure();
-plot(time_frame', ep_data_mean_bin);
+
+err_bar = errorbar(time_frame, ep_data_mean_bin,ep_stddev_timepoint);
+err_bar.Color  = '#B2B2B2';
+legend({'Standard Deviation'}, 'FontSize', 14);
 hold on
-plot(time_frame', stimulus_data_mean_bin);
-ylabel('Amplitude (\mu V)');
-xlabel('Time (sec)');
-title('Mean signal');
+plot(time_frame', ep_data_mean_bin, 'LineWidth', 7, 'Color', 'red', 'DisplayName','Average Response');
+ylabel('Amplitude (\mu V)', 'FontSize', 15);
+xlabel('Time (sec)', 'FontSize', 15);
+title('Avg EP Response with Standard Deviation bars - I521\_A0001\_D003', 'FontSize', 12);
 \end{lstlisting}
 
 
@@ -360,8 +373,10 @@ title('Mean signal');
   \begin{enumerate}
 	\item We often want to get a sense for the amplitude of the noise in a single trial. Propose a method to do this (there are a few reasonably simple methods, so no need to get too complicated). Note: do not assume that the signal averaged EP is the ``true'' signal and just subtract it from that of each trial, because whatever method you propose should be able to work on the signal from a single trial or from the average of the trials. (4 pts)
 
-We can first begin by plotting the frequency response of the signal
 \begin{lstlisting}
+%We can first begin by plotting the frequency response of the signal
+
+
 fs = sampling_frequency_hz_ep;
 len = duration_in_sec_ep;
 t = 0:1/fs:len-1/fs;
@@ -401,12 +416,12 @@ From the FFT of the signal we can see that the ep signal has some low
 frequency niose which is causing the baseline wander and some high
 frequency noise that can be seen throughout the signal. \\
 to preserve the peaks, we can clean the signal by :
-\begin{itemize}
+\begin{enumerate}
       \item Subtacting the mean of the whole segment removing any DC shift.
       \item Next we can pass the signal through a Band-pass filter to remove
   low and high frequency noise. From the FFT we can choose the values
   Lower cut-off : 1Hz and Upper cut-off : 50 Hz. \\
-\end{itemize}
+\end{enumerate}
 
 
 	\item Show with a few of the EPs (plots and/or otherwise) that your method gives reasonable results. (1 pt)
@@ -462,9 +477,6 @@ xlim([20,50])
 \begin{lstlisting}
 disp("Mean of noise across all trials in \mu V")
 mean_ep_noise_uV = mean(ep_noise)
-
-disp("This value includes the low frequency baseline modulations, which is also noise")
-disp("")
 \end{lstlisting}
 
 \color{lightgray} \begin{lstlisting}Mean of noise across all trials in \mu V
@@ -473,21 +485,70 @@ mean_ep_noise_uV =
 
    1.0398e+03
 
-This value includes the low frequency baseline modulations, which is also noise
 \end{lstlisting} \color{black}
 
-        \item Apply your method on the signal averaged EP and report its noise. (1 pt)
+This value includes the low frequency baseline modulations, which is also
+noise. \\
+If we want only the the high-frequency noise, we cant pass the noise
+though a high-pass filter. \\
 
 \begin{lstlisting}
+%Extracting only high-frequency noise
+fs = sampling_frequency_hz_ep;
+x = ep_noise;
+ep_noise_highpass = highpass(x,1, fs);
+
+
+%Plotting the difference after filtering
+plotting_range = sampling_frequency_hz_ep*20:1:sampling_frequency_hz_ep*50;
+t = 0:1/fs:duration_in_sec_ep+1/fs;
+subplot(2,1,1);
+plot(t(plotting_range)',ep_noise(plotting_range));
+title('Noise - I521\_A0001\_D003.')
+xlabel('Time (sec)')
+ylabel('Amplitude (\mu V)')
+xlim([20,50])
+subplot(2,1,2);
+plot(t(plotting_range)',ep_noise_highpass(plotting_range));
+title('Filtered Noise - I521\_A0001\_D003. Filer : High-pass 1 Hz')
+xlabel('Time (sec)')
+ylabel('Amplitude (\mu V)')
+xlim([20,50])
+
+disp("Mean of high frequency noise in \mu V")
+mean_ep_noise_highfrequency_uV = mean(ep_noise_highpass)
+\end{lstlisting}
+
+\color{lightgray} \begin{lstlisting}Mean of high frequency noise in \mu V
+
+mean_ep_noise_highfrequency_uV =
+
+   -0.7029
+
+\end{lstlisting} \color{black}
+
+
+\includegraphics [width=5in]{jalp_hw1_07.png}
+
+  \item Apply your method on the signal averaged EP and report its noise. (1 pt)
+
+\begin{lstlisting}
+%
+
+% First we will substract the mean of the signal
+
+ep_mean_bin_mean_sub = ep_data_mean_bin - mean(ep_data_mean_bin);
 cut_off_freq  = [1 50];
-x = ep_data_mean_bin;
+x = ep_mean_bin_mean_sub;
 fs = sampling_frequency_hz_ep;
 len = size(x,2);
 t = 0:1/fs:1;
 
 ep_mean_filtered = bandpass(x, cut_off_freq, fs);
 y = ep_mean_filtered;
-ep_mean_noise = ep_data_mean_bin - ep_mean_filtered;
+ep_mean_noise = ep_mean_bin_mean_sub - ep_mean_filtered;
+
+ep_mean_noise_level = mean(ep_mean_noise);
 
 %Selecting plotting range : 20-50s of signal
 figure();
@@ -510,7 +571,56 @@ ylabel('Amplitude (\mu V)')
 \end{lstlisting}
 
 
-\includegraphics [width=5in]{jalp_hw1_07.png}
+\includegraphics [width=5in]{jalp_hw1_08.png}
+
+Here we see that due to the window of the filter function, the Average
+signal is distorted when filtered. \\
+One way we cna fix this is to modify the window or take qa longer sample
+of average signal. We can duplicate it 10 times to minimize window impact
+
+\begin{lstlisting}
+%Duplicating signal 10 times and filtering
+ep_mean_bin_replicas = [];
+for i = 1:10
+    ep_mean_bin_replicas = [ep_mean_bin_replicas,ep_mean_bin_mean_sub];
+end
+
+%Filtering the new average signal which has 10 1s signals stecthed together
+
+cut_off_freq  = [0.1 100];
+x = ep_mean_bin_replicas;
+fs = sampling_frequency_hz_ep;
+len = size(x,2);
+t = 0:1/fs:10;
+
+ep_mean_replica_filtered = bandpass(x, cut_off_freq, fs);
+y = ep_mean_replica_filtered;
+ep_mean_filtered_noise = ep_mean_bin_replicas - ep_mean_replica_filtered;
+
+ep_mean_filtered_noise;
+
+%Selecting plotting range : 20-50s of signal
+figure();
+plotting_range = t(1:end-1);
+subplot(3,1,1);
+plot(plotting_range',x);
+title('Raw signal = I521\_A0001\_D003')
+xlabel('Time (sec)')
+ylabel('Amplitude (\mu V)')
+subplot(3,1,2);
+plot(plotting_range',y);
+title('Filtered Data - I521\_A0001\_D003. Bandpass [1, 50] Hz')
+xlabel('Time (sec)')
+ylabel('Amplitude (\mu V)')
+subplot(3,1,3);
+plot(plotting_range',ep_mean_filtered_noise);
+title('Noise - I521\_A0001\_D003. Filer : Bandpass [1, 50] Hz')
+xlabel('Time (sec)')
+ylabel('Amplitude (\mu V)')
+\end{lstlisting}
+
+
+\includegraphics [width=5in]{jalp_hw1_09.png}
 
 	    \item Do these two values make sense? Explain. (1 pt)
 
