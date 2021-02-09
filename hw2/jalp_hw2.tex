@@ -153,7 +153,7 @@ P_K = 1;
 P_Na = 0.045;
 P_Cl = 0.45;
 
-V_m_rest = V_t*log(((P_K*K_extcell_conc_mM)+(P_Na*Na_extcell_conc_mM)+(P_Cl*Cl_cyto_conc_mM))/((P_K*K_cyto_conc_mM)+(P_Na*Na_cyto_conc_mM)+(P_Cl*Cl_extcell_conc_mM)))
+V_m_rest = V_t*log(((P_K*K_extcell_conc_mM)+(P_Na*Na_extcell_conc_mM)+ (P_Cl*Cl_cyto_conc_mM))/((P_K*K_cyto_conc_mM)+(P_Na*Na_cyto_conc_mM)+(P_Cl*Cl_extcell_conc_mM)))
 \end{lstlisting}
 
 \color{lightgray} \begin{lstlisting}
@@ -190,7 +190,7 @@ V_m_actpot =
 
 \end{lstlisting} \color{black}
 
-The membrane potential at peak action potential is $V_m$ = 59.2 mV.\\
+The membrane potential at peak action potential is $V_m$ = 41.5 mV.\\
 
 
 	\item The amplitudes of the multi-unit signals in HW0 and local field
@@ -220,8 +220,87 @@ Use a $\Delta t = 10\, \rm \mu s$ ($\Delta t$ is the discrete analog of the cont
  \item Model the membrane potential with a constant current injection (i.e., $I_e(t) = I_e = 2 {\rm nA}$). Plot your membrane potential as a function of time to show at least a handful of ``firings.'' (8 pts)
 
 
+\\ Answer: \\
+Subsituting the values provided, we can calculate membrane potential for
+given constant current injection.
+
+\begin{lstlisting}
+%Using paramters provided in the question
+tau_m_s = 10*1e-3;
+V_m_V = V_m_rest;
+R_m_ohm = 1e7;
+I_e_A = 2*1e-9;
+del_t_s = 10*1e-6 ;
+V_m_t_V= [];
+V_m_t_curr_V = V_m_V; %Initial V_m_t = V_m
+V_m_thresh_V = -50*1e-3;
+
+duration_us = 10000;
+
+for i=0:duration_us
+
+    V_m_t_V = [V_m_t_V, V_m_t_curr_V];
+    del_V_V = del_t_s/tau_m_s*(V_m_V-V_m_t_curr_V+R_m_ohm*I_e_A);
+    V_m_t_curr_V = V_m_t_curr_V+del_V_V;
+    %Resetting the membrane potential when it crosses the threshold
+    if V_m_t_curr_V > V_m_thresh_V
+        V_m_t_curr_V = V_m_V;
+    end
+
+end
+\end{lstlisting}
+\begin{lstlisting}
+%Plotting the voltage
+figure();
+t_us = 0:duration_us;
+t_ms = t_us/1e3;
+V_m_t_mV = V_m_t_V*1e3;
+plot(t_ms,V_m_t_mV, 'Linewidth', 1.5)
+hold on
+yline(V_m_thresh_V*1e3, ':', 'V_{th}', 'LineWidth', 1)
+title('Membrane potential for I_e = 2nA')
+xlabel('Time (ms)')
+ylabel('Membrane Potential (mV)')
+ylim([-65,-48])
+hold off
+\end{lstlisting}
+
+
+\includegraphics [width=5in]{jalp_hw2_01.png}
+
  \item Produce a plot of firing rate (in Hz) versus injection current, over the range of 1-4 nA. (4 pts)
 
+
+\\ Answer: \\
+lorem ipsum
+
+\begin{lstlisting}
+%Using paramters provided in the question
+tau_m_s = 30*1e-3;
+% V_m_reset_V = V_m_rest;
+V_m_reset_V = -65*1e-3;
+R_m_ohm = 9e7;
+E_l_V = V_m_reset_V;
+V_m_thresh_V = -50*1e-3;
+
+I_e_A = (1:0.2:4)*1e-9;
+r_isi_hz = [];
+
+for i=I_e_A
+    t_isi_curr_s = tau_m_s*log((R_m_ohm*i + E_l_V - V_m_reset_V)/(R_m_ohm*i + E_l_V - V_m_thresh_V));
+    r_isi_hz = [r_isi_hz, 1/t_isi_curr_s];
+end
+\end{lstlisting}
+\begin{lstlisting}
+figure();
+plot(I_e_A,r_isi_hz, 'o-', 'Linewidth', 1.5)
+title('Firing rate vs Injection current ')
+xlabel('Injection Current (A)')
+ylabel('Firing Rate (Hz)')
+\end{lstlisting}
+
+
+\includegraphics [width=5in]{jalp_hw2_02.png}
 
  \item \texttt{I521\_A0002\_D001} contains a dynamic current injection in nA. Plot the membrane potential of your neuron in response to this variable injection current. Use Matlab's \texttt{subplot} function to place the plot of the membrane potential above the injection current so that they both have the same time axis. (Hint: the sampling frequency of the current injection data is different from the sampling frequency ($\frac{1}{\Delta t}$) that we used above.) (4 pts)
 

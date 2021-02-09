@@ -214,7 +214,7 @@ I_e_A = 2*1e-9;
 del_t_s = 10*1e-6 ;
 V_m_t_V= [];
 V_m_t_curr_V = V_m_V; %Initial V_m_t = V_m
-V_m_thresh = -50*1e-3;
+V_m_thresh_V = -50*1e-3;
 
 duration_us = 10000;
 
@@ -224,7 +224,7 @@ for i=0:duration_us
     del_V_V = del_t_s/tau_m_s*(V_m_V-V_m_t_curr_V+R_m_ohm*I_e_A);
     V_m_t_curr_V = V_m_t_curr_V+del_V_V;
     %Resetting the membrane potential when it crosses the threshold
-    if V_m_t_curr_V > V_m_thresh
+    if V_m_t_curr_V > V_m_thresh_V
         V_m_t_curr_V = V_m_V;
     end 
     
@@ -232,19 +232,54 @@ end
 
 %%
 %Plotting the voltage
+figure();
 t_us = 0:duration_us;
 t_ms = t_us/1e3;
 V_m_t_mV = V_m_t_V*1e3;
-plot(t_ms,V_m_t_mV, 'Linewidth', 1.5);
+plot(t_ms,V_m_t_mV, 'Linewidth', 1.5)
+hold on 
+yline(V_m_thresh_V*1e3, ':', 'V_{th}', 'LineWidth', 1)
 title('Membrane potential for I_e = 2nA')
 xlabel('Time (ms)')
 ylabel('Membrane Potential (mV)')
 ylim([-65,-48])
+hold off
+
 
 %%
 % <latex>
 %  \item Produce a plot of firing rate (in Hz) versus injection current, over the range of 1-4 nA. (4 pts)
 % </latex>
+
+%%
+% <latex>
+% \\ Answer: \\
+% lorem ipsum
+% </latex>
+
+%%
+%Using paramters provided in the question
+tau_m_s = 10*1e-3;
+V_m_reset_V = V_m_rest;
+R_m_ohm = 1e7; 
+E_l_V = V_m_reset_V;
+V_m_thresh_V = -50*1e-3;
+
+I_e_A = (1:0.2:4)*1e-9;
+r_isi_hz = [];
+
+for i=I_e_A
+    t_isi_curr_s = tau_m_s*log((R_m_ohm*i + E_l_V - V_m_reset_V)/(R_m_ohm*i + E_l_V - V_m_thresh_V));
+    r_isi_hz = [r_isi_hz, 1/t_isi_curr_s]; 
+end
+
+
+%%
+figure();
+plot(I_e_A,r_isi_hz, 'o-', 'Linewidth', 1.5)
+title('Firing rate vs Injection current ')
+xlabel('Injection Current (A)')
+ylabel('Firing Rate (Hz)')
 
 %%
 % <latex>
