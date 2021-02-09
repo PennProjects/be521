@@ -200,6 +200,49 @@ V_m_actpot = V_t*log(((P_K*K_extcell_conc_mM)+(P_Na*Na_extcell_conc_mM)+(P_Cl*Cl
 
 %%
 % <latex>
+% \\ Answer: \\
+% Subsituting the values provided, we can calculate membrane potential for
+% given constant current injection.
+% </latex>
+
+%%
+%Using paramters provided in the question
+tau_m_s = 10*1e-3;
+V_m_V = V_m_rest;
+R_m_ohm = 1e7; 
+I_e_A = 2*1e-9;
+del_t_s = 10*1e-6 ;
+V_m_t_V= [];
+V_m_t_curr_V = V_m_V; %Initial V_m_t = V_m
+V_m_thresh = -50*1e-3;
+
+duration_us = 10000;
+
+for i=0:duration_us
+    
+    V_m_t_V = [V_m_t_V, V_m_t_curr_V];
+    del_V_V = del_t_s/tau_m_s*(V_m_V-V_m_t_curr_V+R_m_ohm*I_e_A);
+    V_m_t_curr_V = V_m_t_curr_V+del_V_V;
+    %Resetting the membrane potential when it crosses the threshold
+    if V_m_t_curr_V > V_m_thresh
+        V_m_t_curr_V = V_m_V;
+    end 
+    
+end
+
+%%
+%Plotting the voltage
+t_us = 0:duration_us;
+t_ms = t_us/1e3;
+V_m_t_mV = V_m_t_V*1e3;
+plot(t_ms,V_m_t_mV, 'Linewidth', 1.5);
+title('Membrane potential for I_e = 2nA')
+xlabel('Time (ms)')
+ylabel('Membrane Potential (mV)')
+ylim([-65,-48])
+
+%%
+% <latex>
 %  \item Produce a plot of firing rate (in Hz) versus injection current, over the range of 1-4 nA. (4 pts)
 % </latex>
 

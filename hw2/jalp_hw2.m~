@@ -44,7 +44,10 @@
 % </latex>
 
 %%
+% <latex>
 % \\ Answer: \\
+% </latex>
+%%
 % Replacing the value of R = 8.134 J/ mol.K, F  = 96,480 C/mol and T = 310 K
 % in the equation, we get : 
 R = 8.314;
@@ -69,8 +72,8 @@ V_t = R*T/F
 % </latex>
 
 %%
-% \\ Answer: \\
 % <latex>
+% \\ Answer: \\
 % To calcualte the Nernst equilibrium potential, we can use the equation,
 % \begin{align*}
 % E = & \frac{V_T}{z} ln(\frac{[extracellular\ concentration]}{[cytoplasmic\ concentration]})
@@ -118,17 +121,47 @@ E_Cl_mV = V_t/Cl_z*log(Cl_extcell_conc_mM/Cl_cyto_conc_mM)
 % </latex>
 
 %%
+% <latex>
 % \\ Answer: \\
-%Using the given ratios of membrane permiabilities, we get
-P_K = 1
-p_Na = 0.045
-P_Cl = 0.45
+% </latex>
 
-V_m = V_t*log(((P_k*K_extcell_conc_mM)+(P_Na*K_extcell_conc_mM)/())
+%%
+%Using the given ratios of membrane permiabilities, we get
+P_K = 1;
+P_Na = 0.045;
+P_Cl = 0.45;
+
+V_m_rest = V_t*log(((P_K*K_extcell_conc_mM)+(P_Na*Na_extcell_conc_mM)+ (P_Cl*Cl_cyto_conc_mM))/((P_K*K_cyto_conc_mM)+(P_Na*Na_cyto_conc_mM)+(P_Cl*Cl_extcell_conc_mM)))
+
+%%
+% <latex>
+% The resting membrane potential is $V_m$ = -63.2 mV.\\
+% </latex>
+
 %%
 % <latex>
 % 	\item Calculate the membrane potential at the peak action potential, assuming a permeability ratio of $1.0:11:0.45$, again using the ion concentrations given in Question 1.2. (1 pt)
 %   \end{enumerate}
+% </latex>
+
+%%
+% <latex>
+% \\ Answer: \\
+% </latex>
+
+%%
+%Using the membrane permiabilities  to find membrane potential at peak
+%action potential
+
+P_K = 1;
+P_Na = 11;
+P_Cl = 0.45;
+
+V_m_actpot = V_t*log(((P_K*K_extcell_conc_mM)+(P_Na*Na_extcell_conc_mM)+(P_Cl*Cl_cyto_conc_mM))/((P_K*K_cyto_conc_mM)+(P_Na*Na_cyto_conc_mM)+(P_Cl*Cl_extcell_conc_mM)))
+
+%%
+% <latex>
+% The membrane potential at peak action potential is $V_m$ = 41.5 mV.\\
 % </latex>
 
 %%
@@ -144,6 +177,11 @@ V_m = V_t*log(((P_k*K_extcell_conc_mM)+(P_Na*K_extcell_conc_mM)/())
 % 	measurement of the action potential? Hint 2: The resistance of the neuronal membrane is typically much higher than the resistance of the extracellular fluid. (2 pts)
 % </latex>
 
+%%
+% <latex>
+% \\ Answer: \\
+% lorem epsum
+% </latex>
 %% 
 % <latex>
 % \end{enumerate}
@@ -159,6 +197,48 @@ V_m = V_t*log(((P_k*K_extcell_conc_mM)+(P_Na*K_extcell_conc_mM)/())
 % \begin{enumerate}
 %  \item Model the membrane potential with a constant current injection (i.e., $I_e(t) = I_e = 2 {\rm nA}$). Plot your membrane potential as a function of time to show at least a handful of ``firings.'' (8 pts)
 % </latex>
+
+%%
+% <latex>
+% \\ Answer: \\
+% Subsituting the values provided, we can calculate membrane potential for
+% given constant current injection.
+% </latex>
+
+%%
+%Using paramters provided in the question
+tau_m_s = 10*1e-3;
+V_m_V = V_m_rest;
+R_m_ohm = 1e7; 
+I_e_A = 2*1e-9;
+del_t_s = 10*1e-6 ;
+V_m_t_V= [];
+V_m_t_curr_V = V_m_V; %Initial V_m_t = V_m
+V_m_thresh = -50*1e-3;
+
+duration_us = 5000;
+
+for i=0:duration_us
+    
+    V_m_t_V = [V_m_t_V, V_m_t_curr_V];
+    del_V_V = del_t_s/tau_m_s*(V_m_V-V_m_t_curr_V+R_m_ohm*I_e_A);
+    V_m_t_curr_V = V_m_t_curr_V+del_V_V;
+    %Resetting the membrane potential when it crosses the threshold
+    if V_m_t_curr_V > V_m_thresh
+        V_m_t_curr_V = V_m_V;
+    end 
+    
+end
+
+%%
+%Plotting the voltage
+t_us = 0:duration_us;
+t_ms = t_us*1e3
+V_m_t_mV = V_m_t_V/
+plot(t,V_m_t_V);
+title('Membrane potential for I_e = 2nA')
+xlabel('Time (us)')
+ylabel('Membrane Potential (V)')
 
 %%
 % <latex>
