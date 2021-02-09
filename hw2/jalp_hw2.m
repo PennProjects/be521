@@ -208,38 +208,42 @@ V_m_actpot = V_t*log(((P_K*K_extcell_conc_mM)+(P_Na*Na_extcell_conc_mM)+(P_Cl*Cl
 %%
 %Using paramters provided in the question
 tau_m_s = 10*1e-3;
-V_m_V = V_m_rest;
+V_m_rest_V = -63.2*1e-3; %Value from 1.3a
 R_m_ohm = 1e7; 
 I_e_A = 2*1e-9;
 del_t_s = 10*1e-6 ;
 V_m_t_V= [];
-V_m_t_curr_V = V_m_V; %Initial V_m_t = V_m
+V_m_t_curr_V = V_m_rest_V; %Initial V_m_t = V_m
 V_m_thresh_V = -50*1e-3;
 
-duration_us = 10000;
+duration_us = 60000;
+spike_curr = 0;
 
-for i=0:duration_us
+for i=0:10:duration_us
     
     V_m_t_V = [V_m_t_V, V_m_t_curr_V];
-    del_V_V = del_t_s/tau_m_s*(V_m_V-V_m_t_curr_V+R_m_ohm*I_e_A);
+    del_V_V = del_t_s/tau_m_s*(V_m_rest_V-V_m_t_curr_V+R_m_ohm*I_e_A);
     V_m_t_curr_V = V_m_t_curr_V+del_V_V;
     %Resetting the membrane potential when it crosses the threshold
     if V_m_t_curr_V > V_m_thresh_V
-        V_m_t_curr_V = V_m_V;
+        V_m_t_curr_V = V_m_rest_V;       
+        spike_new = i-spike_curr;
+        spike_curr = i;
     end 
     
 end
 
+spike_interval_ms = spike_new/1e3
 %%
 %Plotting the voltage
 figure();
-t_us = 0:duration_us;
+t_us = 0:10:duration_us;
 t_ms = t_us/1e3;
 V_m_t_mV = V_m_t_V*1e3;
 plot(t_ms,V_m_t_mV, 'Linewidth', 1.5)
 hold on 
 yline(V_m_thresh_V*1e3, ':', 'V_{th}', 'LineWidth', 1)
-title('Membrane potential for I_e = 2nA')
+title(['Membrane potential for I_e = ', num2str(I_e_A),'A'])
 xlabel('Time (ms)')
 ylabel('Membrane Potential (mV)')
 ylim([-65,-48])
@@ -254,7 +258,14 @@ hold off
 %%
 % <latex>
 % \\ Answer: \\
-% lorem ipsum
+% To calculate firing rate, we know that, \\
+% \[
+% $r_{sis}$ = 
+% \begin{cases}
+%   0 & \text{if $R_mI_e\ \leg \ V_{th} -E_l$} \\
+%   \frac{1}{t_isi} = (\tau_m ln(\frac{R_mI_e\ +E_L\ -V_{reset}}{R_mI_e\ +E_L\ - V_{th}}))^{-1} & \text{otherwise}
+% \end{cases}
+% \]
 % </latex>
 
 %%
@@ -265,18 +276,23 @@ R_m_ohm = 1e7;
 E_l_V = V_m_reset_V;
 V_m_thresh_V = -50*1e-3;
 
-I_e_A = (1:0.2:4)*1e-9;
+I_e_A = (1:0.1:4)*1e-9;
 r_isi_hz = [];
 
 for i=I_e_A
     t_isi_curr_s = tau_m_s*log((R_m_ohm*i + E_l_V - V_m_reset_V)/(R_m_ohm*i + E_l_V - V_m_thresh_V));
-    r_isi_hz = [r_isi_hz, 1/t_isi_curr_s]; 
+    if (R_m_ohm*i <=  (V_m_thresh_V-E_l_V))
+        r_isi_curr_hz = 0;
+    else
+        r_isi_curr_hz = 1/t_isi_curr_s;
+    end
+    r_isi_hz = [r_isi_hz, r_isi_curr_hz ]; 
 end
 
 
 %%
-figure();
-plot(I_e_A,r_isi_hz, 'o-', 'Linewidth', 1.5)
+% figure();
+% plot(I_e_A,r_isi_hz, 'o-', 'Linewidth', 1.5)
 title('Firing rate vs Injection current ')
 xlabel('Injection Current (A)')
 ylabel('Firing Rate (Hz)')
@@ -285,6 +301,77 @@ ylabel('Firing Rate (Hz)')
 % <latex>
 %  \item \texttt{I521\_A0002\_D001} contains a dynamic current injection in nA. Plot the membrane potential of your neuron in response to this variable injection current. Use Matlab's \texttt{subplot} function to place the plot of the membrane potential above the injection current so that they both have the same time axis. (Hint: the sampling frequency of the current injection data is different from the sampling frequency ($\frac{1}{\Delta t}$) that we used above.) (4 pts)
 % </latex>
+
+%%
+% <latex>
+% \\ Answer: \\
+% </latex>
+
+%%
+%Getting I521_A0002_D001 data
+%Adding workspace path
+addpath(genpath('/Users/jalpanchal/git/be521'));
+
+%create session
+% dataset I521 A0002 D001.
+session = IEEGSession('I521_A0002_D001', 'jalpanchal', 'jal_ieeglogin.bin');
+
+%fetch detals of data
+duration_s = session.data(1).rawChannels(1).get_tsdetails.getDuration/1e6
+sampling_frequency_hz = session.data.sampleRate
+dyn_curr_nA = (session.data.getvalues(0, duration_s * 1e6, 1))';
+
+%%
+%Calculating the membrane potential for the provided dynamic injection
+%current
+
+tau_m_s = 10*1e-3;
+V_m_rest_V = -63.2*1e-3; %Value from 1.3a
+R_m_ohm = 1e7; 
+del_t_s = 1/sampling_frequency_hz;
+V_m_t_V= [];
+V_m_t_curr_V = V_m_rest_V; %Initial V_m_t = V_m
+V_m_thresh_V = -50*1e-3;
+
+
+for i=dyn_curr_nA
+    i_A = i*1e-9;
+    V_m_t_V = [V_m_t_V, V_m_t_curr_V];
+    del_V_V = del_t_s/tau_m_s*(V_m_rest_V-V_m_t_curr_V+R_m_ohm*i_A);
+    V_m_t_curr_V = V_m_t_curr_V+del_V_V;
+    %Resetting the membrane potential when it crosses the threshold
+    if V_m_t_curr_V > V_m_thresh_V
+        V_m_t_curr_V = V_m_rest_V;
+    end 
+    
+end
+%%
+%Plotting values
+fs = sampling_frequency_hz;
+len = duration_s;
+t = 0:1/fs:len-1/fs;
+x = dyn_curr_nA;
+
+figure();
+V_m_t_mV = V_m_t_V*1e3;
+ax1 = subplot(2,1,1);
+plot(t,V_m_t_mV, 'Linewidth', 1.5)
+hold on 
+yline(V_m_thresh_V*1e3, ':', 'V_{th}', 'LineWidth', 1)
+title(['Membrane potential for dynamic injection current'])
+% xlabel('Time (s)')
+ylabel('Membrane Potential (mV)')
+ylim([-65,-45])
+set(ax1,'xticklabel',[]);
+ax1.Position = [0.1 0.5 0.8 0.4];
+hold off
+
+ax2 = subplot(2,1,2);
+plot(t, x, 'Color', 'black', 'Linewidth', 1.5);
+ylabel('Injection Current (nA)');
+xlabel('Time (sec)');
+ax2.Position = [0.1 0.08 0.8 0.4];
+
 
 %%
 % <latex>
@@ -302,12 +389,107 @@ ylabel('Firing Rate (Hz)')
 
 %%
 % <latex>
+% \\ Answer: \\
+% Here, to account for spike-rate adaption, we will increment the
+% $r_m g_{sra}$ term by 0.06 after every action potential and continue
+% decaying it at the the rate of \frac{-$r_m g_{sra}$}{\tau_sra} till it
+% reaches 0. \\
+% </latex>
+
+%%
+%Using paramters provided in the question
+tau_m_s = 10*1e-3;
+V_m_rest_V = -63.2*1e-3; %Value from 1.3a
+V_K_V = -70*1e-3; 
+R_m_ohm = 1e7; 
+I_e_A = 2*1e-9;
+del_t_s = 10*1e-6 ;
+V_m_t_V= [];
+V_m_t_curr_V = V_m_rest_V; %Initial V_m_t = V_m_rest
+V_m_thresh_V = -50*1e-3;
+
+tau_sra_s = 100*1e-3;
+
+% As r_m is a constant we will treat r_m * g_sra as a single term
+r_m_g_sra = 0;
+
+spike_time_stamp_us = [];
+
+duration_us = 500000;
+
+for i=0:10:duration_us
+    
+    V_m_t_V = [V_m_t_V, V_m_t_curr_V];
+    addi_current = r_m_g_sra*(V_m_t_curr_V-V_K_V);
+    del_V_V = del_t_s/tau_m_s*(V_m_rest_V-V_m_t_curr_V+R_m_ohm*I_e_A-addi_current);
+    V_m_t_curr_V = V_m_t_curr_V+del_V_V;
+    
+    %Resetting the membrane potential when it crosses the threshold
+    if V_m_t_curr_V > V_m_thresh_V
+        V_m_t_curr_V = V_m_rest_V;      
+        %After an action potential, r_m*g_sra increases by 0.06
+        r_m_g_sra = r_m_g_sra + 0.01;
+        
+        spike_time_stamp_us = [spike_time_stamp_us, i];
+    end 
+    
+    %While r_m*g_sra is >0 it decays back to zero
+    if r_m_g_sra >0        
+        del_r_m_g_sra = -del_t_s/tau_sra_s*(r_m_g_sra);
+        r_m_g_sra = r_m_g_sra + del_r_m_g_sra;
+    end
+end
+
+%%
+% Plotting the voltage
+figure();
+t_us = 0:10:duration_us;
+t_ms = t_us/1e3;
+V_m_t_mV = V_m_t_V*1e3;
+plot(t_ms,V_m_t_mV, 'Linewidth', 1.5)
+hold on 
+yline(V_m_thresh_V*1e3, ':', 'V_{th}', 'LineWidth', 1)
+title(('Membrane potential  with spike-rate adaption'))
+xlabel('Time (ms)')
+ylabel('Membrane Potential (mV)')
+ylim([-65,-48])
+xlim([0,200])
+hold off
+%%
+% <latex>
 %   \item Plot the inter-spike interval (the time between the spikes) of all the spikes that occur in 500 ms. (2 pts)
 % </latex>
 
 %%
 % <latex>
+% \\ Answer: \\ 
+% </latex>
+
+%%
+%Calculataing interval between spikes
+spike_interval_ms = diff(spike_time_stamp_us)/1e3;
+plot(spike_interval_ms, 'o-', 'Linewidth', 1.5);
+title(('Inter-spike interval from i to i+1^{th} Spike for spike-rate adaption'))
+xlabel('Spike Interval index')
+ylabel('Interval duration (ms)')
+%%
+% <latex>
 %   \item Explain how the spike-rate adaptation term we introduced above might be contributing to the behavior you observe in 2.4.b. (2 pts)
+% </latex>
+
+%%
+% <latex>
+% \\ Answer: \\
+% Without the spike-rate adaption, we saw that the spike interval was a
+% constant value of 10.78 ms for a I_e = 2nA. \\ The spike-rate adaption
+% causes the inter-spike distance to lengthen over time and cause it to
+% settle at a stady state value eventually. This is achieved by modeling a 
+% conductance with fast recovery time and large increment after
+% an action potential. The large increment causes the neuron to clamp at
+% E_K, thus temporarily preventing further firing and producing an absolute
+% refractory period. As this conductance decays to 0, firing will be
+% possible but initially less likely, producing a relative refractory
+% period. When the recovery is completed, normal firing can resume.\\
 % </latex>
 
 %%
