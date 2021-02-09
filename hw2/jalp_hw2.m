@@ -503,9 +503,66 @@ ylabel('Interval duration (ms)')
 
 %%
 % <latex>
+% \\ Answer: \\
+% </latex>
+
+%%
+% <latex>
 % 	\item Provide an interesting figure along with an explanation illustrating the extension. (4 pts)
 % </latex>
 
+%%
+% <latex>
+% \\ Answer: \\
+% </latex>
+
+%%
+%Using values of constants from DayanAbbot-Chap5_Page 173
+g_L = 0.3; % mS/cm^2
+g_K = 36; % mS/cm^2
+g_Na = 120; % mS/cm^2
+
+E_L_mV = -54.387;
+E_K_mV = -77;
+E_Na_mV = 50;
+
+C_m = 1; % uF/cm^2 
+
+
+t = 0:0.01:450;
+del_t_ms = 0.01;
+
+%Injection current
+I_e_nA = 10*(t>100) - 10*(t>200) + 35*(t>300) - 35*(t>400);
+
+%gating variables
+%m for Na channel
+
+%Initial values
+V_mV = -65;
+m = 0.05;
+h = 0.6;
+n = 0.32;
+
+V_arry_mV = [];
+
+for i  = 1:45001
+    
+    V_arry_mV = [V_arry_mV , V_mV];
+    del_V_mV = del_t_ms/C_m*(I_e_nA(i) - g_L*(V_mV-E_L_mV)-g_Na*m^3*h*(V_mV-E_Na_mV) -g_K*n^4*(V_mV-E_K_mV));
+    V_mV = V_mV + del_V_mV;
+    
+    
+%     del_m = 0.1*(V_mV+40)/(1-)
+    
+end
+
+%%
+%Plot the graphs
+subplot(2,1,1);
+plot(t,V_arry_mV)
+subplot(2,1,2);
+plot(t, I_e_nA)
 %%
 % <latex>
 %   \end{enumerate}
