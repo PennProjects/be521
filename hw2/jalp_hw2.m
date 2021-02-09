@@ -2,7 +2,7 @@
 % <latex>
 % \title{BE 521: Homework 2 Questions \\{\normalsize Modeling Neurons} \\{\normalsize Spring 2021}}
 % \author{46 points}
-% \date{Due: Tuesday, 2/2/2021 10:00 PM}
+% \date{Due: Tuesday, 2/9/2021 10:00 PM}
 % \maketitle
 % \textbf{Objective:} Computational modeling of neurons. \\
 % We gratefully acknowledge Dr. Vijay Balasubramanian (UPenn) for many of
@@ -12,8 +12,7 @@
 %% 
 % <latex>
 % \begin{center}
-% \author{Jal Mahendra Panchal\\
-%   \normalsize Collaborators: TBD \\}
+% \author{Jal Mahendra Panchal}
 % \end{center}
 % </latex>
 
@@ -45,6 +44,10 @@
 % </latex>
 
 %%
+% <latex>
+% \\ Answer: \\
+% </latex>
+%%
 % Replacing the value of R = 8.134 J/ mol.K, F  = 96,480 C/mol and T = 310 K
 % in the equation, we get : 
 R = 8.314;
@@ -70,6 +73,44 @@ V_t = R*T/F
 
 %%
 % <latex>
+% \\ Answer: \\
+% To calcualte the Nernst equilibrium potential, we can use the equation,
+% \begin{align*}
+% E = & \frac{V_T}{z} ln(\frac{[extracellular\ concentration]}{[cytoplasmic\ concentration]})
+% \end{align*}
+% </latex>
+
+K_extcell_conc_mM =4.5;
+K_cyto_conc_mM = 120;
+K_z = 1;
+
+Na_extcell_conc_mM =145;
+Na_cyto_conc_mM = 15;
+Na_z  = 1;
+
+Cl_extcell_conc_mM =120;
+Cl_cyto_conc_mM = 12;
+Cl_z = -1;
+
+% Nernst equilibrium potential for K in mV is
+E_K_mV = V_t/K_z*log(K_extcell_conc_mM/K_cyto_conc_mM)
+
+% Nernst equilibrium potential for Na in mV is 
+E_Na_mV = V_t/Na_z*log(Na_extcell_conc_mM/Na_cyto_conc_mM)
+
+% Nernst equilibrium potential for Cl in mV is 
+E_Cl_mV = V_t/Cl_z*log(Cl_extcell_conc_mM/Cl_cyto_conc_mM)
+
+%%
+% <latex>
+% The Nernst equilibrium potential for $K^+$ is -87.7 mV, for $Na^+$ is 60.6
+% mV and for $Cl^-$ is -61.5 mV. \\
+% </latex>
+
+
+
+%%
+% <latex>
 %  \item 
 %   \begin{enumerate}
 % 	\item Use the Goldmann equation,
@@ -81,8 +122,46 @@ V_t = R*T/F
 
 %%
 % <latex>
+% \\ Answer: \\
+% </latex>
+
+%%
+%Using the given ratios of membrane permiabilities, we get
+P_K = 1;
+P_Na = 0.045;
+P_Cl = 0.45;
+
+V_m_rest = V_t*log(((P_K*K_extcell_conc_mM)+(P_Na*Na_extcell_conc_mM)+ (P_Cl*Cl_cyto_conc_mM))/((P_K*K_cyto_conc_mM)+(P_Na*Na_cyto_conc_mM)+(P_Cl*Cl_extcell_conc_mM)))
+
+%%
+% <latex>
+% The resting membrane potential is $V_m$ = -63.2 mV.\\
+% </latex>
+
+%%
+% <latex>
 % 	\item Calculate the membrane potential at the peak action potential, assuming a permeability ratio of $1.0:11:0.45$, again using the ion concentrations given in Question 1.2. (1 pt)
 %   \end{enumerate}
+% </latex>
+
+%%
+% <latex>
+% \\ Answer: \\
+% </latex>
+
+%%
+%Using the membrane permiabilities  to find membrane potential at peak
+%action potential
+
+P_K = 1;
+P_Na = 11;
+P_Cl = 0.45;
+
+V_m_actpot = V_t*log(((P_K*K_extcell_conc_mM)+(P_Na*Na_extcell_conc_mM)+(P_Cl*Cl_cyto_conc_mM))/((P_K*K_cyto_conc_mM)+(P_Na*Na_cyto_conc_mM)+(P_Cl*Cl_extcell_conc_mM)))
+
+%%
+% <latex>
+% The membrane potential at peak action potential is $V_m$ = 41.5 mV.\\
 % </latex>
 
 %%
@@ -98,6 +177,11 @@ V_t = R*T/F
 % 	measurement of the action potential? Hint 2: The resistance of the neuronal membrane is typically much higher than the resistance of the extracellular fluid. (2 pts)
 % </latex>
 
+%%
+% <latex>
+% \\ Answer: \\
+% lorem epsum
+% </latex>
 %% 
 % <latex>
 % \end{enumerate}
