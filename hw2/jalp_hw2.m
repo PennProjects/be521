@@ -126,7 +126,7 @@ E_Cl_mV = V_t/Cl_z*log(Cl_extcell_conc_mM/Cl_cyto_conc_mM)
 % </latex>
 
 %%
-%Using the given ratios of membrane permiabilities, we get
+%Using the given ratios of membrane permeability, we get
 P_K = 1;
 P_Na = 0.045;
 P_Cl = 0.45;
@@ -150,7 +150,7 @@ V_m_rest = V_t*log(((P_K*K_extcell_conc_mM)+(P_Na*Na_extcell_conc_mM)+ (P_Cl*Cl_
 % </latex>
 
 %%
-%Using the membrane permiabilities  to find membrane potential at peak
+%Using the membrane permeability  to find membrane potential at peak
 %action potential
 
 P_K = 1;
@@ -181,14 +181,14 @@ V_m_actpot = V_t*log(((P_K*K_extcell_conc_mM)+(P_Na*Na_extcell_conc_mM)+(P_Cl*Cl
 % <latex>
 % \\ Answer: \\
 % Local field Potential is measured between 2 electrodes in the
-% extracelular fluid in constast the action potential is measured between
+% extracellular fluid in contrast the action potential is measured between
 % an electrode inserted into the brain cell and another electrode in the
 % extracellular fluid. The resistance across the 2 electrodes for action
 % potential measurement is very high due to the presence of neuronal
 % membrane in between as compared to the extracellular fluid between the 2
 % electrodes of during the Local field potential measurement. The
-% difference in reference points and the resistnace account for the much
-% highe values of action potential voltage and local field potential.\\
+% difference in reference points and the resistance account for the much
+% highe values of action potential voltage and as compared to local field potential.\\
 % </latex>
 %% 
 % <latex>
@@ -299,7 +299,7 @@ end
 
 
 %%
-% figure();
+figure();
 plot(I_e_A,r_isi_hz, 'o-', 'Linewidth', 1.5)
 title('Firing rate vs Injection current ')
 xlabel('Injection Current (A)')
@@ -400,7 +400,7 @@ ax2.Position = [0.1 0.08 0.8 0.4];
 % \\ Answer: \\
 % Here, to account for spike-rate adaption, we will increment the
 % $r_m g_{sra}$ term by 0.06 after every action potential and continue
-% decaying it at the the rate of \frac{-$r_m g_{sra}$}{\tau_sra} till it
+% decaying it at the the rate of \frac{-r_m g_{sra}}{\tau_sra} till it
 % reaches 0. \\
 % </latex>
 
@@ -621,10 +621,11 @@ end
 
 %%
 %Plot the graphs
-subplot(4,1,1);
+ax1 = subplot(4,1,1);
 plot(t,V_arry_mV, 'LineWidth', 1.1)
 title(('Hodgkin-Huxley model for action potential'))
 ylabel('Membrane Potential (mV)')
+ax1.Position = [1.5 0.6 0.7 1];
 
 subplot(4,1,2);
 plot(t, I_e_uA, 'LineWidth', 1.1)
