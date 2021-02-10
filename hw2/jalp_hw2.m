@@ -180,7 +180,8 @@ V_m_actpot = V_t*log(((P_K*K_extcell_conc_mM)+(P_Na*Na_extcell_conc_mM)+(P_Cl*Cl
 %%
 % <latex>
 % \\ Answer: \\
-% lorem epsum
+% Local field Potential is measured between 2 electrodes in the
+% extracelular fluid
 % </latex>
 %% 
 % <latex>
@@ -528,15 +529,12 @@ E_Na_mV = 50;
 
 C_m = 1; % uF/cm^2 
 
-
 t = 0:0.01:450;
 del_t_ms = 0.01;
 
 %Injection current
-I_e_nA = 10*(t>100) - 10*(t>200) + 35*(t>300) - 35*(t>400);
+I_e_uA = 10*(t>50) - 10*(t>150) + 20*(t>200) -20*(t>300) + 40*(t>350) - 40*(t>450);
 
-%gating variables
-%m for Na channel
 
 %Initial values
 V_mV = -65;
@@ -545,24 +543,57 @@ h = 0.6;
 n = 0.32;
 
 V_arry_mV = [];
+I_L_arry = [];
+I_Na_arry = [];
+I_K_arry = [];
+m_arry = [];
+h_arry = [];
+n_arry = [];
 
 for i  = 1:45001
     
     V_arry_mV = [V_arry_mV , V_mV];
-    del_V_mV = del_t_ms/C_m*(I_e_nA(i) - g_L*(V_mV-E_L_mV)-g_Na*m^3*h*(V_mV-E_Na_mV) -g_K*n^4*(V_mV-E_K_mV));
+    
+    I_L = g_L*(V_mV-E_L_mV);
+    I_L_arry = [I_L_arry, I_L];
+    
+    I_Na = g_Na*m^3*h*(V_mV-E_Na_mV);
+    I_Na_arry = [I_Na_arry, I_Na];
+    
+    I_K = g_K*n^4*(V_mV-E_K_mV);
+    I_K_arry = [I_K_arry, I_K];
+    
+    
+    del_V_mV = del_t_ms/C_m*(I_e_uA(i) -I_L -I_Na -I_K);
     V_mV = V_mV + del_V_mV;
     
+    m_arry = [m_arry, del_m];
+    del_m = del_t_ms*((0.1*(V_mV+40)/(1-exp(-(V_mV+40)/10)))*(1-m)-(4*exp(-(V_mV+65)/18))*m);
+    m = m + del_m;
     
-%     del_m = 0.1*(V_mV+40)/(1-)
+    h_arry = [h_arry,h];
+    del_h = del_t_ms*((0.07*exp(-(V_mV+65)/20))*(1-h)-(1/(1+exp(-(V_mV+35)/10)))*h);
+    h = h + del_h;
+    
+    n_arry = [n_arry, n];
+    del_n = del_t_ms*((0.01*((V_mV+55)/(1-exp(-(V_mV+55)/10))))*(1-n)-(0.125*exp(-(V_mV+65)/80))*n);
+    n = n + del_n;
     
 end
 
 %%
 %Plot the graphs
-subplot(2,1,1);
+subplot(5,1,1);
 plot(t,V_arry_mV)
-subplot(2,1,2);
-plot(t, I_e_nA)
+subplot(5,1,2);
+plot(t, I_e_uA)
+subplot(5,1,3);
+plot(t, m_arry)
+subplot(5,1,4);
+plot(t, h_arry)
+subplot(5,1,5);
+plot(t, n_arry)
+
 %%
 % <latex>
 %   \end{enumerate}
