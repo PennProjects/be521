@@ -1,5 +1,5 @@
 
-function feature_values = MovingWinFeat(x, fs, winLen, winDisp, featFn)
+function [feature_values, ni, win_start, win_end] = MovingWinFeat(x, fs, winLen, winDisp, featFn)
 
 %% Input
 % x - signal 
@@ -9,7 +9,11 @@ function feature_values = MovingWinFeat(x, fs, winLen, winDisp, featFn)
 % featFn - Feature function
 
 %% Output
-%feature_values = featFn(x, fs);
+%feature_values = A vector of values of a feature from function
+%                 featFn for each window
+% ni = right shift of first window 
+% win_start = starting index of each window
+% win_end = ending index of each window
 
 %% Definition %%
 
@@ -23,13 +27,17 @@ ni = rem((xLen-(winLen-winDisp)),(winDisp));
 % Trimming the portion of the signal from start which is not part of any window
 x_trim = x(ni*1e-3*fs+1 : end);
 x_windows = [];
+win_start = [];
+win_end = [];
 
 
 %%Separating each window
 for i = 1:NumWins
-    win_start_indx = int(1 + ((i-1)*winDisp*1e-3*fs))
-    win_end_indx = win_start_indx +winLen*1e-3*fs-1
+    win_start_indx = round(1 + ((i-1)*winDisp*1e-3*fs));
+    win_end_indx = round(win_start_indx +winLen*1e-3*fs-1);
     window_points = x_trim(win_start_indx: win_end_indx);
+    
+    win_start = [win
     x_windows = [x_windows, window_points];  
 end
 

@@ -350,6 +350,74 @@ ZeroCrossingFn = @(x) size(find(abs(diff(sign(x-mean(x))))>1),2);
 % </latex>
 
 %%
+% <latex> 
+% \\ Answer : \\
+% </latex>
+
+%% Computing values 4(d)
+x = sine_wave_cmb;
+fs = sampling_frequency_hz;
+winLen = 400 ; %in ms
+winDisp = 100; %in ms
+
+[line_length_windows_4d, ni, win_start, win_end] = MovingWinFeats(x, fs, winLen, winDisp, LLFn);
+area_4d = MovingWinFeats(x, fs, winLen, winDisp, AreaFn);
+energy_4d = MovingWinFeats(x, fs, winLen, winDisp, EnergyFn);
+zero_crossing_4d = MovingWinFeats(x, fs, winLen, winDisp, ZeroCrossingFn);
+
+
+%% Plotting the graph 4(d)
+t = 0: 1/sampling_frequency_hz : duration_s-1/sampling_frequency_hz;
+t_win_end = t(ni+win_end);
+
+subplot(3,2,1)
+plot(t_win_end, line_length_windows_4d, 'o-', 'Linewidth', 1, 'Color',[0, 0.4470, 0.7410])
+title('Line Length in window')
+xlabel('Time (s)')
+ylabel('line length amplitude')
+ylim([0.995*min(line_length_windows_4d), 1.005*max(line_length_windows_4d)])
+
+subplot(3,2,2)
+plot(t_win_end, area_4d, 'o-', 'Linewidth', 1, 'Color', [0.8500, 0.3250, 0.0980])
+title('Area in window')
+xlabel('Time (s)')
+ylabel('Area amplitude')
+ylim([0.9*min(area_4d), 1.1*max(area_4d)])
+
+subplot(3,2,3)
+plot(t_win_end, energy_4d, 'o-', 'Linewidth', 1, 'Color', [0.4660, 0.6740, 0.1880])
+title('Energy in window')
+xlabel('Time (s)')
+ylabel('Energy amplitude')
+ylim([0.9*min(energy_4d), 1.1*max(energy_4d)])
+
+
+subplot(3,2,4)
+plot(t_win_end, zero_crossing_4d, 'o-', 'Linewidth', 1, 'Color', [0.9290, 0.6940, 0.1250])
+title('Total Zero crossings in window')
+xlabel('Time (s)')
+ylabel('Number of Zero Crossings')
+ylim([0.9*min(zero_crossing_4d), 1.1*max(zero_crossing_4d)])
+
+
+subplot(3,2,5)
+plot(t, x , 'Linewidth', 1)
+title('Signal')
+xlabel('Time (s)')
+ylabel('Signal amplitude')
+ylim([1.1*min(x), 1.1*max(x)])
+
+
+subplot(3,2,6)
+plot(t, x , 'Linewidth', 1)
+title('Signal')
+xlabel('Time (s)')
+ylabel('Signal amplitude')
+ylim([1.1*min(x), 1.1*max(x)])
+
+
+suptitle('Features in window : 400 ms WinLen, 100ms WinDisp')
+%%
 % <latex>
 %   \end{enumerate}
 % \end{enumerate}  

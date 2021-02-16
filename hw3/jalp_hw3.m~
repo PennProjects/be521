@@ -330,7 +330,12 @@ EnergyFn = @(x) sum(x.^2);
 % </latex>
 
 %%
-ZeroCrossingFn = @(x) sum(x(
+% Here we first remove the mean from the signal
+% Then we find values above and below the mean
+% We then calculate the difference between the signs of consecutive values
+% if the absolute value of this difference is > 2 then its a zero crossing
+% We then find the number of indices where zero crossing occcurs.
+ZeroCrossingFn = @(x) size(find(abs(diff(sign(x-mean(x))))>1),2);
 
 %%
 % <latex>
@@ -343,6 +348,67 @@ ZeroCrossingFn = @(x) sum(x(
 %    comparing down the column easy). Ensure that the time axis in all
 %    of your plots is the same. (6 pts)
 % </latex>
+
+%%
+% <latex> 
+% \\ Answer : \\
+% </latex>
+
+%% Computing values 4(d)
+x = sine_wave;
+fs = sampling_frequency_hz;
+winLen = 400 ; %in ms
+winDisp = 100; %in ms
+
+[line_length_windows_4d, ni, win_start, win_end] = MovingWinFeats(x, fs, winLen, winDisp, LLFn);
+area_4d = MovingWinFeats(x, fs, winLen, winDisp, AreaFn);
+energy_4d = MovingWinFeats(x, fs, winLen, winDisp, EnergyFn);
+zero_crossing_4d = MovingWinFeats(x, fs, winLen, winDisp, ZeroCrossingFn);
+
+
+%% Plotting the graph 4(d)
+t = 0: 1/sampling_frequency_hz : duration_s-1/sampling_frequency_hz;
+t_win_end = t(ni+win_end);
+
+subplot(3,2,1)
+plot(t_win_end, line_length_windows_4d, 'o-', 'Linewidth', 1, 'Color',[0, 0.4470, 0.7410])
+title('Line Length')
+xlabel('Time (s)')
+ylabel('line length amplitude')
+ylim(0.9*min(line_length_windows_4d), 1.1*max(line_length_windows_4d))
+
+subplot(3,2,2)
+plot(t_win_end, area_4d, 'o-', 'Linewidth', 1, 'Color', [0.8500, 0.3250, 0.0980])
+title('Area')
+xlabel('Time (s)')
+ylabel('Area amplitude')
+ylim(0.9*min(area_4d), 1.1*max(area_4d))
+
+subplot(3,2,3)
+plot(t_win_end, energy_4d, 'o-', 'Linewidth', 1, 'Color', [0.4660, 0.6740, 0.1880])
+title('Energy in Window')
+xlabel('Time (s)')
+ylabel('Energy amplitude')
+
+subplot(3,2,4)
+plot(t_win_end, zero_crossing_4d, 'o-', 'Linewidth', 1, 'Color', [0.9290, 0.6940, 0.1250])
+title('Total Zero crossings in Window')
+xlabel('Time (s)')
+ylabel('Number of Zero Crossings')
+
+subplot(3,2,5)
+plot(t, x , 'Linewidth', 1)
+title('Signal')
+xlabel('Time (s)')
+ylabel('Signal amplitude')
+
+subplot(3,2,6)
+plot(t, x , 'Linewidth', 1)
+title('Signal')
+xlabel('Time (s)')
+ylabel('Signal amplitude')
+
+
 
 %%
 % <latex>
