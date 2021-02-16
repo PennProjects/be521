@@ -10,6 +10,6 @@ function step_window = zoInterp(x, numInterp)
 
 %% Definition
 x = reshape(x,[],1); %making x a column vector
-step_window = reshape((repmat(x, 1, numInterp))', 1, [])
+step_window = reshape((repmat(x, 1, numInterp))', 1, []);
 
 end

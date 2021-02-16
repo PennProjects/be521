@@ -482,7 +482,7 @@ sez_data_trim = sez_data(1:end-78);
 %% Answer P2 Q3(a)
 % <latex> 
 % \\ Answer : \\
-% \lstinputlisting{zoInerp.m}
+% \lstinputlisting{zoInterp.m}
 % </latex>
 
 
@@ -523,6 +523,46 @@ ylabel('Signal amplitude')
 %  up any signal or feature. (6 pts)
 % </latex>
 
+%% Answer P2 Q4
+% <latex> 
+% \\ Answer : \\
+% </latex>
+
+%%
+%Calcualting Line Length for I521_A0003_D001
+x = sez_data_trim';
+fs = sampling_frequency_hz_sez;
+winLen_ms = 5000; %in ms
+winDisp_ms = 1000; %in ms
+[line_length_sez, ni_sez, win_st_sez, win_end_sez] = MovingWinFeats(x, fs, winLen_ms, winDisp_ms, LLFn);
+
+%Scaling line length to have a max value = 2x max of signal
+scaling_factor = 2*max(sez_data_trim)/max(line_length_sez);
+
+%Normalizing line length
+line_length_norm = scaling_factor*line_length_sez;
+
+%padding Linelength
+ni = ni_sez*1e-3*fs; % ni in number of samples
+L = winLen_ms*1e-3*fs; % L in number of samples
+d = winDisp_ms*1e-3*fs; % d in number of samples
+
+line_length_pad = [NaN(1,ni+L-1) zoInterp(line_length_norm(1:end-1),d) line_length_norm(end)];
+
+%% 
+%Plotting
+len_s = size(sez_data_trim,1)/fs;
+t = (0:1/fs : len_s-1/fs)/60;
+plot(t, sez_data_trim,'Linewidth', 0.1, 'Color', [0, 0.4470, 0.7410]);
+hold on
+plot(t, line_length_pad, 'Linewidth', 1, 'Color', [0.8500, 0.3250, 0.0980])
+hold off
+title('Line Length overlay on EEG')
+xlabel('Time (min)')
+ylabel('Signal Amplitude (\muV)')
+xlim([-1,82]) 
+legend('EEG signal', 'Line Length')
+
 %%
 % <latex>
 %  \item What threshold might you use on the raw line-length feature
@@ -530,9 +570,19 @@ ylabel('Signal amplitude')
 %  capture the 17 largest pre-seizure chirps that occur? (1 pt)
 % </latex>
 
+%% Answer P2 Q5
+% <latex> 
+% \\ Answer : \\
+% </latex>
+
 %%
 % <latex>
 %  \item Using this threshold value, in another plot draw red vertical lines at the leading point in time where the threshold is crossed. Add these vertical lines on top of the plot you made in Question 2.4. These events should capture the pre-seizure chirps, the seizure onset, and some flickering during the end of the seizure. (3 pts)
+% </latex>
+
+%% Answer P2 Q6
+% <latex> 
+% \\ Answer : \\
 % </latex>
 
 %%
@@ -544,9 +594,19 @@ ylabel('Signal amplitude')
 %  \item Plot the signal in \texttt{multiSz\_1} and draw vertical red lines at the times when you think the two seizures begin. (You should be able to do this without the need of any features.) (2 pts)
 % </latex>
 
+%% Answer P3 Q1
+% <latex> 
+% \\ Answer : \\
+% </latex>
+
 %%
 % <latex>
 %  \item Produce feature overlay plots similar to that of Question 2.4 for each of the four features you have implemented along with the red vertical lines at each seizure. Use the same 4-second sliding window with 1 second displacement. (4 pts)
+% </latex>
+
+%% Answer P3 Q2
+% <latex> 
+% \\ Answer : \\
 % </latex>
 
 %%
@@ -558,11 +618,20 @@ ylabel('Signal amplitude')
 %    background) for when a seizure occurs? Explain why you think this feature is the best. (3 pts)
 % </latex>
 
+%% Answer P3 Q3(a)
+% <latex> 
+% \\ Answer : \\
+% </latex>
+
 %%
 % <latex>
 %    \item What threshold would you use to determine if a seizure is occurring? (1 pt)
 % </latex>
 
+%% Answer P3 Q3(b)
+% <latex> 
+% \\ Answer : \\
+% </latex>
 %%
 % <latex>
 %   \end{enumerate}
@@ -572,6 +641,12 @@ ylabel('Signal amplitude')
 % <latex>
 %  \item The signal in \texttt{multiSz\_2} contains another seizure (whose location should again be fairly obvious). Plot the data along with the feature and threshold (horizontal black line, with correct normalization for the signal in \texttt{data2}) you determined in the previous question. (2 pts)
 % </latex>
+
+%% Answer P3 Q4
+% <latex> 
+% \\ Answer : \\
+% </latex>
+
 
 %%
 % <latex>

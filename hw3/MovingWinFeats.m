@@ -2,7 +2,7 @@
 function [feature_values, ni, win_start, win_end] = MovingWinFeat(x, fs, winLen, winDisp, featFn)
 
 %% Input
-% x - signal 
+% x - signal as a row vector
 % fs - sampling frequency in Hz
 % winLen - Length of window in ms
 % winDisp - Displacement of window in ms
