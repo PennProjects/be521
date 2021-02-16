@@ -32,7 +32,7 @@
 %    \item Plot the signal. (2 pts)
 % </latex>
 
-%%
+%% Answer P1 Q1(a)
 % <latex> 
 % \\ Answer : \\
 % </latex>
@@ -49,6 +49,7 @@ sine_wave = sin(2*pi*signal_frequency_hz*t + theta_rad);
 
 %%
 % Plot
+figure();
 plot(t, sine_wave, 'Linewidth', 1);
 title('Sine Wave')
 xlabel('Time (s)')
@@ -71,7 +72,7 @@ ylim ([-1.5,1.5])
 % </latex>
 
 
-%%
+%% Answer P1 Q1(b)
 % <latex> 
 % \\ Answer : \\
 % </latex>
@@ -86,7 +87,7 @@ LLFn = @(x) sum(abs(diff(x)));
 %   \end{enumerate}
 % </latex>
 
-%%
+%% Answer P1 Q1(c)
 % <latex> 
 % \\ Answer : \\
 % </latex>
@@ -121,7 +122,7 @@ line_length = LLFn(sine_wave)
 % 	and the length (in seconds) of \texttt{x}. (4 pts) 
 % </latex>
 
-%%
+%% Answer P1 Q2(a)
 % <latex> 
 % \\ Answer : \\
 % </latex>
@@ -141,7 +142,7 @@ NumWins = @(xLen, fs, winLen, winDisp) floor((xLen-(winLen-winDisp))/(winDisp));
 % 	where \texttt{fs}, \texttt{winLen}, and \texttt{winDisp} are the appropriate values. (1 pt)
 % </latex>
 
-%%
+%% Answer P1 Q2(b)
 % <latex> 
 % \\ Answer : \\
 % </latex>
@@ -163,7 +164,7 @@ NumberOfWindows_2_1 = NumWins(duration_ms, sampling_frequency_hz, win_len_ms, wi
 % 	\item Repeat the above calculation for 50 ms window displacement. (1 pt)
 % </latex>
 
-%%
+%% Answer P1 Q2(c)
 % <latex> 
 % \\ Answer : \\
 % </latex>
@@ -185,7 +186,7 @@ NumberOfWindows_2_2 = NumWins(duration_ms, sampling_frequency_hz, win_len_ms, wi
 %   \end{enumerate}
 % </latex>
 
-%%
+%% Answer P1 Q2(d)
 % <latex> 
 % \\ Answer : \\
 % </latex>
@@ -228,7 +229,7 @@ NumberOfWindows_2_3 = NumWins(duration_ms, sampling_frequency_hz, win_len_ms, wi
 %   \lstinputlisting{[path to] MovingWinFeats.m}
 %   </latex>
 
-%%
+%% Answer P1 Q3(a)
 % <latex> 
 % \\ Answer : \\
 % \lstinputlisting{MovingWinFeats.m}
@@ -240,7 +241,7 @@ NumberOfWindows_2_3 = NumWins(duration_ms, sampling_frequency_hz, win_len_ms, wi
 %    \item Using the signal you defined in Question 1.1 and the function you created in Question 1.1.b, calculate the line-length over windows of length 400 ms and displacement 200 ms. (2 pts)
 % </latex>
 
-%%
+%% Answer P1 Q3(b)
 % <latex> 
 % \\ Answer : \\
 % </latex>
@@ -255,7 +256,8 @@ line_length_windows_3c = MovingWinFeats(x, fs, winLen, winDisp, LLFn);
 
 %%
 %Plotting linelength for each window
-plot(line_length_windows)
+figure();
+plot(line_length_windows, 'o-')
 title('Line Length for 400 ms winLen, 200 winDisp')
 xlabel('window index')
 ylabel('line length amplitude')
@@ -265,7 +267,7 @@ ylabel('line length amplitude')
 %   \end{enumerate}
 % </latex>
 
-%%
+%% Answer P1 Q3(c)
 % <latex> 
 % \\ Answer : \\
 % </latex>
@@ -294,7 +296,7 @@ line_length_windows_3d = MovingWinFeats(x, fs, winLen, winDisp, LLFn);
 %    \item Area, $\displaystyle A(\mathbf{x}) = \sum_{i=1}^{n} |x_i| $ \quad (2 pts)
 % </latex>
 
-%%
+%% Answer P1 Q4(a)
 % <latex> 
 % \\ Answer : \\
 % </latex>
@@ -307,7 +309,7 @@ AreaFn = @(x) sum(abs(x));
 %    \item Energy, $\displaystyle E(\mathbf{x}) = \sum_{i=1}^{n} x_i^2 $ \quad (2 pts)
 % </latex>
 
-%%
+%% Answer P1 Q4(b)
 % <latex> 
 % \\ Answer : \\
 % </latex>
@@ -324,7 +326,7 @@ EnergyFn = @(x) sum(x.^2);
 %        and $\overline{x}$ is the mean value of the elements in $x$. (4 pts)
 % </latex>
 
-%%
+%% Answer P1 Q4(c)
 % <latex> 
 % \\ Answer : \\
 % </latex>
@@ -349,7 +351,7 @@ ZeroCrossingFn = @(x) size(find(abs(diff(sign(x-mean(x))))>1),2);
 %    of your plots is the same. (6 pts)
 % </latex>
 
-%%
+%% Answer P1 Q4(d)
 % <latex> 
 % \\ Answer : \\
 % </latex>
@@ -370,6 +372,7 @@ zero_crossing_4d = MovingWinFeats(x, fs, winLen, winDisp, ZeroCrossingFn);
 t = 0: 1/sampling_frequency_hz : duration_s-1/sampling_frequency_hz;
 t_win_end = t(ni+win_end);
 
+figure();
 subplot(3,2,1)
 plot(t_win_end, line_length_windows_4d, 'o-', 'Linewidth', 1, 'Color',[0, 0.4470, 0.7410])
 title('Line Length in window')
@@ -427,10 +430,47 @@ suptitle('Features in window : 400 ms WinLen, 100ms WinDisp')
 %  \item What is the length using hours:minutes:seconds:milliseconds of the recording? (Use getDuration) (2 pts)
 % </latex>
 
+%% Answer P2 Q1
+% <latex> 
+% \\ Answer : \\
+% </latex>
+
+%% Fetching signal
+addpath(genpath('/Users/jalpanchal/git/be521'));
+
+session_sez = IEEGSession('I521_A0003_D001', 'jalpanchal', 'jal_ieeglogin.bin');
+sampling_frequency_hz_sez = session_ep.data.sampleRate;
+duration_in_sec_sez = session_ep.data(1).rawChannels(1).get_tsdetails.getDuration/1e6;
+
+sez_data = session_ep.data.getvalues(0, duration_in_sec_ep * 1e6, 1);
+
+%%
+datestr(seconds(duration_in_sec_sez),'HH:MM:SS:FFF')
+
+%%
+% <latex> 
+% The duration of the signal I521\_A0003\_D001 in
+% hours:minutes:seconds:milliseconds is 01:21:20:390.\\
+% </latex>
+
+
 %%
 % <latex>
 %  \item How many data points should we discard at the end if we want to clip the recording to the last full second? Do this clipping. (1 pt)
 % </latex>
+
+%% Answer P2 Q2
+% <latex> 
+% \\ Answer : \\
+% The signal has 390ms of data which needs to be discarded. At 200 Hz and
+% 5ms between every sample, we will have to discard the last 78 data
+% points. \\
+% </latex>
+
+%%
+% Discarding the last 78 data points
+sez_data_trim = sez_data(1:end-78);
+
 
 %%
 % <latex>
@@ -438,6 +478,13 @@ suptitle('Features in window : 400 ms WinLen, 100ms WinDisp')
 %  \begin{enumerate}
 %   \item Using the \texttt{repmat} and \texttt{reshape} functions, create an external function \texttt{zoInterp(x, numInterp} that copies each value of \texttt{x} \texttt{numInterp} times. You can implement this function in one line of code with no loops. Include the code for this function as you did in Question 1.3.a. (2 pts)
 % </latex>
+
+%% Answer P2 Q3(a)
+% <latex> 
+% \\ Answer : \\
+% \lstinputlisting{zoInerp.m}
+% </latex>
+
 
 %%
 % <latex>
@@ -448,6 +495,19 @@ suptitle('Features in window : 400 ms WinLen, 100ms WinDisp')
 %   where the \texttt{'-o'} option lets us see the individul points as well as the line that connects them. (2 pts)
 %  \end{enumerate}
 % </latex>
+
+%% Answer P2 Q3(b)
+% <latex> 
+% \\ Answer : \\
+% </latex>
+
+%%
+figure();
+plot(zoInterp(1:5,5), '-o')
+title('Example of zoInterp')
+xlabel('Signal index')
+ylabel('Signal amplitude')
+
 
 %%
 % <latex>
