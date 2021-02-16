@@ -43,7 +43,7 @@ duration_s = 7;
 signal_frequency_hz = 2;
 sampling_frequency_hz = 100;
 theta_rad =  pi/2;
-t = 0: 1/sampling_frequency_hz : duration_s;
+t = 0: 1/sampling_frequency_hz : duration_s-1/sampling_frequency_hz;
 
 sine_wave = sin(2*pi*signal_frequency_hz*t + theta_rad);
 
@@ -98,7 +98,7 @@ line_length = LLFn(sine_wave)
 
 %%
 % <latex> 
-% The line length of the sine wave is 56 units.
+% The line length of the sine wave is 55.9921 units.
 % </latex>
 
 %%
@@ -229,15 +229,48 @@ NumberOfWindows_2_3 = NumWins(duration_ms, sampling_frequency_hz, win_len_ms, wi
 %   </latex>
 
 %%
+% <latex> 
+% \\ Answer : \\
+% \lstinputlisting{MovingWinFeats.m}
+% </latex>
+
+
+%%
 % <latex>
 %    \item Using the signal you defined in Question 1.1 and the function you created in Question 1.1.b, calculate the line-length over windows of length 400 ms and displacement 200 ms. (2 pts)
 % </latex>
 
 %%
+% <latex> 
+% \\ Answer : \\
+% </latex>
+
+%%
+x = sine_wave;
+fs = sampling_frequency_hz;
+winLen = 400 ; %in ms
+winDisp = 200; %in ms
+line_length_windows = MovingWinFeats(x, fs, winLen, winDisp, LLFn);
+
+%%
+%Plotting linelength for each window
+plot(line_length_windows)
+title('Line Length for 400 ms winLen, 200 winDisp')
+xlabel('window index')
+ylabel('line length amplitude')
+%%
 % <latex>
 %    \item Add a unit-amplitude 10 Hz signal (in the form of a sine wave) to your original signal and again calculate the line length over the same window and displacement. (2 pts)
 %   \end{enumerate}
 % </latex>
+
+%%
+% <latex> 
+% \\ Answer : \\
+% </latex>
+
+%%
+
 
 %%
 % <latex>

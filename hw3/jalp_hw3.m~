@@ -43,7 +43,7 @@ duration_s = 7;
 signal_frequency_hz = 2;
 sampling_frequency_hz = 100;
 theta_rad =  pi/2;
-t = 0: 1/sampling_frequency_hz : duration_s;
+t = 0: 1/sampling_frequency_hz : duration_s-1/sampling_frequency_hz;
 
 sine_wave = sin(2*pi*signal_frequency_hz*t + theta_rad);
 
@@ -98,7 +98,7 @@ line_length = LLFn(sine_wave)
 
 %%
 % <latex> 
-% The line length of the sine wave is 56 units.
+% The line length of the sine wave is 55.9921 units.
 % </latex>
 
 %%
@@ -150,11 +150,11 @@ NumWins = @(xLen, fs, winLen, winDisp) floor((xLen-(winLen-winDisp))/(winDisp));
 duration_ms = 7000;
 win_len_ms = 400;
 win_disp_ms = 200;
-NumberOfWindows_1_1 = NumWins(duration_ms, sampling_frequency_hz, win_len_ms, win_disp_ms)
+NumberOfWindows_2_1 = NumWins(duration_ms, sampling_frequency_hz, win_len_ms, win_disp_ms)
 
 %%
 % <latex> 
-% The number of windows of length 400ms and displacement 200ms  in a 7s signal are 34;
+% The number of windows of length 400ms and displacement 200ms in a 7s signal are 34;
 % </latex>
 
 
@@ -164,9 +164,41 @@ NumberOfWindows_1_1 = NumWins(duration_ms, sampling_frequency_hz, win_len_ms, wi
 % </latex>
 
 %%
+% <latex> 
+% \\ Answer : \\
+% </latex>
+
+%%
+duration_ms = 7000;
+win_len_ms = 400;
+win_disp_ms = 50;
+NumberOfWindows_2_2 = NumWins(duration_ms, sampling_frequency_hz, win_len_ms, win_disp_ms)
+
+%%
+% <latex> 
+% The number of windows of length 400ms and displacement 50ms in a 7s signal are 133;
+% </latex>
+
+%%
 % <latex>
 % 	\item Repeat the above calculation for 100 ms window displacement. (1 pt)
 %   \end{enumerate}
+% </latex>
+
+%%
+% <latex> 
+% \\ Answer : \\
+% </latex>
+
+%%
+duration_ms = 7000;
+win_len_ms = 400;
+win_disp_ms = 100;
+NumberOfWindows_2_3 = NumWins(duration_ms, sampling_frequency_hz, win_len_ms, win_disp_ms)
+
+%%
+% <latex> 
+% The number of windows of length 400ms and displacement 100ms in a 7s signal are 67;
 % </latex>
 
 %%
@@ -197,9 +229,24 @@ NumberOfWindows_1_1 = NumWins(duration_ms, sampling_frequency_hz, win_len_ms, wi
 %   </latex>
 
 %%
+% <latex> 
+% \\ Answer : \\
+% \lstinputlisting{MovingWinFeats.m}
+% </latex>
+
+
+%%
 % <latex>
 %    \item Using the signal you defined in Question 1.1 and the function you created in Question 1.1.b, calculate the line-length over windows of length 400 ms and displacement 200 ms. (2 pts)
 % </latex>
+
+%%
+% <latex> 
+% \\ Answer : \\
+% </latex>
+
+%%
+
 
 %%
 % <latex>
