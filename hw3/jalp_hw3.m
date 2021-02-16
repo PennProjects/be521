@@ -246,11 +246,12 @@ NumberOfWindows_2_3 = NumWins(duration_ms, sampling_frequency_hz, win_len_ms, wi
 % </latex>
 
 %%
+% Using function MovingWinFeats to calculate Line Length
 x = sine_wave;
 fs = sampling_frequency_hz;
 winLen = 400 ; %in ms
 winDisp = 200; %in ms
-line_length_windows = MovingWinFeats(x, fs, winLen, winDisp, LLFn);
+line_length_windows_3c = MovingWinFeats(x, fs, winLen, winDisp, LLFn);
 
 %%
 %Plotting linelength for each window
@@ -270,7 +271,21 @@ ylabel('line length amplitude')
 % </latex>
 
 %%
+%Adding a 10 Hz signal 
+duration_s = 7;
+signal_frequency_hz = 10;
+sampling_frequency_hz = 100;
+t = 0: 1/sampling_frequency_hz : duration_s-1/sampling_frequency_hz;
+sine_wave_10 = sin(2*pi*10*t);
 
+sine_wave_cmb = sine_wave + sine_wave_10;
+
+% Using function MovingWinFeats to calculate Line Length
+x = sine_wave_cmb;
+fs = sampling_frequency_hz;
+winLen = 400 ; %in ms
+winDisp = 200; %in ms
+line_length_windows_3d = MovingWinFeats(x, fs, winLen, winDisp, LLFn);
 
 %%
 % <latex>
@@ -280,8 +295,18 @@ ylabel('line length amplitude')
 % </latex>
 
 %%
+% <latex> 
+% \\ Answer : \\
+% </latex>
+
+%%
 % <latex>
 %    \item Energy, $\displaystyle E(\mathbf{x}) = \sum_{i=1}^{n} x_i^2 $ \quad (2 pts)
+% </latex>
+
+%%
+% <latex> 
+% \\ Answer : \\
 % </latex>
 
 %%
@@ -292,6 +317,12 @@ ylabel('line length amplitude')
 %        $\mathbf{FromBelow}$ denotes $(x_{i-1} - \overline{x} < 0) \;\mbox{AND}\; (x_i - \overline{x} > 0)$,
 %        and $\overline{x}$ is the mean value of the elements in $x$. (4 pts)
 % </latex>
+
+%%
+% <latex> 
+% \\ Answer : \\
+% </latex>
+
 
 %%
 % <latex>

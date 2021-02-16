@@ -246,8 +246,19 @@ NumberOfWindows_2_3 = NumWins(duration_ms, sampling_frequency_hz, win_len_ms, wi
 % </latex>
 
 %%
+% Using function MovingWinFeats to calculate Line Length
+x = sine_wave;
+fs = sampling_frequency_hz;
+winLen = 400 ; %in ms
+winDisp = 200; %in ms
+line_length_windows_3c = MovingWinFeats(x, fs, winLen, winDisp, LLFn);
 
-
+%%
+%Plotting linelength for each window
+plot(line_length_windows)
+title('Line Length for 400 ms winLen, 200 winDisp')
+xlabel('window index')
+ylabel('line length amplitude')
 %%
 % <latex>
 %    \item Add a unit-amplitude 10 Hz signal (in the form of a sine wave) to your original signal and again calculate the line length over the same window and displacement. (2 pts)
@@ -255,11 +266,34 @@ NumberOfWindows_2_3 = NumWins(duration_ms, sampling_frequency_hz, win_len_ms, wi
 % </latex>
 
 %%
+% <latex> 
+% \\ Answer : \\
+% </latex>
+
+%%
+%Adding a 10 Hz signal 
+duration_s = 7;
+signal_frequency_hz = 10;
+sampling_frequency_hz = 100;
+t = 0: 1/sampling_frequency_hz : duration_s-1/sampling_frequency_hz;
+sine_wave_10 = sin(2*pi*10*t);
+
+sine_wave_cmb = sine_wave + sine_wave_10;
+
+% Using function MovingWinFeats to calculate Line Length
+x = sine_wave_cmb;
+fs = sampling_frequency_hz;
+winLen = 400 ; %in ms
+winDisp = 200; %in ms
+line_length_windows_3d = MovingWinFeats(x, fs, winLen, winDisp, LLFn);
+
+%%
 % <latex>
 %   \item Code the following 3 additional features in MINIMAL lines of code (hint: each can be implemented in one line using the anonymous function trick).
 %   \begin{enumerate}
 %    \item Area, $\displaystyle A(\mathbf{x}) = \sum_{i=1}^{n} |x_i| $ \quad (2 pts)
 % </latex>
+
 
 %%
 % <latex>
