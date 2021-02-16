@@ -150,11 +150,11 @@ NumWins = @(xLen, fs, winLen, winDisp) floor((xLen-(winLen-winDisp))/(winDisp));
 duration_ms = 7000;
 win_len_ms = 400;
 win_disp_ms = 200;
-NumberOfWindows_2_1 = NumWins(duration_ms, sampling_frequency_hz, win_len_ms, win_disp_ms)
+NumberOfWindows_1_1 = NumWins(duration_ms, sampling_frequency_hz, win_len_ms, win_disp_ms)
 
 %%
 % <latex> 
-% The number of windows of length 400ms and displacement 200ms in a 7s signal are 34;
+% The number of windows of length 400ms and displacement 200ms  in a 7s signal are 34;
 % </latex>
 
 
@@ -164,41 +164,9 @@ NumberOfWindows_2_1 = NumWins(duration_ms, sampling_frequency_hz, win_len_ms, wi
 % </latex>
 
 %%
-% <latex> 
-% \\ Answer : \\
-% </latex>
-
-%%
-duration_ms = 7000;
-win_len_ms = 400;
-win_disp_ms = 50;
-NumberOfWindows_2_2 = NumWins(duration_ms, sampling_frequency_hz, win_len_ms, win_disp_ms)
-
-%%
-% <latex> 
-% The number of windows of length 400ms and displacement 50ms in a 7s signal are 133;
-% </latex>
-
-%%
 % <latex>
 % 	\item Repeat the above calculation for 100 ms window displacement. (1 pt)
 %   \end{enumerate}
-% </latex>
-
-%%
-% <latex> 
-% \\ Answer : \\
-% </latex>
-
-%%
-duration_ms = 7000;
-win_len_ms = 400;
-win_disp_ms = 100;
-NumberOfWindows_2_3 = NumWins(duration_ms, sampling_frequency_hz, win_len_ms, win_disp_ms)
-
-%%
-% <latex> 
-% The number of windows of length 400ms and displacement 100ms in a 7s signal are 67;
 % </latex>
 
 %%
