@@ -300,6 +300,9 @@ line_length_windows_3d = MovingWinFeats(x, fs, winLen, winDisp, LLFn);
 % </latex>
 
 %%
+AreaFn = @(x) sum(abs(x));
+
+%%
 % <latex>
 %    \item Energy, $\displaystyle E(\mathbf{x}) = \sum_{i=1}^{n} x_i^2 $ \quad (2 pts)
 % </latex>
@@ -308,6 +311,9 @@ line_length_windows_3d = MovingWinFeats(x, fs, winLen, winDisp, LLFn);
 % <latex> 
 % \\ Answer : \\
 % </latex>
+
+%%
+EnergyFn = @(x) sum(x.^2);
 
 %%
 % <latex>
@@ -323,6 +329,13 @@ line_length_windows_3d = MovingWinFeats(x, fs, winLen, winDisp, LLFn);
 % \\ Answer : \\
 % </latex>
 
+%%
+% Here we first remove the mean from the signal
+% Then we find values above and below the mean
+% We then calculate the difference between the signs of consecutive values
+% if the absolute value of this difference is > 2 then its a zero crossing
+% We then find the number of indices where zero crossing occcurs.
+ZeroCrossingFn = @(x) size(find(abs(diff(sign(x-mean(x))))>1),2);
 
 %%
 % <latex>

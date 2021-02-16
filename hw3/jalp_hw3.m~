@@ -294,11 +294,26 @@ line_length_windows_3d = MovingWinFeats(x, fs, winLen, winDisp, LLFn);
 %    \item Area, $\displaystyle A(\mathbf{x}) = \sum_{i=1}^{n} |x_i| $ \quad (2 pts)
 % </latex>
 
+%%
+% <latex> 
+% \\ Answer : \\
+% </latex>
+
+%%
+AreaFn = @(x) sum(abs(x));
 
 %%
 % <latex>
 %    \item Energy, $\displaystyle E(\mathbf{x}) = \sum_{i=1}^{n} x_i^2 $ \quad (2 pts)
 % </latex>
+
+%%
+% <latex> 
+% \\ Answer : \\
+% </latex>
+
+%%
+EnergyFn = @(x) sum(x.^2);
 
 %%
 % <latex>
@@ -308,6 +323,14 @@ line_length_windows_3d = MovingWinFeats(x, fs, winLen, winDisp, LLFn);
 %        $\mathbf{FromBelow}$ denotes $(x_{i-1} - \overline{x} < 0) \;\mbox{AND}\; (x_i - \overline{x} > 0)$,
 %        and $\overline{x}$ is the mean value of the elements in $x$. (4 pts)
 % </latex>
+
+%%
+% <latex> 
+% \\ Answer : \\
+% </latex>
+
+%%
+ZeroCrossingFn = @(x) sum(x(
 
 %%
 % <latex>
