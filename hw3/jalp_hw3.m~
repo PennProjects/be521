@@ -257,7 +257,7 @@ line_length_windows_3c = MovingWinFeats(x, fs, winLen, winDisp, LLFn);
 %%
 %Plotting linelength for each window
 figure();
-plot(line_length_windows, 'o-')
+plot(line_length_windows_3c, 'o-')
 title('Line Length for 400 ms winLen, 200 winDisp')
 xlabel('window index')
 ylabel('line length amplitude')
@@ -439,10 +439,10 @@ suptitle('Features in window : 400 ms WinLen, 100ms WinDisp')
 addpath(genpath('/Users/jalpanchal/git/be521'));
 
 session_sez = IEEGSession('I521_A0003_D001', 'jalpanchal', 'jal_ieeglogin.bin');
-sampling_frequency_hz_sez = session_ep.data.sampleRate;
-duration_in_sec_sez = session_ep.data(1).rawChannels(1).get_tsdetails.getDuration/1e6;
+sampling_frequency_hz_sez = session_sez.data.sampleRate;
+duration_in_sec_sez = session_sez.data(1).rawChannels(1).get_tsdetails.getDuration/1e6;
 
-sez_data = session_ep.data.getvalues(0, duration_in_sec_ep * 1e6, 1);
+sez_data = session_sez.data.getvalues(0, duration_in_sec_sez * 1e6, 1);
 
 %%
 datestr(seconds(duration_in_sec_sez),'HH:MM:SS:FFF')
@@ -551,15 +551,16 @@ line_length_pad = [NaN(1,ni+L-1) zoInterp(line_length_norm(1:end-1),d) line_leng
 
 %% 
 %Plotting
+figure();
 len_s = size(sez_data_trim,1)/fs;
 t = (0:1/fs : len_s-1/fs)/60;
 plot(t, sez_data_trim,'Linewidth', 0.1, 'Color', [0, 0.4470, 0.7410]);
 hold on
 plot(t, line_length_pad, 'Linewidth', 1, 'Color', [0.8500, 0.3250, 0.0980])
 hold off
-title('Showing Line Length o')
+title('Line Length overlay on EEG for I521\_A0003\_D001')
 xlabel('Time (min)')
-ylabel('Signal Amplitude (\muV')
+ylabel('Signal Amplitude (\muV)')
 xlim([-1,82]) 
 legend('EEG signal', 'Line Length')
 
@@ -574,6 +575,27 @@ legend('EEG signal', 'Line Length')
 % <latex> 
 % \\ Answer : \\
 % </latex>
+
+%%
+%Finding threshold for 17 pre seizure peaks
+line_length_raw_pad = [NaN(1,ni+L-1) zoInterp(line_length_sez(1:end-1),d) line_length_sez(end)];
+line_length_raw_presz = line_length_raw_pad(1:end-20*60*200);
+
+first_derivative = diff(line_length_raw_presz);
+second_derivative = diff(first_derivative < 0 );
+threshold = 6*1e4;
+data_above_threshold = line_length_raw_presz(2:end-1)>threshold;
+
+peak_index = find(second_derivative .* data_above_threshold);
+
+%%
+% plot
+figure();
+plot(t(1:end-20*60*200), line_length_raw_pad_presz, 'Linewidth', 1, 'Color', [0.8500, 0.3250, 0.0980])
+title('Line Length')
+xlabel('Time (min)')
+ylabel('Signal Amplitude (\muV)')
+
 
 %%
 % <latex>
@@ -598,6 +620,36 @@ legend('EEG signal', 'Line Length')
 % <latex> 
 % \\ Answer : \\
 % </latex>
+
+%% 
+session_mulsez = IEEGSession('I521_A0003_D002', 'jalpanchal', 'jal_ieeglogin.bin');
+sampling_frequency_hz_smulez = session_mulsez.data.sampleRate;
+duration_in_sec_mulsez = session_mulsez.data(1).rawChannels(1).get_tsdetails.getDuration/1e6;
+
+multisz_1 = session_mulsez.data.getvalues(0, duration_in_sec_mulsez * 1e6, 1);
+multisz_2 = session_mulsez.data.getvalues(0, duration_in_sec_mulsez * 1e6, 2);
+
+datestr(seconds(duration_in_sec_mulsez),'HH:MM:SS:FFF')
+
+
+%%
+len_s = duration_in_sec_mulsez;
+fs = sampling_frequency_hz_smulez;
+t = (0:1/fs : len_s-1/fs)/60;
+
+%Index for start of 2 seizures
+sez_1_indx = 8;
+sez_2_indx = 151;
+
+fi
+plot(t, multisz_1,'Linewidth', 0.1, 'Color', [0, 0.4470, 0.7410]);
+hold on
+xline(sez_1_indx, 'Linewidth', 1.5, 'Color', 'r');
+xline(sez_2_indx, 'Linewidth', 1.5, 'Color', 'r');
+hold off
+title('Seizure indicators for I521\_A0003\_D002')
+xlabel('Time (min)')
+ylabel('Signal Amplitude (\muV)')
 
 %%
 % <latex>
