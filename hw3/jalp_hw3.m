@@ -10,8 +10,7 @@
 %% 
 % <latex>
 % \begin{center}
-% \author{Jal Mahendra Panchal \\
-%   \normalsize Collaborators: COLLABORATORS HERE \\}
+% \author{Jal Mahendra Panchal}
 % \end{center}
 % </latex>
 
@@ -32,9 +31,9 @@
 %    \item Plot the signal. (2 pts)
 % </latex>
 
-%% Answer P1 Q1(a)
+%%
 % <latex> 
-% \\ Answer : \\
+% Answer: \\
 % </latex>
 
 %%
@@ -72,13 +71,13 @@ ylim ([-1.5,1.5])
 % </latex>
 
 
-%% Answer P1 Q1(b)
+%%
 % <latex> 
-% \\ Answer : \\
+% Answer: \\
 % </latex>
 
-%% Line Length function
-% We will define an anonymous funtionn to calculate line length
+%% 
+% We will define an anonymous function to calculate line length
 LLFn = @(x) sum(abs(diff(x)));
 
 %%
@@ -87,9 +86,9 @@ LLFn = @(x) sum(abs(diff(x)));
 %   \end{enumerate}
 % </latex>
 
-%% Answer P1 Q1(c)
+%%
 % <latex> 
-% \\ Answer : \\
+% Answer: \\
 % </latex>
 
 
@@ -122,12 +121,12 @@ line_length = LLFn(sine_wave)
 % 	and the length (in seconds) of \texttt{x}. (4 pts) 
 % </latex>
 
-%% Answer P1 Q2(a)
+%%
 % <latex> 
-% \\ Answer : \\
+% Answer: \\
 % </latex>
 
-%% Number of windows function
+%% 
 %The number of windows can be found using the following function
 NumWins = @(xLen, fs, winLen, winDisp) floor((xLen-(winLen-winDisp))/(winDisp));
 
@@ -142,9 +141,9 @@ NumWins = @(xLen, fs, winLen, winDisp) floor((xLen-(winLen-winDisp))/(winDisp));
 % 	where \texttt{fs}, \texttt{winLen}, and \texttt{winDisp} are the appropriate values. (1 pt)
 % </latex>
 
-%% Answer P1 Q2(b)
+%%
 % <latex> 
-% \\ Answer : \\
+% Answer: \\
 % </latex>
 
 %%
@@ -164,9 +163,9 @@ NumberOfWindows_2_1 = NumWins(duration_ms, sampling_frequency_hz, win_len_ms, wi
 % 	\item Repeat the above calculation for 50 ms window displacement. (1 pt)
 % </latex>
 
-%% Answer P1 Q2(c)
+%% 
 % <latex> 
-% \\ Answer : \\
+% Answer: \\
 % </latex>
 
 %%
@@ -186,9 +185,9 @@ NumberOfWindows_2_2 = NumWins(duration_ms, sampling_frequency_hz, win_len_ms, wi
 %   \end{enumerate}
 % </latex>
 
-%% Answer P1 Q2(d)
+%% 
 % <latex> 
-% \\ Answer : \\
+% Answer: \\
 % </latex>
 
 %%
@@ -229,9 +228,9 @@ NumberOfWindows_2_3 = NumWins(duration_ms, sampling_frequency_hz, win_len_ms, wi
 %   \lstinputlisting{[path to] MovingWinFeats.m}
 %   </latex>
 
-%% Answer P1 Q3(a)
+%% 
 % <latex> 
-% \\ Answer : \\
+% Answer: \\
 % \lstinputlisting{MovingWinFeats.m}
 % </latex>
 
@@ -241,9 +240,9 @@ NumberOfWindows_2_3 = NumWins(duration_ms, sampling_frequency_hz, win_len_ms, wi
 %    \item Using the signal you defined in Question 1.1 and the function you created in Question 1.1.b, calculate the line-length over windows of length 400 ms and displacement 200 ms. (2 pts)
 % </latex>
 
-%% Answer P1 Q3(b)
+%% 
 % <latex> 
-% \\ Answer : \\
+% Answer: \\
 % </latex>
 
 %%
@@ -252,12 +251,12 @@ x = sine_wave;
 fs = sampling_frequency_hz;
 winLen = 400 ; %in ms
 winDisp = 200; %in ms
-line_length_windows_3c = MovingWinFeats(x, fs, winLen, winDisp, LLFn);
+line_length_windows_3b = MovingWinFeats(x, fs, winLen, winDisp, LLFn);
 
 %%
 %Plotting linelength for each window
 figure();
-plot(line_length_windows_3c, 'o-')
+plot(line_length_windows_3b, 'o-')
 title('Line Length for 400 ms winLen, 200 winDisp')
 xlabel('window index')
 ylabel('line length amplitude')
@@ -267,9 +266,9 @@ ylabel('line length amplitude')
 %   \end{enumerate}
 % </latex>
 
-%% Answer P1 Q3(c)
+%% 
 % <latex> 
-% \\ Answer : \\
+% Answer: \\
 % </latex>
 
 %%
@@ -287,7 +286,16 @@ x = sine_wave_cmb;
 fs = sampling_frequency_hz;
 winLen = 400 ; %in ms
 winDisp = 200; %in ms
-line_length_windows_3d = MovingWinFeats(x, fs, winLen, winDisp, LLFn);
+line_length_windows_3c = MovingWinFeats(x, fs, winLen, winDisp, LLFn);
+
+%%
+%Plotting linelength for each window
+figure();
+plot(line_length_windows_3c, 'o-')
+title('Line Length for 400 ms winLen, 200 winDisp, combi signal 3(c)')
+xlabel('window index')
+ylabel('line length amplitude')
+
 
 %%
 % <latex>
@@ -296,9 +304,9 @@ line_length_windows_3d = MovingWinFeats(x, fs, winLen, winDisp, LLFn);
 %    \item Area, $\displaystyle A(\mathbf{x}) = \sum_{i=1}^{n} |x_i| $ \quad (2 pts)
 % </latex>
 
-%% Answer P1 Q4(a)
+%% 
 % <latex> 
-% \\ Answer : \\
+% Answer: \\
 % </latex>
 
 %%
@@ -309,9 +317,9 @@ AreaFn = @(x) sum(abs(x));
 %    \item Energy, $\displaystyle E(\mathbf{x}) = \sum_{i=1}^{n} x_i^2 $ \quad (2 pts)
 % </latex>
 
-%% Answer P1 Q4(b)
+%%
 % <latex> 
-% \\ Answer : \\
+% Answer: \\
 % </latex>
 
 %%
@@ -326,17 +334,19 @@ EnergyFn = @(x) sum(x.^2);
 %        and $\overline{x}$ is the mean value of the elements in $x$. (4 pts)
 % </latex>
 
-%% Answer P1 Q4(c)
+%%
 % <latex> 
-% \\ Answer : \\
+% Answer: \\
 % </latex>
 
 %%
-% Here we first remove the mean from the signal
-% Then we find values above and below the mean
-% We then calculate the difference between the signs of consecutive values
-% if the absolute value of this difference is > 2 then its a zero crossing
-% We then find the number of indices where zero crossing occcurs.
+% Here we first remove the mean from the signal. \\
+% Then we find values above and below the mean. \\
+% We then calculate the difference between the signs of consecutive values.
+% \\
+% if the absolute value of this difference is > 2 then its a zero crossing.
+% \\
+% We then find the number of indices where zero crossing occcurs. \\
 ZeroCrossingFn = @(x) size(find(abs(diff(sign(x-mean(x))))>1),2);
 
 %%
@@ -351,12 +361,12 @@ ZeroCrossingFn = @(x) size(find(abs(diff(sign(x-mean(x))))>1),2);
 %    of your plots is the same. (6 pts)
 % </latex>
 
-%% Answer P1 Q4(d)
+%% 
 % <latex> 
-% \\ Answer : \\
+% Answer: \\
 % </latex>
 
-%% Computing values 4(d)
+%% 
 x = sine_wave_cmb;
 fs = sampling_frequency_hz;
 winLen = 400 ; %in ms
@@ -368,7 +378,7 @@ energy_4d = MovingWinFeats(x, fs, winLen, winDisp, EnergyFn);
 zero_crossing_4d = MovingWinFeats(x, fs, winLen, winDisp, ZeroCrossingFn);
 
 
-%% Plotting the graph 4(d)
+%% 
 t = 0: 1/sampling_frequency_hz : duration_s-1/sampling_frequency_hz;
 t_win_end = t(ni+win_end);
 
@@ -430,12 +440,12 @@ suptitle('Features in window : 400 ms WinLen, 100ms WinDisp')
 %  \item What is the length using hours:minutes:seconds:milliseconds of the recording? (Use getDuration) (2 pts)
 % </latex>
 
-%% Answer P2 Q1
+%%
 % <latex> 
-% \\ Answer : \\
+% Answer: \\
 % </latex>
 
-%% Fetching signal
+%% 
 addpath(genpath('/Users/jalpanchal/git/be521'));
 
 session_sez = IEEGSession('I521_A0003_D001', 'jalpanchal', 'jal_ieeglogin.bin');
@@ -459,9 +469,9 @@ datestr(seconds(duration_in_sec_sez),'HH:MM:SS:FFF')
 %  \item How many data points should we discard at the end if we want to clip the recording to the last full second? Do this clipping. (1 pt)
 % </latex>
 
-%% Answer P2 Q2
+%%
 % <latex> 
-% \\ Answer : \\
+% Answer: \\
 % The signal has 390ms of data which needs to be discarded. At 200 Hz and
 % 5ms between every sample, we will have to discard the last 78 data
 % points. \\
@@ -479,9 +489,9 @@ sez_data_trim = sez_data(1:end-78);
 %   \item Using the \texttt{repmat} and \texttt{reshape} functions, create an external function \texttt{zoInterp(x, numInterp} that copies each value of \texttt{x} \texttt{numInterp} times. You can implement this function in one line of code with no loops. Include the code for this function as you did in Question 1.3.a. (2 pts)
 % </latex>
 
-%% Answer P2 Q3(a)
+%% 
 % <latex> 
-% \\ Answer : \\
+% Answer: \\
 % \lstinputlisting{zoInterp.m}
 % </latex>
 
@@ -496,9 +506,9 @@ sez_data_trim = sez_data(1:end-78);
 %  \end{enumerate}
 % </latex>
 
-%% Answer P2 Q3(b)
+%% 
 % <latex> 
-% \\ Answer : \\
+% Answer: \\
 % </latex>
 
 %%
@@ -523,9 +533,9 @@ ylabel('Signal amplitude')
 %  up any signal or feature. (6 pts)
 % </latex>
 
-%% Answer P2 Q4
+%% 
 % <latex> 
-% \\ Answer : \\
+% Answer: \\
 % </latex>
 
 %%
@@ -571,9 +581,9 @@ legend('EEG signal', 'Normalized Line Length')
 %  capture the 17 largest pre-seizure chirps that occur? (1 pt)
 % </latex>
 
-%% Answer P2 Q5
+%% 
 % <latex> 
-% \\ Answer : \\
+% Answer: \\
 % We can select the threshold visually to detect 17 peaks.
 % </latex>
 
@@ -610,9 +620,9 @@ xlim([0,62])
 %  \item Using this threshold value, in another plot draw red vertical lines at the leading point in time where the threshold is crossed. Add these vertical lines on top of the plot you made in Question 2.4. These events should capture the pre-seizure chirps, the seizure onset, and some flickering during the end of the seizure. (3 pts)
 % </latex>
 
-%% Answer P2 Q6
+%% 
 % <latex> 
-% \\ Answer : \\
+% Answer: \\
 % </latex>
 
 %%
@@ -652,12 +662,12 @@ legend('EEG signal', 'Normalized Line Length', 'Threshold Crossing')
 %  \item Plot the signal in \texttt{multiSz\_1} and draw vertical red lines at the times when you think the two seizures begin. (You should be able to do this without the need of any features.) (2 pts)
 % </latex>
 
-%% Answer P3 Q1
+%% 
 % <latex> 
-% \\ Answer : \\
+% Answer: \\
 % </latex>
 
-%% Fetching signal
+%%
 session_mulsez = IEEGSession('I521_A0003_D002', 'jalpanchal', 'jal_ieeglogin.bin');
 sampling_frequency_hz_mulsez = session_mulsez.data.sampleRate;
 duration_in_sec_mulsez = session_mulsez.data(1).rawChannels(1).get_tsdetails.getDuration/1e6;
@@ -686,18 +696,18 @@ hold off
 title('Seizure indicators for I521\_A0003\_D002')
 xlabel('Time (min)')
 ylabel('Signal Amplitude (\muV)')
-
+legend('EEG signal', 'seizure indication')
 %%
 % <latex>
 %  \item Produce feature overlay plots similar to that of Question 2.4 for each of the four features you have implemented along with the red vertical lines at each seizure. Use the same 4-second sliding window with 1 second displacement. (4 pts)
 % </latex>
 
-%% Answer P3 Q2
+%%
 % <latex> 
-% \\ Answer : \\
+% Answer: \\
 % </latex>
 
-%% Computing values 4(d)
+%% 
 x = multisz_1';
 fs = sampling_frequency_hz_mulsez;
 winLen = 4000 ; %in ms
@@ -708,7 +718,8 @@ area_ms1 = MovingWinFeats(x, fs, winLen, winDisp, AreaFn);
 energy_ms1 = MovingWinFeats(x, fs, winLen, winDisp, EnergyFn);
 zero_crossing_ms1 = MovingWinFeats(x, fs, winLen, winDisp, ZeroCrossingFn);
 
-%% Normalising features
+%% 
+%Normalising features
 
 scaling_factor = 2*max(multisz_1)/max(line_length_ms1);
 line_length_norm_ms1 = scaling_factor*line_length_ms1;
@@ -722,7 +733,8 @@ energy_norm_ms1 = scaling_factor*energy_ms1;
 scaling_factor = 2*max(multisz_1)/max(zero_crossing_ms1);
 zero_crossing_norm_ms1 = scaling_factor*zero_crossing_ms1;
 
-%% Padding features
+%% 
+%Padding features
 ni = ni_ms*1e-3*fs; % ni in number of samples
 L = winLen*1e-3*fs; % L in number of samples
 d = winDisp*1e-3*fs; % d in number of samples
@@ -734,8 +746,9 @@ zero_crossing_pad_ms1 = [NaN(1,ni+L-1) zoInterp(zero_crossing_norm_ms1(1:end-1),
 
 
 
-%% Plotting the graphs
-%% Line length
+%% 
+%Plotting the graphs
+%Line length
 figure();
 len_s = size(multisz_1,1)/fs;
 t = (0:1/fs : len_s-1/fs)/60;
@@ -750,7 +763,7 @@ xlabel('Time (min)')
 ylabel('Signal Amplitude (\muV)')
 legend('EEG signal', 'Normalized Line Length', 'Seizure indicator')
 
-%% Area
+%Area
 figure();
 len_s = size(multisz_1,1)/fs;
 t = (0:1/fs : len_s-1/fs)/60;
@@ -765,7 +778,7 @@ xlabel('Time (min)')
 ylabel('Signal Amplitude (\muV)')
 legend('EEG signal', 'Normalized Area', 'Seizure indicator')
 
-%% Energy
+%Energy
 figure();
 len_s = size(multisz_1,1)/fs;
 t = (0:1/fs : len_s-1/fs)/60;
@@ -780,7 +793,7 @@ xlabel('Time (min)')
 ylabel('Signal Amplitude (\muV)')
 legend('EEG signal', 'Normalized energy', 'Seizure indicator')
 
-%% Zero Crossing 
+%Zero Crossing 
 figure();
 len_s = size(multisz_1,1)/fs;
 t = (0:1/fs : len_s-1/fs)/60;
@@ -807,9 +820,9 @@ legend('EEG signal', 'Normalized Zero-Crossing', 'Seizure indicator')
 %    background) for when a seizure occurs? Explain why you think this feature is the best. (3 pts)
 % </latex>
 
-%% Answer P3 Q3(a)
+%% 
 % <latex> 
-% \\ Answer : \\
+% Answer: \\
 % To check which feature gives the largest signal as compared to
 % background, we will compute the ratio of $\frac{max value}{mean}$ for
 % each feature
@@ -847,12 +860,12 @@ zerocrossing_det_ratio = max(zero_crossing_norm_ms1)/mean(zero_crossing_norm_ms1
 %    \item What threshold would you use to determine if a seizure is occurring? (1 pt)
 % </latex>
 
-%% Answer P3 Q3(b)
+%% 
 % <latex> 
-% \\ Answer : \\
+% Answer: \\
 % </latex>
 
-%% Energy
+%% 
 figure();
 len_s = size(multisz_1,1)/fs;
 t = (0:1/fs : len_s-1/fs)/60;
@@ -875,7 +888,7 @@ legend('EEG signal', 'Normalized energy', 'Seizure indicator', 'Energy threshold
 scaling_factor = 2*max(multisz_1)/max(energy_ms1);
 threshold_raw = threshold_energy/scaling_factor;
 
-%% Answer P3 Q3(b)
+%% 
 % <latex> 
 % Based on visual inspection, I would select a threshold of 1000 units in
 % the Normalized energy of the signal to detect a seizure or 7.99x1e7 units
@@ -891,9 +904,9 @@ threshold_raw = threshold_energy/scaling_factor;
 %  \item The signal in \texttt{multiSz\_2} contains another seizure (whose location should again be fairly obvious). Plot the data along with the feature and threshold (horizontal black line, with correct normalization for the signal in \texttt{data2}) you determined in the previous question. (2 pts)
 % </latex>
 
-%% Answer P3 Q4
+%% 
 % <latex> 
-% \\ Answer : \\
+% Answer: \\
 % </latex>
 
 %%
@@ -915,7 +928,7 @@ d = winDisp*1e-3*fs; % d in number of samples
 
 energy_pad_ms2 = [NaN(1,ni+L-1) zoInterp(energy_norm_ms2(1:end-1),d) energy_norm_ms2(end)];
 
-%% Energy
+%% 
 figure();
 len_s = size(multisz_2,1)/fs;
 t = (0:1/fs : len_s-1/fs)/60;
