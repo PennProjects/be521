@@ -558,11 +558,11 @@ plot(t, sez_data_trim,'Linewidth', 0.1, 'Color', [0, 0.4470, 0.7410]);
 hold on
 plot(t, line_length_pad, 'Linewidth', 1, 'Color', [0.8500, 0.3250, 0.0980])
 hold off
-title('Line Length overlay on EEG for I521\_A0003\_D001')
+title('Normalized Line Length overlay on EEG for I521\_A0003\_D001')
 xlabel('Time (min)')
 ylabel('Signal Amplitude (\muV)')
 xlim([-1,82]) 
-legend('EEG signal', 'Line Length')
+legend('EEG signal', 'Normalized Line Length')
 
 %%
 % <latex>
@@ -574,27 +574,35 @@ legend('EEG signal', 'Line Length')
 %% Answer P2 Q5
 % <latex> 
 % \\ Answer : \\
+% We can select the threshold visually to detect 17 peaks.
 % </latex>
 
 %%
-%Finding threshold for 17 pre seizure peaks
+%Verification of threshold
 line_length_raw_pad = [NaN(1,ni+L-1) zoInterp(line_length_sez(1:end-1),d) line_length_sez(end)];
+%only considering pre-seizure signal
 line_length_raw_presz = line_length_raw_pad(1:end-20*60*200);
 
-first_derivative = diff(line_length_raw_presz);
-second_derivative = diff(first_derivative < 0 );
-threshold = 6*1e4;
-data_above_threshold = line_length_raw_presz(2:end-1)>threshold;
-
-peak_index = find(second_derivative .* data_above_threshold);
+%Peaks found with threshold
+x = line_length_raw_presz;
+threshold = 4.3*1e4;
+y = x>threshold;
+peaks_found = size(find(diff(sign(y))==1),2)
 
 %%
-% plot
+%Finding threshold for 17 pre seizure peaks
+% plot the threshold on EEG signal
 figure();
-plot(t(1:end-20*60*200), line_length_raw_pad_presz, 'Linewidth', 1, 'Color', [0.8500, 0.3250, 0.0980])
-title('Line Length')
+t = (0:1/fs : len_s-1/fs)/60;
+plot(t(1:end-20*60*200), line_length_raw_presz, 'Linewidth', 1, 'Color', [0.8500, 0.3250, 0.0980])
+hold on
+yline(threshold, 'Linewidth', 2, 'Color', [0 0 0])
+hold off
+title('Finding threshold from Line Length from pre-seizure 17 peaks')
 xlabel('Time (min)')
-ylabel('Signal Amplitude (\muV)')
+ylabel('Line length units')
+legend('Line Length','Threshold')
+xlim([0,62])
 
 
 %%
@@ -606,6 +614,34 @@ ylabel('Signal Amplitude (\muV)')
 % <latex> 
 % \\ Answer : \\
 % </latex>
+
+%%
+% Finding the index energy signal when it crosses threshold
+x = line_length_raw_pad;
+threshold = 4.3*1e4;
+y = x>threshold;
+crossing_index = find(diff(sign(y))==1);
+crossing_index = crossing_index/fs/60; %in mins
+
+
+%%
+%Plotting
+figure();
+len_s = size(sez_data_trim,1)/fs;
+t = (0:1/fs : len_s-1/fs)/60;
+plot(t, sez_data_trim,'Linewidth', 0.1, 'Color', [0, 0.4470, 0.7410]);
+hold on
+plot(t, line_length_pad, 'Linewidth', 1, 'Color', [0.8500, 0.3250, 0.0980])
+for i=crossing_index
+    xline(i, 'Linewidth', 1)
+end
+hold off
+title('Normalized Line Length overlay on EEG for I521\_A0003\_D001')
+xlabel('Time (min)')
+ylabel('Signal Amplitude (\muV)')
+xlim([-1,82]) 
+legend('EEG signal', 'Normalized Line Length', 'Threshold Crossing')
+
 
 %%
 % <latex>
@@ -621,9 +657,9 @@ ylabel('Signal Amplitude (\muV)')
 % \\ Answer : \\
 % </latex>
 
-%% 
+%% Fetching signal
 session_mulsez = IEEGSession('I521_A0003_D002', 'jalpanchal', 'jal_ieeglogin.bin');
-sampling_frequency_hz_smulez = session_mulsez.data.sampleRate;
+sampling_frequency_hz_mulsez = session_mulsez.data.sampleRate;
 duration_in_sec_mulsez = session_mulsez.data(1).rawChannels(1).get_tsdetails.getDuration/1e6;
 
 multisz_1 = session_mulsez.data.getvalues(0, duration_in_sec_mulsez * 1e6, 1);
@@ -634,7 +670,7 @@ datestr(seconds(duration_in_sec_mulsez),'HH:MM:SS:FFF')
 
 %%
 len_s = duration_in_sec_mulsez;
-fs = sampling_frequency_hz_smulez;
+fs = sampling_frequency_hz_mulsez;
 t = (0:1/fs : len_s-1/fs)/60;
 
 %Index for start of 2 seizures, selected from visual inspection
@@ -661,6 +697,107 @@ ylabel('Signal Amplitude (\muV)')
 % \\ Answer : \\
 % </latex>
 
+%% Computing values 4(d)
+x = multisz_1';
+fs = sampling_frequency_hz_mulsez;
+winLen = 4000 ; %in ms
+winDisp = 1000; %in ms
+
+[line_length_ms1, ni_ms, win_start_ms, win_end_ms] = MovingWinFeats(x, fs, winLen, winDisp, LLFn);
+area_ms1 = MovingWinFeats(x, fs, winLen, winDisp, AreaFn);
+energy_ms1 = MovingWinFeats(x, fs, winLen, winDisp, EnergyFn);
+zero_crossing_ms1 = MovingWinFeats(x, fs, winLen, winDisp, ZeroCrossingFn);
+
+%% Normalising features
+
+scaling_factor = 2*max(multisz_1)/max(line_length_ms1);
+line_length_norm_ms1 = scaling_factor*line_length_ms1;
+
+scaling_factor = 2*max(multisz_1)/max(area_ms1);
+area_norm_ms1 = scaling_factor*area_ms1;
+
+scaling_factor = 2*max(multisz_1)/max(energy_ms1);
+energy_norm_ms1 = scaling_factor*energy_ms1;
+
+scaling_factor = 2*max(multisz_1)/max(zero_crossing_ms1);
+zero_crossing_norm_ms1 = scaling_factor*zero_crossing_ms1;
+
+%% Padding features
+ni = ni_ms*1e-3*fs; % ni in number of samples
+L = winLen*1e-3*fs; % L in number of samples
+d = winDisp*1e-3*fs; % d in number of samples
+
+line_length_pad_ms1 = [NaN(1,ni+L-1) zoInterp(line_length_norm_ms1(1:end-1),d) line_length_norm_ms1(end)];
+area_pad_ms1 = [NaN(1,ni+L-1) zoInterp(area_norm_ms1(1:end-1),d) area_norm_ms1(end)];
+energy_pad_ms1 = [NaN(1,ni+L-1) zoInterp(energy_norm_ms1(1:end-1),d) energy_norm_ms1(end)];
+zero_crossing_pad_ms1 = [NaN(1,ni+L-1) zoInterp(zero_crossing_norm_ms1(1:end-1),d) zero_crossing_norm_ms1(end)];
+
+
+
+%% Plotting the graphs
+%% Line length
+figure();
+len_s = size(multisz_1,1)/fs;
+t = (0:1/fs : len_s-1/fs)/60;
+plot(t, multisz_1,'Linewidth', 0.1, 'Color', [0, 0.4470, 0.7410]);
+hold on
+plot(t, line_length_pad_ms1, 'Linewidth', 1, 'Color', [0.8500, 0.3250, 0.0980])
+xline(sez_1_indx, 'Linewidth', 2, 'Color', [0.4660, 0.6740, 0.1880]);
+xline(sez_2_indx, 'Linewidth', 2, 'Color', [0.4660, 0.6740, 0.1880]);
+hold off
+title('Normalized Line Length overlay on EEG for I521\_A0003\_D002, multisz 1 channel')
+xlabel('Time (min)')
+ylabel('Signal Amplitude (\muV)')
+legend('EEG signal', 'Normalized Line Length', 'Seizure indicator')
+
+%% Area
+figure();
+len_s = size(multisz_1,1)/fs;
+t = (0:1/fs : len_s-1/fs)/60;
+plot(t, multisz_1,'Linewidth', 0.1, 'Color', [0, 0.4470, 0.7410]);
+hold on
+plot(t, area_pad_ms1, 'Linewidth', 1, 'Color', [0.8500, 0.3250, 0.0980])
+xline(sez_1_indx, 'Linewidth', 2, 'Color', [0.4660, 0.6740, 0.1880]);
+xline(sez_2_indx, 'Linewidth', 2, 'Color', [0.4660, 0.6740, 0.1880]);
+hold off
+title('Normalized Area overlay on EEG for I521\_A0003\_D002, multisz 1 channel')
+xlabel('Time (min)')
+ylabel('Signal Amplitude (\muV)')
+legend('EEG signal', 'Normalized Area', 'Seizure indicator')
+
+%% Energy
+figure();
+len_s = size(multisz_1,1)/fs;
+t = (0:1/fs : len_s-1/fs)/60;
+plot(t, multisz_1,'Linewidth', 0.1, 'Color', [0, 0.4470, 0.7410]);
+hold on
+plot(t, energy_pad_ms1, 'Linewidth', 1, 'Color', [0.8500, 0.3250, 0.0980])
+xline(sez_1_indx, 'Linewidth', 2, 'Color', [0.4660, 0.6740, 0.1880]);
+xline(sez_2_indx, 'Linewidth', 2, 'Color', [0.4660, 0.6740, 0.1880]);
+hold off
+title('Normalized Energy overlay on EEG for I521\_A0003\_D002, multisz 1 channel')
+xlabel('Time (min)')
+ylabel('Signal Amplitude (\muV)')
+legend('EEG signal', 'Normalized energy', 'Seizure indicator')
+
+%% Zero Crossing 
+figure();
+len_s = size(multisz_1,1)/fs;
+t = (0:1/fs : len_s-1/fs)/60;
+plot(t, multisz_1,'Linewidth', 0.1, 'Color', [0, 0.4470, 0.7410]);
+hold on
+plot(t, zero_crossing_pad_ms1, 'Linewidth', 1, 'Color', [0.8500, 0.3250, 0.0980])
+xline(sez_1_indx, 'Linewidth', 2, 'Color', [0.4660, 0.6740, 0.1880]);
+xline(sez_2_indx, 'Linewidth', 2, 'Color', [0.4660, 0.6740, 0.1880]);
+hold off
+title('Normalized Zero-Crossing overlay on EEG for I521\_A0003\_D002, multisz 1 channel')
+xlabel('Time (min)')
+ylabel('Signal Amplitude (\muV)')
+legend('EEG signal', 'Normalized Zero-Crossing', 'Seizure indicator')
+
+
+
+
 %%
 % <latex>
 %  \item 
@@ -673,6 +810,36 @@ ylabel('Signal Amplitude (\muV)')
 %% Answer P3 Q3(a)
 % <latex> 
 % \\ Answer : \\
+% To check which feature gives the largest signal as compared to
+% background, we will compute the ratio of $\frac{max value}{mean}$ for
+% each feature
+% </latex>
+
+%%
+linelength_det_ratio = max(line_length_norm_ms1)/mean(line_length_norm_ms1)
+area_det_ratio = max(area_norm_ms1)/mean(area_norm_ms1)
+energy_det_ratio = max(energy_norm_ms1)/mean(energy_norm_ms1)
+zerocrossing_det_ratio = max(zero_crossing_norm_ms1)/mean(zero_crossing_norm_ms1)
+
+%%
+% <latex> 
+% We get the ratio of $\frac{max value}{mean}$ as 
+% \begin{enumeration}
+% \item Line Length = 7.5043
+% \item Area = 6.2745
+% \item Energy = 27.0870
+% \item Zero crossing = 3.5446. \\
+% \end{enumeration}
+% This is also confirmed through visual inspection of the graphs that the
+% Energy is the feature that is has the largest difference in
+% signal when a seizure occurs.\\
+% Seizures as Dr. Litt explained in the class tend to have a certain amount
+% of energy that needs to be dissipated forit to end. Having known this, it makes sense
+% if the energy plot shows the best indications of a seizure. As during a
+% seizure episode, the most amount of energy is dissipated in the form of the high
+% frequency signals we call "seizues", this is seen in the energy
+% signal as a big change from "normal"energy levels to high energy levels
+% of seizures.
 % </latex>
 
 %%
@@ -683,6 +850,36 @@ ylabel('Signal Amplitude (\muV)')
 %% Answer P3 Q3(b)
 % <latex> 
 % \\ Answer : \\
+% </latex>
+
+%% Energy
+figure();
+len_s = size(multisz_1,1)/fs;
+t = (0:1/fs : len_s-1/fs)/60;
+threshold_energy = 1000;
+
+plot(t, multisz_1,'Linewidth', 0.1, 'Color', [0, 0.4470, 0.7410]);
+hold on
+plot(t, energy_pad_ms1, 'Linewidth', 1, 'Color', [0.8500, 0.3250, 0.0980])
+xline(sez_1_indx, 'Linewidth', 2, 'Color', [0.4660, 0.6740, 0.1880]);
+xline(sez_2_indx, 'Linewidth', 2, 'Color', [0.4660, 0.6740, 0.1880]);
+yline(threshold_energy, 'Linewidth', 2, 'Color', [0 0 0]);
+hold off
+title('Normalized Energy overlay on EEG for I521\_A0003\_D002, multisz 1 channel')
+xlabel('Time (min)')
+ylabel('Signal Amplitude (\muV)')
+legend('EEG signal', 'Normalized energy', 'Seizure indicator', 'Energy threshold')
+
+%%
+%Non-normalized energy
+scaling_factor = 2*max(multisz_1)/max(energy_ms1);
+threshold_raw = threshold_energy/scaling_factor;
+
+%% Answer P3 Q3(b)
+% <latex> 
+% Based on visual inspection, I would select a threshold of 1000 units in
+% the Normalized energy of the signal to detect a seizure or 7.99x1e7 units
+% of raw energy.
 % </latex>
 %%
 % <latex>
@@ -698,6 +895,42 @@ ylabel('Signal Amplitude (\muV)')
 % <latex> 
 % \\ Answer : \\
 % </latex>
+
+%%
+x = multisz_2';
+fs = sampling_frequency_hz_mulsez;
+winLen = 4000 ; %in ms
+winDisp = 1000; %in ms
+
+energy_ms2 = MovingWinFeats(x, fs, winLen, winDisp, EnergyFn);
+
+%Normalization
+scaling_factor = 2*max(multisz_2)/max(energy_ms2);
+energy_norm_ms2 = scaling_factor*energy_ms2;
+
+%%Padding features
+ni = ni_ms*1e-3*fs; % ni in number of samples
+L = winLen*1e-3*fs; % L in number of samples
+d = winDisp*1e-3*fs; % d in number of samples
+
+energy_pad_ms2 = [NaN(1,ni+L-1) zoInterp(energy_norm_ms2(1:end-1),d) energy_norm_ms2(end)];
+
+%% Energy
+figure();
+len_s = size(multisz_2,1)/fs;
+t = (0:1/fs : len_s-1/fs)/60;
+threshold_energy = 1000;
+
+plot(t, multisz_2,'Linewidth', 0.1, 'Color', [0, 0.4470, 0.7410]);
+hold on
+plot(t, energy_pad_ms2, 'Linewidth', 1, 'Color', [0.8500, 0.3250, 0.0980])
+yline(threshold_energy, 'Linewidth', 2, 'Color', [0 0 0]);
+hold off
+title('Normalized Energy overlay on EEG for I521\_A0003\_D002, multisz 2 channel ')
+xlabel('Time (min)')
+ylabel('Signal Amplitude (\muV)')
+legend('EEG signal', 'Normalized energy', 'Energy threshold')
+
 
 
 %%
