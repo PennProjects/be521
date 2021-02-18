@@ -412,7 +412,7 @@
 
 %% 
 % <latex>
-% \textbf{Answer 4.3c:} 
+% \textbf{Answer :} 
 % </latex>
 
 %% 
@@ -421,26 +421,22 @@
 %  \item
 %   \begin{enumerate}
 %    \item Using your optimal value for $k$ from CV, calculate the
-%    $k$-NN model's \textit{testing} error. (1 pts) \\
+%    $k$-NN model's \textit{testing} error. (1 pts) 
 % </latex>
 
-%% 
-% <latex>
-% \textbf{Answer 4.4a:} 
-% </latex>
+%%
+% [ANSWER HERE]
 
 %%
 % <latex>
 % \item How does this
 %    model's testing error compare to the $k$-NN model
 %    you trained in question 3.3? Is it the best of the three models
-%    you trained in Section 3? (2 pts) \\
+%    you trained in Section 3? (2 pts)
 % </latex>
 
-%% 
-% <latex>
-% \textbf{Answer 4.4b:} 
-% </latex>
+%%
+% [ANSWER HERE]
 
 %% 
 % <latex>
