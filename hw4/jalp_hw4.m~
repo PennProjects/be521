@@ -278,9 +278,15 @@ end
 hfo_train = find(cell2mat(train_data(:, 1))==2);
 artif_train = find(cell2mat(train_data(:, 1))==1);
 
-scatter(testFeats(hfo_train,1), testFeats(hfo_train,2),  'filled', 'MarkerEdgeColor', [0 0.4470 0.7410])
+figure();
+scatter(testFeats(hfo_train,1), testFeats(hfo_train,2), 60,  'filled', 'MarkerEdgeColor', [0 0.4470 0.7410])
+
 hold on
-scatter(testFeats(artif_train, 1), testFeats(a
+scatter(testFeats(artif_train, 1), testFeats(artif_train,2), 60, 'filled', 'MarkerEdgeColor', [0.8500 0.3250 0.0980])
+title('Training set Line Length vs Area - I521\_A0004\_D001')
+xlabel('Line Length')
+ylabel('Area')
+legend('HFOs','artifacts')
 %% 
 % <latex>
 %     \item Feature normalization is often important. One simple
@@ -300,6 +306,20 @@ scatter(testFeats(artif_train, 1), testFeats(a
 % \textbf{Answer 2.2a:} 
 % </latex>
 
+%%
+% The statistical term for the normalized value is a \emph{Z-score}. It
+% tells us how many standard deviations above or below the mean the given
+% value is.
+
+%%
+%Calculating normalized feature values
+mean_ll_area  = mean(trainFeats);
+std_ll_area = std(trainFeats);
+
+trainFeats_norm = (trainFeats-mean_ll_area)./std_ll_area;
+testFeats_norm = (testFeats-mean_ll_area) ./std_ll_area;
+
+
 %% 
 % <latex>
 % 	\item Explain why such a feature normalization might be critical
@@ -312,6 +332,15 @@ scatter(testFeats(artif_train, 1), testFeats(a
 % </latex>
 
 %%
+% Machine learning algorithms like $k$-NN classifiers can be influenced by
+% the magnitude of different variables during classification. When
+% calculating the distance of the nearest neighbours, the magnitude of the
+% variables will influence the relative distance between points. To avoid
+% such a situation, the variables are normalised using their z-score. The
+% normalized variables now wont have an undue influence due to magnitude on
+% the algorithms like $k$-NN classifiers
+
+%%
 % <latex>
 % \item Explain why (philosophically) you use the training feature means and
 % 	standard deviations to normalize the testing set. (2 pts) \\
@@ -321,6 +350,13 @@ scatter(testFeats(artif_train, 1), testFeats(a
 % <latex>
 % \textbf{Answer 2.2c:} 
 % </latex>
+
+%%
+% The test set is suppose to represent new unkown data that is used to test
+% how the algorithm will work with new data. In doing so the test data
+% should not influence the normalization of the data as it a new and
+% unknown.\\
+% While at the same time, using the same mean and standard deviation
 
 %% 
 % <latex>
