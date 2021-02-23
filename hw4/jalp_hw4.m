@@ -483,7 +483,8 @@ pihat = mnrval(B,X);
 test_error_mnr = size(find(Ypred_test_mnr~=Y_test),1)/size(Y_test,1)
 
 %%
-% Using the trained model on the testing data, we get an error of 13.33%.
+% Using the trained model on the testing data, we get an error of
+% 13.33%.%\\%
 % Which is a little higher than the testing error. This is expected as the
 % model was fit in using the training data so that coefficients of the
 % weights are more tuned to the training set as compared to the testing
@@ -895,6 +896,15 @@ test_error_opt = size(find(Ypred_test~=Y_test),1)/size(Y_test,1)
 % <latex>
 % \textbf{Answer 4.4b:} 
 % </latex>
+
+%%
+% The testing error with $k$=29 is 11.43% while that with $k$=1 in Q3.3 was
+% 17.86%, so the testing error has dropped with the increase in $k$. %\\%
+% Comparing to the errors calculated in the other models, the logistic
+% regression gave an error of 13.33% and the SVN gave an error of 11.43%
+% for the the testing data. The optimised %k% has shown better results than
+% the older $k$-NN model and the logistic regression model and has the same error
+% as the SVM classifier. 
 
 %% 
 % <latex>
