@@ -811,6 +811,7 @@ title('Training and Validation error for changing k - I521\_A0004\_D001')
 xlabel('k values')
 ylabel('Percentage error')
 legend('Training error', 'Validation error')
+
 %% 
 % <latex>
 % \item What is the optimal $k$ value and its training and testing error?
@@ -822,6 +823,14 @@ legend('Training error', 'Validation error')
 % \textbf{Answer 4.3b:} 
 % </latex>
 
+%%
+% As we increase the value of $k$ from 1:30 the validation error decreases
+% and the traning error increases to reach stable values. The optimal k
+% would be the one that gives the minimum value for the both the training
+% and the validation errore. $\\$.
+% Based on the graph, choosing a k from 26-30 should give similar results.
+% Choosing a k=27 seems like the optimal value giving a training error of 12.11% and 
+% a validation error of 12.5%
 %% 
 % <latex>
 %    \item Explain why $k$-NN generally overfits less with higher
@@ -832,6 +841,15 @@ legend('Training error', 'Validation error')
 % <latex>
 % \textbf{Answer 4.3c:} 
 % </latex>
+
+%%
+% For smaller values of k the classifier is only looking a 1 nearest
+% neighbor and so is very aggresive in fitting to every point in the
+% training set. This causes an overfit. As k increases, the number of
+% nearest neighbors considered increses and hence this smoothens fit and
+% removed the micro level jaggednes of the classification boundary. As k
+% increases we start seeing more of an average over several points which
+% prevents overfitting and gives a more generic fit to the data.
 
 %% 
 % <latex>
