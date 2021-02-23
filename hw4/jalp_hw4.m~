@@ -121,27 +121,28 @@ number_artifact_training =  size(artif_train,1)
 %%
 %test_raw_norm = session_hfo.data.getvalues(0, duration_in_sec_hfo * 1e6, 1);
 %fetching first occurance of HFO
+i= 1;
 fs = sampling_frequency_hz_hfo;
-t_hfo = train_data{hfo_train(1),2}/1e3 : 1e3/fs : train_data{hfo_train(1),3}/1e3;
-hfo_1_train = train_data{hfo_train(1), 4};
+t_hfo = train_data{hfo_train(i),2}/1e3 : 1e3/fs : train_data{hfo_train(i),3}/1e3;
+hfo_1_train = train_data{hfo_train(i), 4};
 
 %fetching first occurance of artifact
-t_artif = train_data{artif_train(1),2}/1e3 : 1e3/fs : train_data{artif_train(1),3}/1e3;
-artif_1_train = train_data{artif_train(1), 4};
+t_artif = train_data{artif_train(i),2}/1e3 : 1e3/fs : train_data{artif_train(i),3}/1e3;
+artif_1_train = train_data{artif_train(i), 4};
 
 
 %%
 %plots
 figure();
 ax1 = subplot(1,2,1);
-plot(t_hfo, hfo_1_train, 'Linewidth', 2);
+plot(t_hfo, hfo_1_train, 'Linewidth', 1.5);
 title('HFO(1)')
 xlabel('Time (ms)')
 set(ax1, 'YTick', [])
 ax1.Position = [0.1300 0.1100 0.3747 0.8150];
 
 ax2 = subplot(1,2,2);
-plot(t_artif, artif_1_train, 'Linewidth', 2)
+plot(t_artif, artif_1_train, 'Linewidth', 1.5)
 title('Artifact(1)')
 xlabel('Time (ms)')
 set(ax2, 'YTick', [])
@@ -167,6 +168,15 @@ suptitle('First samples in training window in I521\_A0004\_D001')
 % \textbf{Answer 1.3:} 
 % </latex>
 
+%%
+% FIR Bandpass filter Magnitude response:
+
+%%
+% <latex>
+% \includegraphics[scale=0.4]{screenshot_p1q3.png}
+% </latex>
+
+
 %% 
 % <latex>
 %     \item Using the forward-backward filter function
@@ -184,6 +194,43 @@ suptitle('First samples in training window in I521\_A0004\_D001')
 % \textbf{Answer 1.4:} 
 % </latex>
 
+%%
+load('./fir_staba.mat')
+b = fir_b;
+a = 1;
+
+hfo_1_filter = filtfilt(b,a,hfo_1_train);
+artif_1_filter = filtfilt(b,a,artif_1_train);
+
+%%
+%plots
+figure();
+ax1 = subplot(1,2,1);
+plot(t_hfo, hfo_1_train, 'Linewidth', 0.5);
+hold on
+plot(t_hfo, hfo_1_filter, 'Linewidth', 1.2);
+hold off
+title('HFO(1)')
+xlabel('Time (ms)')
+ylim([1.1*min(hfo_1_train), 1.2*max(hfo_1_train)])
+legend('raw HFO','filtered HFO', 'Location','northwest')
+set(ax1, 'YTick', [])
+ax1.Position = [0.1300 0.1100 0.3747 0.8150];
+
+ax2 = subplot(1,2,2);
+plot(t_artif, artif_1_train, 'Linewidth', 0.5)
+hold on
+plot(t_artif, artif_1_filter, 'Linewidth', 1.2)
+hold off
+title('Artifact(1)')
+xlabel('Time (ms)')
+ylim([1.1*min(artif_1_train), 1.5*max(artif_1_train)])
+legend('raw artifacts','filtered artifacts')
+set(ax2, 'YTick', [])
+ax2.Position = [0.5303 0.1100 0.3747 0.8150];
+
+
+suptitle('FIR filter on training data in I521\_A0004\_D001')
 %% 
 % <latex>
 %     \item Speculate how processing the data using Staba's method may
@@ -194,6 +241,9 @@ suptitle('First samples in training window in I521\_A0004\_D001')
 % <latex>
 % \textbf{Answer 1.5:} 
 % </latex>
+
+%%
+% The processing in Staba ..
 
 %% 
 % <latex>
@@ -307,7 +357,7 @@ legend('HFOs','artifacts')
 % </latex>
 
 %%
-% The statistical term for the normalized value is a \emph{Z-score}. It
+% The statistical term for the normalized value is a %\emph{Z-score}%. It
 % tells us how many standard deviations above or below the mean the given
 % value is.
 
@@ -351,15 +401,15 @@ testFeats_norm = (testFeats-mean_ll_area) ./std_ll_area;
 % </latex>
 
 %%
-% The test set is suppose to represent new unkown data that is used to test
+% The test set is suppose to represent new unknown data that is used to test
 % how the algorithm will work with new data. In doing so the test data
 % should not influence the normalization of the data as it a new and
-% unknown.\\
+% unknown.$\\$
 % While at the same time, using the same mean and standard deviation from
 % the training set on the test set means that we are giving the same
 % standardised and uniform treatment to all the data that the algorithm
 % interacts with. This way we allow the intrinsic features of each new
-% dataset to imapact its result. 
+% data-set to impact its result. 
 
 %% 
 % <latex>
@@ -407,7 +457,7 @@ pihat = mnrval(B,X);
 train_error_mnr = size(find(Ypred_train_mnr~=Y),1)/size(Y,1)
 
 %%
-% The error in training is 12.5 %
+% The error in training is 12.5%
 
 %% 
 % <latex>
@@ -433,7 +483,7 @@ pihat = mnrval(B,X);
 test_error_mnr = size(find(Ypred_test_mnr~=Y_test),1)/size(Y_test,1)
 
 %%
-% Using the trained model on the testing data, we get an error of 13.33 %.
+% Using the trained model on the testing data, we get an error of 13.33%.
 % Which is a little higher than the testing error. This is expected as the
 % model was fit in using the training data so that coefficients of the
 % weights are more tuned to the training set as compared to the testing
@@ -477,7 +527,7 @@ Ypred_test_knn = predict(knn, X);
 test_error_knn = size(find(Ypred_test_knn~=Y_test),1)/size(Y_test,1)
 
 %%
-% The training error was 0 and the testing error was 17.86 %
+% For $k$-nearest neighbors classifier, the training error was 0% and the testing error was 17.86%
 %%
 % <latex>
 %    \item Why is the training error zero? (2 pts) \\
@@ -531,7 +581,9 @@ Ypred_test_svm = predict(svmodel, X);
 
 test_error_svm = size(find(Ypred_test_svm~=Y_test),1)/size(Y_test,1)
 
-
+%%
+% For the SVM classifier, the training error was 11% and the testing error
+% was 11.43%
 
 %% 
 % <latex>
@@ -555,6 +607,9 @@ test_error_svm = size(find(Ypred_test_svm~=Y_test),1)/size(Y_test,1)
 % <latex>
 % \textbf{Answer 3.5:} 
 % </latex>
+
+%%
+
 
 %% 
 % <latex>
@@ -602,6 +657,14 @@ test_error_svm = size(find(Ypred_test_svm~=Y_test),1)/size(Y_test,1)
 % \textbf{Answer 4.1:} 
 % </latex>
 
+%%
+%creating a randon order of training sample indices
+rand_ord = randperm(200);
+%reshaping it in to a 10 cell containing 20 unique indices
+rand_ord = reshape(rand_ord, 10, []);
+fold_index = num2cell(rand_ord, 2);
+
+length(unique([fold_index{:}]))
 %% 
 % <latex>
 %  \item Train a new $k$-NN model (still using the default parameters)
