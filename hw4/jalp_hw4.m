@@ -829,8 +829,10 @@ legend('Training error', 'Validation error')
 % would be the one that gives the minimum value for the both the training
 % and the validation errore. $\\$.
 % Based on the graph, choosing a k from 26-30 should give similar results.
-% Choosing a k=27 seems like the optimal value giving a training error of 12.11% and 
-% a validation error of 12.5%
+% I will choose a k=29 as the trend of error seems to be at the lowest
+% point and the model will be more stable with new test data for a high k. With
+% the current randomization of folds I get a validation error of 12.5% and
+% a training error of 12.28%
 %% 
 % <latex>
 %    \item Explain why $k$-NN generally overfits less with higher
@@ -864,6 +866,22 @@ legend('Training error', 'Validation error')
 % <latex>
 % \textbf{Answer 4.4a:} 
 % </latex>
+
+%%
+%Calculating testing error for optimal k
+k = 29;
+X = trainFeats_norm;
+Y = cell2mat(train_data(:,1)); 
+knn = fitcknn(X,Y, 'NumNeighbors', k);
+    
+X_test  = testFeats_norm;
+Y_test = cell2mat(test_data(:,1)); 
+Ypred_test = predict(knn, X_test);
+
+test_error_opt = size(find(Ypred_test~=Y_test),1)/size(Y_test,1)
+
+%%
+% With a $k$ of 29, the testing error is 11.43%
 
 %%
 % <latex>
