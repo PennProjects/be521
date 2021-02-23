@@ -273,8 +273,14 @@ for i = 1:size(test_data,1)
 end
 
 
+%%
+%Scatter plot of training data
+hfo_train = find(cell2mat(train_data(:, 1))==2);
+artif_train = find(cell2mat(train_data(:, 1))==1);
 
-
+scatter(testFeats(hfo_train,1), testFeats(hfo_train,2),  'filled', 'MarkerEdgeColor', [0 0.4470 0.7410])
+hold on
+scatter(testFeats(artif_train, 1), testFeats(a
 %% 
 % <latex>
 %     \item Feature normalization is often important. One simple
