@@ -456,6 +456,29 @@ test_error = size(find(Ypred_test~=Y_test),1)/size(Y_test,1)
 % </latex>
 
 %%
+%K nearest neighbor classifier
+X = trainFeats_norm;
+Y = cell2mat(train_data(:,1)); 
+
+knn = fitcknn(X,Y, 'NumNeighbors', 1)
+
+%%
+%Calculating training error by predicting the training set
+Ypred_train = predict(knn, X);
+
+train_error = size(find(Ypred_train~=Y),1)/size(Y,1)
+
+%%
+%Calculating testing error using the trained knn model
+X  = testFeats_norm;
+Y_test = cell2mat(test_data(:,1)); 
+Ypred_test = predict(knn, X);
+
+test_error = size(find(Ypred_test~=Y_test),1)/size(Y_test,1)
+
+%%
+% The training error was 0 and the testing error was 17.86 %
+%%
 % <latex>
 %    \item Why is the training error zero? (2 pts) \\
 % </latex>
@@ -464,6 +487,9 @@ test_error = size(find(Ypred_test~=Y_test),1)/size(Y_test,1)
 % <latex>
 % \textbf{Answer 3.3b:} 
 % </latex>
+
+%%
+% The testing error is 0 because ..
 
 %% 
 % <latex>
