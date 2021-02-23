@@ -64,6 +64,45 @@
 % \textbf{Answer 1.1:} 
 % </latex>
 
+%%
+%Fetch I521_A0004_D001 data
+addpath(genpath('/Users/jalpanchal/git/be521'));
+
+session_hfo = IEEGSession('I521_A0004_D001', 'jalpanchal', 'jal_ieeglogin.bin');
+sampling_frequency_hz_hfo = session_hfo.data.sampleRate;
+duration_in_sec_hfo = session_hfo.data(1).rawChannels(1).get_tsdetails.getDuration/1e6;
+
+test_raw_norm = session_hfo.data.getvalues(0, duration_in_sec_hfo * 1e6, 1);
+train_raw_norm = session_hfo.data.getvalues(0, duration_in_sec_hfo * 1e6, 2);
+
+datestr(seconds(duration_in_sec_hfo),'HH:MM:SS:FFF')
+%%
+%Get annotations
+dataset = session_hfo.data;
+layerName = 'Training windows';
+[allEvents, timesUSec, channels] = getAnnotations(dataset,layerName);
+
+%%
+%parsing description and event timing and time series
+train_data = {str2double(allEvents(1).description), allEvents(1).start,...
+               allEvents(1).stop, session_hfo.data.getvalues(allEvents(1).start, allEvents(1).stop-allEvents(1).start, 2)};
+for i = 2:size(allEvents,2)
+    train_data = [train_data;{str2double(allEvents(i).description),... 
+        allEvents(i).start, allEvents(i).stop, ...
+        session_hfo.data.getvalues(allEvents(i).start, allEvents(i).stop-allEvents(i).start, 2) }];
+end
+
+%%
+hfo_train = find(cell2mat(train_data(:, 1))==2);
+artif_train = find(cell2mat(train_data(:, 1))==1);
+
+number_hfo_training = size(hfo_train, 1)
+number_artifact_training =  size(artif_train,1)
+
+%%
+% The number of samples for HFO is 101 and that for artifacts is 99.
+
+
 %% 
 % <latex>
 %     \item Using the training set, find the first occurrence of the
@@ -78,6 +117,38 @@
 % <latex>
 % \textbf{Answer 1.2:} 
 % </latex>
+
+%%
+%test_raw_norm = session_hfo.data.getvalues(0, duration_in_sec_hfo * 1e6, 1);
+%fetching first occurance of HFO
+fs = sampling_frequency_hz_hfo;
+t_hfo = train_data{hfo_train(1),2}/1e3 : 1e3/fs : train_data{hfo_train(1),3}/1e3;
+hfo_1_train = train_data{hfo_train(1), 4};
+
+%fetching first occurance of artifact
+t_artif = train_data{artif_train(1),2}/1e3 : 1e3/fs : train_data{artif_train(1),3}/1e3;
+artif_1_train = train_data{artif_train(1), 4};
+
+
+%%
+%plots
+figure();
+ax1 = subplot(1,2,1);
+plot(t_hfo, hfo_1_train, 'Linewidth', 2);
+title('HFO(1)')
+xlabel('Time (ms)')
+set(ax1, 'YTick', [])
+ax1.Position = [0.1300 0.1100 0.3747 0.8150];
+
+ax2 = subplot(1,2,2);
+plot(t_artif, artif_1_train, 'Linewidth', 2)
+title('Artifact(1)')
+xlabel('Time (ms)')
+set(ax2, 'YTick', [])
+ax2.Position = [0.5303 0.1100 0.3747 0.8150];
+
+
+suptitle('First samples in training window in I521\_A0004\_D001')
 
 %% 
 % <latex>
@@ -153,6 +224,57 @@
 % <latex>
 % \textbf{Answer 2.1:} 
 % </latex>
+
+%%
+%First we'll get the time series of each observation for testing set
+%Get annotations
+dataset = session_hfo.data;
+layerName = 'Testing windows';
+[allEvents, timesUSec, channels] = getAnnotations(dataset,layerName);
+
+%%
+%parsing description and event timing and time series
+test_data = {str2double(allEvents(1).description), allEvents(1).start,...
+               allEvents(1).stop, session_hfo.data.getvalues(allEvents(1).start, allEvents(1).stop-allEvents(1).start, 1)};
+for i = 2:size(allEvents,2)
+    test_data = [test_data;{str2double(allEvents(i).description),... 
+        allEvents(i).start, allEvents(i).stop, ...
+        session_hfo.data.getvalues(allEvents(i).start, allEvents(i).stop-allEvents(i).start, 1) }];
+end
+
+%%
+%Function definition
+%LineLength
+LLFn = @(x) sum(abs(diff(x)));
+
+%Area
+AreaFn = @(x) sum(abs(x));
+
+%%
+%Calculating features for training set
+trainFeats = zeros(size(train_data,1), 2);
+
+for i = 1:size(train_data,1)
+    temp_ =train_data{i,4};
+    temp_(isnan(temp_))=0;
+    trainFeats(i,1) = LLFn(temp_);
+    trainFeats(i,2) = AreaFn(temp_);
+end
+
+%%
+%Calculating features for testing set
+testFeats = zeros(size(test_data,1), 2);
+
+for i = 1:size(test_data,1)
+    temp_ =test_data{i,4};
+    temp_(isnan(temp_))=0;
+    testFeats(i,1) = LLFn(temp_);
+    testFeats(i,2) = AreaFn(temp_);
+end
+
+
+%%
+%Scatter plot of training data
 
 %% 
 % <latex>
