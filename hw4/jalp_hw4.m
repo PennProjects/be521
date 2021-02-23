@@ -659,7 +659,7 @@ test_error_svm = size(find(Ypred_test_svm~=Y_test),1)/size(Y_test,1)
 
 %%
 %creating a randon order of training sample indices
-rand_ord = randperm(200);
+% rand_ord = randperm(200);
 %reshaping it in to a 10 cell containing 20 unique indices
 rand_ord = reshape(rand_ord, 10, []);
 knn_folds = num2cell(rand_ord, 2);
@@ -758,6 +758,59 @@ avg_val_error = mean([knn_folds{:,2}])
 % \textbf{Answer 4.3a:} 
 % </latex>
 
+%%
+%Calculating validation and training error for differnt values of k
+knn_k = 1:30;
+val_error_mul_k = zeros(1,30);
+train_error_mul_k = zeros(1,30);
+
+for k = knn_k
+    
+    for i =1:10
+    
+        %finding the index of training set
+        train_idx = idx(~ismember(idx,knn_folds{i,1}));
+        
+        %training model for folds other than i
+        X = trainFeats_norm(train_idx, :);
+        Y = cell2mat(train_data(train_idx,1));
+        knn = fitcknn(X,Y, 'NumNeighbors', k); %varrying k
+        
+        %Calculating training error
+        Ypred_train = predict(knn, X);
+        train_error = size(find(Ypred_train~=Y),1)/size(Y,1);
+        
+        %val set features
+        X_val = trainFeats_norm(knn_folds{i,1},:);
+        Y_val = cell2mat(train_data(knn_folds{i,1},1));
+        
+        %Calculating validation error
+        Ypred_val = predict(knn, X_val);
+        val_error = size(find(Ypred_val~=Y_val),1)/size(Y_val,1);
+        
+        %saving error in cell array
+        knn_folds{i,2+k} = [train_error, val_error];
+
+    end
+    
+    %Calculating average val and training error for each k
+    temp_ = [knn_folds{:,2+k}];
+    temp_ = reshape(temp_,2,[])';
+    
+    train_error_mul_k(k) = mean(temp_(:,1));
+    val_error_mul_k(k) = mean(temp_(:,2));
+end
+
+%%
+%plotting errors against k
+figure();
+plot(knn_k,train_error_mul_k*100, 'r-o')
+hold on
+plot(knn_k,val_error_mul_k*100, 'b-o')
+title('Training and Validation error for changing k - I521\_A0004\_D001')
+xlabel('k values')
+ylabel('Percentage error')
+legend('Training error', 'Validation error')
 %% 
 % <latex>
 % \item What is the optimal $k$ value and its training and testing error?
