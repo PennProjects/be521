@@ -662,9 +662,9 @@ test_error_svm = size(find(Ypred_test_svm~=Y_test),1)/size(Y_test,1)
 rand_ord = randperm(200);
 %reshaping it in to a 10 cell containing 20 unique indices
 rand_ord = reshape(rand_ord, 10, []);
-fold_index = num2cell(rand_ord, 2);
+knn_folds = num2cell(rand_ord, 2);
 
-number_of_unique_indices = length(unique([fold_index{:}]))
+number_of_unique_indices = length(unique([knn_folds{:}])) 
 %% 
 % <latex>
 %  \item Train a new $k$-NN model (still using the default parameters)
@@ -683,6 +683,39 @@ number_of_unique_indices = length(unique([fold_index{:}]))
 % </latex>
 
 %%
+%Calculating the validation error for each fold
+
+idx = 1:200;
+
+for i =1:10
+    
+    %finding the index of training set
+    train_idx = idx(~ismember(idx,knn_folds{i,1}));
+    
+    %training model for folds other than i
+    X = trainFeats_norm(train_idx, :);
+    Y = cell2mat(train_data(train_idx,1)); 
+    knn = fitcknn(X,Y, 'NumNeighbors', 1);
+    
+    %val set features
+    X_val = trainFeats_norm(knn_folds{i,1},:);
+    Y_val = cell2mat(train_data(knn_folds{i,1},1)); 
+    
+    %Calculating error
+    Ypred_train = predict(knn, X_val);
+    train_error = size(find(Ypred_train~=Y_val),1)/size(Y_val,1);
+    
+    %saving error in cell array
+    knn_folds{i,2} = train_error;
+
+end
+
+
+%%
+% The average validation error for all folds is
+avg_val_error = mean([knn_folds{:,2}])
+
+%%
 % <latex>
 % \item How does this error compare (lower,
 %    higher, the same?) to the error you found in question 3.3? Does
@@ -693,6 +726,18 @@ number_of_unique_indices = length(unique([fold_index{:}]))
 % <latex>
 % \textbf{Answer 4.2b:} 
 % </latex>
+
+%%
+% The average validation error varies everytime the folds were re- radomised, 
+% which is expected. The values I got were 15.5%, 18%, 16% etc,
+% which were all around the value of the testing error for K-nn got in
+% Q3.3, 17.86% and all of which are higher than the 0% got as the training
+% error. Both these results are as expected as by training the model on
+% data from other folds and predicting the value of a given fold, this is
+% similar to training using the complete training set and predicting the
+% testing error. As the model was trained in a different set of data from
+% the validation fold, the validation error was non-zero and was close to the values
+% for testing error in Q3.3.
 
 %% 
 % <latex>
