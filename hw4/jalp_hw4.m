@@ -279,10 +279,10 @@ hfo_train = find(cell2mat(train_data(:, 1))==2);
 artif_train = find(cell2mat(train_data(:, 1))==1);
 
 figure();
-scatter(testFeats(hfo_train,1), testFeats(hfo_train,2), 60,  'filled', 'MarkerEdgeColor', [0 0.4470 0.7410])
+scatter(trainFeats(hfo_train,1), trainFeats(hfo_train,2), 60,  'filled', 'MarkerEdgeColor', [0 0.4470 0.7410])
 
 hold on
-scatter(testFeats(artif_train, 1), testFeats(artif_train,2), 60, 'filled', 'MarkerEdgeColor', [0.8500 0.3250 0.0980])
+scatter(trainFeats(artif_train, 1), trainFeats(artif_train,2), 60, 'filled', 'MarkerEdgeColor', [0.8500 0.3250 0.0980])
 title('Training set Line Length vs Area - I521\_A0004\_D001')
 xlabel('Line Length')
 ylabel('Area')
@@ -318,7 +318,6 @@ std_ll_area = std(trainFeats);
 
 trainFeats_norm = (trainFeats-mean_ll_area)./std_ll_area;
 testFeats_norm = (testFeats-mean_ll_area) ./std_ll_area;
-
 
 %% 
 % <latex>
