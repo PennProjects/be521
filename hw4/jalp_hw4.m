@@ -401,13 +401,13 @@ Y = cell2mat(train_data(:,1));
 
 %calculating predicted probalities
 pihat = mnrval(B,X);
-[~, Ypred_train] = max(pihat, [],2);
+[~, Ypred_train_mnr] = max(pihat, [],2);
 
 %Calculating training error
-train_error = size(find(Ypred_train~=Y),1)/size(Y,1)
+train_error_mnr = size(find(Ypred_train_mnr~=Y),1)/size(Y,1)
 
 %%
-% The error in training is 12.5 %
+% The error in training is 12.5\%
 
 %% 
 % <latex>
@@ -427,13 +427,13 @@ train_error = size(find(Ypred_train~=Y),1)/size(Y,1)
 X = testFeats_norm;
 Y_test = cell2mat(test_data(:,1)); 
 pihat = mnrval(B,X);
-[~, Ypred_test] = max(pihat, [],2);
+[~, Ypred_test_mnr] = max(pihat, [],2);
 
 %Calculating training error
-test_error = size(find(Ypred_test~=Y_test),1)/size(Y_test,1)
+test_error_mnr = size(find(Ypred_test_mnr~=Y_test),1)/size(Y_test,1)
 
 %%
-% Using the trained model on the testing data, we get an error of 13.33 %.
+% Using the trained model on the testing data, we get an error of 13.33\%.
 % Which is a little higher than the testing error. This is expected as the
 % model was fit in using the training data so that coefficients of the
 % weights are more tuned to the training set as compared to the testing
@@ -464,20 +464,20 @@ knn = fitcknn(X,Y, 'NumNeighbors', 1)
 
 %%
 %Calculating training error by predicting the training set
-Ypred_train = predict(knn, X);
+Ypred_train_knn = predict(knn, X);
 
-train_error = size(find(Ypred_train~=Y),1)/size(Y,1)
+train_error_knn = size(find(Ypred_train_knn~=Y),1)/size(Y,1)
 
 %%
 %Calculating testing error using the trained knn model
 X  = testFeats_norm;
 Y_test = cell2mat(test_data(:,1)); 
-Ypred_test = predict(knn, X);
+Ypred_test_knn = predict(knn, X);
 
-test_error = size(find(Ypred_test~=Y_test),1)/size(Y_test,1)
+test_error_knn = size(find(Ypred_test_knn~=Y_test),1)/size(Y_test,1)
 
 %%
-% The training error was 0 and the testing error was 17.86 %
+% For $k$-nearest neighbors classifier, the training error was 0\% and the testing error was 17.86\%
 %%
 % <latex>
 %    \item Why is the training error zero? (2 pts) \\
@@ -489,7 +489,12 @@ test_error = size(find(Ypred_test~=Y_test),1)/size(Y_test,1)
 % </latex>
 
 %%
-% The testing error is 0 because ..
+% When predicting the class of a point in the training set with a K-NN
+% model trained with the same set, with k=1 the model with find the same
+% point as being the closest point and so it will always classify the point
+% accurately. the prediction point in this case coincide with the model
+% points so it will all predict it correctly. Hence, the training error is
+% zero.
 
 %% 
 % <latex>
@@ -504,6 +509,31 @@ test_error = size(find(Ypred_test~=Y_test),1)/size(Y_test,1)
 % <latex>
 % \textbf{Answer 3.4 :} 
 % </latex>
+
+%%
+%SVM model
+X = trainFeats_norm;
+Y = cell2mat(train_data(:,1)); 
+
+svmodel = fitcsvm(X,Y, 'KernelFunction','rbf')
+
+%%
+%Calculating training error by predicting the training set
+Ypred_train_svm = predict(svmodel, X);
+
+train_error_svm = size(find(Ypred_train_svm~=Y),1)/size(Y,1)
+
+%%
+%Calculating testing error using the trained knn model
+X  = testFeats_norm;
+Y_test = cell2mat(test_data(:,1)); 
+Ypred_test_svm = predict(svmodel, X);
+
+test_error_svm = size(find(Ypred_test_svm~=Y_test),1)/size(Y_test,1)
+
+%%
+% For the SVM classifier, the training error was 11\% and the testing error
+% was 11.43\%
 
 %% 
 % <latex>
