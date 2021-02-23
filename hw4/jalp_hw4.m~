@@ -279,10 +279,10 @@ hfo_train = find(cell2mat(train_data(:, 1))==2);
 artif_train = find(cell2mat(train_data(:, 1))==1);
 
 figure();
-scatter(testFeats(hfo_train,1), testFeats(hfo_train,2), 60,  'filled', 'MarkerEdgeColor', [0 0.4470 0.7410])
+scatter(trainFeats(hfo_train,1), trainFeats(hfo_train,2), 60,  'filled', 'MarkerEdgeColor', [0 0.4470 0.7410])
 
 hold on
-scatter(testFeats(artif_train, 1), testFeats(artif_train,2), 60, 'filled', 'MarkerEdgeColor', [0.8500 0.3250 0.0980])
+scatter(trainFeats(artif_train, 1), trainFeats(artif_train,2), 60, 'filled', 'MarkerEdgeColor', [0.8500 0.3250 0.0980])
 title('Training set Line Length vs Area - I521\_A0004\_D001')
 xlabel('Line Length')
 ylabel('Area')
@@ -318,7 +318,6 @@ std_ll_area = std(trainFeats);
 
 trainFeats_norm = (trainFeats-mean_ll_area)./std_ll_area;
 testFeats_norm = (testFeats-mean_ll_area) ./std_ll_area;
-
 
 %% 
 % <latex>
@@ -356,7 +355,11 @@ testFeats_norm = (testFeats-mean_ll_area) ./std_ll_area;
 % how the algorithm will work with new data. In doing so the test data
 % should not influence the normalization of the data as it a new and
 % unknown.\\
-% While at the same time, using the same mean and standard deviation
+% While at the same time, using the same mean and standard deviation from
+% the training set on the test set means that we are giving the same
+% standardised and uniform treatment to all the data that the algorithm
+% interacts with. This way we allow the intrinsic features of each new
+% dataset to imapact its result. 
 
 %% 
 % <latex>
@@ -388,6 +391,24 @@ testFeats_norm = (testFeats-mean_ll_area) ./std_ll_area;
 % \textbf{Answer 3.1:} 
 % </latex>
 
+%%
+%Logistic Regression Classifier
+X = trainFeats_norm;
+Y = cell2mat(train_data(:,1)); 
+
+%logistic regression
+[B,dev,stat] = mnrfit(X,Y);
+
+%calculating predicted probalities
+pihat = mnrval(B,X);
+[~, Ypred_train] = max(pihat, [],2);
+
+%Calculating training error
+train_error = size(find(Ypred_train~=Y),1)/size(Y,1)
+
+%%
+% The error in training is 12.5 %
+
 %% 
 % <latex>
 %  \item Using the model trained on the training data, predict the
@@ -400,6 +421,21 @@ testFeats_norm = (testFeats-mean_ll_area) ./std_ll_area;
 % <latex>
 % \textbf{Answer 3.2:} 
 % </latex>
+
+%%
+%calculating predicted probalities for testing set
+X = testFeats_norm;
+Y_test = cell2mat(test_data(:,1)); 
+pihat = mnrval(B,X);
+[~, Ypred_test] = max(pihat, [],2);
+
+%Calculating training error
+test_error = size(find(Ypred_test~=Y_test),1)/size(Y_test,1)
+
+%%
+% Using the trained model on the testing data, we get an error of 13.33 %.
+% Which is a little higher than the testing error. This is expected as the
+% model was trained 
 
 %% 
 % <latex>

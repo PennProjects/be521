@@ -391,6 +391,24 @@ testFeats_norm = (testFeats-mean_ll_area) ./std_ll_area;
 % \textbf{Answer 3.1:} 
 % </latex>
 
+%%
+%Logistic Regression Classifier
+X = trainFeats_norm;
+Y = cell2mat(train_data(:,1)); 
+
+%logistic regression
+[B,dev,stat] = mnrfit(X,Y);
+
+%calculating predicted probalities
+pihat = mnrval(B,X);
+[~, Ypred_train] = max(pihat, [],2);
+
+%Calculating training error
+train_error = size(find(Ypred_train~=Y),1)/size(Y,1)
+
+%%
+% The error in training is 12.5 %
+
 %% 
 % <latex>
 %  \item Using the model trained on the training data, predict the
@@ -403,6 +421,25 @@ testFeats_norm = (testFeats-mean_ll_area) ./std_ll_area;
 % <latex>
 % \textbf{Answer 3.2:} 
 % </latex>
+
+%%
+%calculating predicted probalities for testing set
+X = testFeats_norm;
+Y_test = cell2mat(test_data(:,1)); 
+pihat = mnrval(B,X);
+[~, Ypred_test] = max(pihat, [],2);
+
+%Calculating training error
+test_error = size(find(Ypred_test~=Y_test),1)/size(Y_test,1)
+
+%%
+% Using the trained model on the testing data, we get an error of 13.33 %.
+% Which is a little higher than the testing error. This is expected as the
+% model was fit in using the training data so that coefficients of the
+% weights are more tuned to the training set as compared to the testing
+% set. Since the testing set has new data that more likely wil not have
+% that same composition as the traning set we would observe a slightly
+% higher error realistically. 
 
 %% 
 % <latex>
