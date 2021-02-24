@@ -558,7 +558,7 @@ test_error_knn = size(find(Ypred_test_knn~=Y_test),1)/size(Y_test,1)
 
 %% 
 % <latex>
-% \textbf{Answer 3.4 :} 
+% \textbf{Answer 3.4:} 
 % </latex>
 
 %%
@@ -581,6 +581,7 @@ Y_test = cell2mat(test_data(:,1));
 Ypred_test_svm = predict(svmodel, X);
 
 test_error_svm = size(find(Ypred_test_svm~=Y_test),1)/size(Y_test,1)
+
 
 %%
 % For the SVM classifier, the training error was 11% and the testing error
@@ -610,8 +611,51 @@ test_error_svm = size(find(Ypred_test_svm~=Y_test),1)/size(Y_test,1)
 % </latex>
 
 %%
+%calculating decision boundaries
+ll = 0:0.1:5.5;
+ar = 0:1:55;
+
+[LL,AR] = meshgrid(ll,ar);
+LL = reshape(LL, [], 1);
+AR = reshape(AR,[],1);
+
+%normalising grid
+grid = [LL,AR];
+grid_norm = (grid-mean_ll_area)./std_ll_area;
+
+%%
+%Logistic regression plot
+X = trainFeats_norm;
+Y = cell2mat(train_data(:,1)); 
+
+%logistic regression
+[B,dev,stat] = mnrfit(X,Y);
+pihat_grid = mnrval(B,grid_norm);
+[~, Ypred_grid] = max(pihat_grid, [],2);
+
+yel = find(Ypred_grid(:,1)==1);
+cya = find(Ypred_grid(:,1)==2);
 
 
+hfo_train = find(Y(:,1)==2);
+artif_train = find(Y(:,1)==1);
+
+
+
+%%
+figure();
+scatter(grid_norm(yel,1), grid_norm(yel,2), 60,  'filled', 'MarkerFaceColor',[0.9290 0.6940 0.1250])
+hold on
+scatter(grid_norm(cya, 1), grid_norm(cya,2), 60, 'filled', 'MarkerFaceColor', [0.3010 0.7450 0.9330])
+
+%training set
+scatter(trainFeats_norm(hfo_train,1), trainFeats(hfo_train,2), 60,  'filled', 'MarkerEdgeColor', [0 0.4470 0.7410])
+scatter(trainFeats(artif_train, 1), trainFeats(artif_train,2), 60, 'filled', 'MarkerEdgeColor', [0.8500 0.3250 0.0980])
+
+
+title('Training set Line Length vs Area - I521\_A0004\_D001')
+xlabel('Line Length')
+ylabel('Area')
 %% 
 % <latex>
 %  \item In a few sentences, report some observations about the three
@@ -903,8 +947,8 @@ test_error_opt = size(find(Ypred_test~=Y_test),1)/size(Y_test,1)
 % Comparing to the errors calculated in the other models, the logistic
 % regression gave an error of 13.33% and the SVN gave an error of 11.43%
 % for the the testing data. The optimised %k% has shown better results than
-% the older $k$-NN and the logistic regression model and has the same error
-% as the SVM classifier
+% the older $k$-NN model and the logistic regression model and has the same error
+% as the SVM classifier. 
 
 %% 
 % <latex>
