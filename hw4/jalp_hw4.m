@@ -779,6 +779,17 @@ ylim([-3,5])
 % \textbf{Answer 3.6:} 
 % </latex>
 
+%%
+% In the three plots we can se the varying levels of agression of fitting
+% the data. The KNN classifier with k=1 looks the most agressive and
+% overfit where it tries to get regions for even single points. This overfitting has caused it to 
+% wrongly classify the most number of testing samples. $\\$ The SVN is
+% the next most agressive classifier where it has tried to reach for most
+% possible points in one closed boundary. We can visually also see why it
+% has the least training error. $\\$. The Logistic regression classifier
+% seems like underfit where several training and testing samples are
+% classified incorrectly.
+
 %% 
 % <latex>
 % \end{enumerate}
@@ -814,7 +825,7 @@ ylim([-3,5])
 
 %%
 %creating a randon order of training sample indices
-% rand_ord = randperm(200);
+rand_ord = randperm(200);
 %reshaping it in to a 10 cell containing 20 unique indices
 rand_ord = reshape(rand_ord, 10, []);
 knn_folds = num2cell(rand_ord, 2);

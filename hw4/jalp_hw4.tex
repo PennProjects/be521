@@ -152,26 +152,27 @@ The number of samples for HFO is 101 and that for artifacts is 99.
 \begin{lstlisting}
 %test_raw_norm = session_hfo.data.getvalues(0, duration_in_sec_hfo * 1e6, 1);
 %fetching first occurance of HFO
+i= 1;
 fs = sampling_frequency_hz_hfo;
-t_hfo = train_data{hfo_train(1),2}/1e3 : 1e3/fs : train_data{hfo_train(1),3}/1e3;
-hfo_1_train = train_data{hfo_train(1), 4};
+t_hfo = train_data{hfo_train(i),2}/1e3 : 1e3/fs : train_data{hfo_train(i),3}/1e3;
+hfo_1_train = train_data{hfo_train(i), 4};
 
 %fetching first occurance of artifact
-t_artif = train_data{artif_train(1),2}/1e3 : 1e3/fs : train_data{artif_train(1),3}/1e3;
-artif_1_train = train_data{artif_train(1), 4};
+t_artif = train_data{artif_train(i),2}/1e3 : 1e3/fs : train_data{artif_train(i),3}/1e3;
+artif_1_train = train_data{artif_train(i), 4};
 \end{lstlisting}
 \begin{lstlisting}
 %plots
 figure();
 ax1 = subplot(1,2,1);
-plot(t_hfo, hfo_1_train, 'Linewidth', 2);
+plot(t_hfo, hfo_1_train, 'Linewidth', 1.5);
 title('HFO(1)')
 xlabel('Time (ms)')
 set(ax1, 'YTick', [])
 ax1.Position = [0.1300 0.1100 0.3747 0.8150];
 
 ax2 = subplot(1,2,2);
-plot(t_artif, artif_1_train, 'Linewidth', 2)
+plot(t_artif, artif_1_train, 'Linewidth', 1.5)
 title('Artifact(1)')
 xlabel('Time (ms)')
 set(ax2, 'YTick', [])
@@ -198,7 +199,7 @@ suptitle('First samples in training window in I521\_A0004\_D001')
 
 FIR Bandpass filter Magnitude response:
 
-\includegraphics{screenshot_p1q3.png}
+\includegraphics[scale=0.4]{screenshot_p1q3.png}
 
 
     \item Using the forward-backward filter function
@@ -214,17 +215,46 @@ FIR Bandpass filter Magnitude response:
 \textbf{Answer 1.4:}
 
 \begin{lstlisting}
-b = load('./fir_staba.mat')
+load('./fir_staba.mat')
+b = fir_b;
+a = 1;
+
+hfo_1_filter = filtfilt(b,a,hfo_1_train);
+artif_1_filter = filtfilt(b,a,artif_1_train);
+\end{lstlisting}
+\begin{lstlisting}
+%plots
+figure();
+ax1 = subplot(1,2,1);
+plot(t_hfo, hfo_1_train, 'Linewidth', 0.5);
+hold on
+plot(t_hfo, hfo_1_filter, 'Linewidth', 1.2);
+hold off
+title('HFO(1)')
+xlabel('Time (ms)')
+ylim([1.1*min(hfo_1_train), 1.2*max(hfo_1_train)])
+legend('raw HFO','filtered HFO', 'Location','northwest')
+set(ax1, 'YTick', [])
+ax1.Position = [0.1300 0.1100 0.3747 0.8150];
+
+ax2 = subplot(1,2,2);
+plot(t_artif, artif_1_train, 'Linewidth', 0.5)
+hold on
+plot(t_artif, artif_1_filter, 'Linewidth', 1.2)
+hold off
+title('Artifact(1)')
+xlabel('Time (ms)')
+ylim([1.1*min(artif_1_train), 1.5*max(artif_1_train)])
+legend('raw artifacts','filtered artifacts')
+set(ax2, 'YTick', [])
+ax2.Position = [0.5303 0.1100 0.3747 0.8150];
+
+
+suptitle('FIR filter on training data in I521\_A0004\_D001')
 \end{lstlisting}
 
-\color{lightgray} \begin{lstlisting}
-b = 
 
-  struct with fields:
-
-    Num: [1×101 double]
-
-\end{lstlisting} \color{black}
+\includegraphics [width=5in]{jalp_hw4_02.png}
 
     \item Speculate how processing the data using Staba's method may
     have erroneously led to a false HFO detection (3 pts) \\
@@ -232,6 +262,7 @@ b =
 
 \textbf{Answer 1.5:}
 
+The processing in Staba ..
 
 \end{enumerate}
 \section{Defining Features for HFOs (9 pts)} In this section we will
@@ -277,7 +308,7 @@ end
 \end{lstlisting}
 
 
-\includegraphics [width=5in]{jalp_hw4_02.png}
+\includegraphics [width=5in]{jalp_hw4_03.png}
 \begin{lstlisting}
 %Function definition
 %LineLength
@@ -314,10 +345,10 @@ hfo_train = find(cell2mat(train_data(:, 1))==2);
 artif_train = find(cell2mat(train_data(:, 1))==1);
 
 figure();
-scatter(trainFeats(hfo_train,1), trainFeats(hfo_train,2), 60,  'filled', 'MarkerEdgeColor', [0 0.4470 0.7410])
+scatter(trainFeats(hfo_train,1), trainFeats(hfo_train,2), 60,  'filled', 'MarkerFaceColor', [0 0.4470 0.7410])
 
 hold on
-scatter(trainFeats(artif_train, 1), trainFeats(artif_train,2), 60, 'filled', 'MarkerEdgeColor', [0.8500 0.3250 0.0980])
+scatter(trainFeats(artif_train, 1), trainFeats(artif_train,2), 60, 'filled', 'MarkerFaceColor', [0.8500 0.3250 0.0980])
 title('Training set Line Length vs Area - I521\_A0004\_D001')
 xlabel('Line Length')
 ylabel('Area')
@@ -325,7 +356,7 @@ legend('HFOs','artifacts')
 \end{lstlisting}
 
 
-\includegraphics [width=5in]{jalp_hw4_03.png}
+\includegraphics [width=5in]{jalp_hw4_04.png}
 
     \item Feature normalization is often important. One simple
     normalization method is to subtract each feature by its mean and
@@ -341,7 +372,7 @@ legend('HFOs','artifacts')
 
 \textbf{Answer 2.2a:}
 
-The statistical term for the normalized value is a \ensuremath{\backslash}emph\{Z-score\}. It tells us how many standard deviations above or below the mean the given value is.
+The statistical term for the normalized value is a \%\ensuremath{\backslash}emph\{Z-score\}\%. It tells us how many standard deviations above or below the mean the given value is.
 \begin{lstlisting}
 %Calculating normalized feature values
 mean_ll_area  = mean(trainFeats);
@@ -365,7 +396,7 @@ Machine learning algorithms like $k$-NN classifiers can be influenced by the mag
 
 \textbf{Answer 2.2c:}
 
-The test set is suppose to represent new unkown data that is used to test how the algorithm will work with new data. In doing so the test data should not influence the normalization of the data as it a new and unknown.\ensuremath{\backslash}\ensuremath{\backslash} While at the same time, using the same mean and standard deviation from the training set on the test set means that we are giving the same standardised and uniform treatment to all the data that the algorithm interacts with. This way we allow the intrinsic features of each new dataset to imapact its result.
+The test set is suppose to represent new unknown data that is used to test how the algorithm will work with new data. In doing so the test data should not influence the normalization of the data as it a new and unknown.\$\ensuremath{\backslash}\ensuremath{\backslash}\$ While at the same time, using the same mean and standard deviation from the training set on the test set means that we are giving the same standardised and uniform treatment to all the data that the algorithm interacts with. This way we allow the intrinsic features of each new data-set to impact its result.
 
     \end{enumerate}
 \end{enumerate}
@@ -414,7 +445,7 @@ train_error_mnr =
     0.1250
 
 \end{lstlisting} \color{black}
-The error in training is 12.5\ensuremath{\backslash}\%
+The error in training is 12.5\%
 
  \item Using the model trained on the training data, predict the
  labels of the test samples and calculate the testing error. Is the
@@ -441,7 +472,7 @@ test_error_mnr =
     0.1333
 
 \end{lstlisting} \color{black}
-Using the trained model on the testing data, we get an error of 13.33\ensuremath{\backslash}\%. Which is a little higher than the testing error. This is expected as the model was fit in using the training data so that coefficients of the weights are more tuned to the training set as compared to the testing set. Since the testing set has new data that more likely wil not have that same composition as the traning set we would observe a slightly higher error realistically.
+Using the trained model on the testing data, we get an error of 13.33\%.\%\ensuremath{\backslash}\ensuremath{\backslash}\% Which is a little higher than the testing error. This is expected as the model was fit in using the training data so that coefficients of the weights are more tuned to the training set as compared to the testing set. Since the testing set has new data that more likely wil not have that same composition as the traning set we would observe a slightly higher error realistically.
 
  \item
   \begin{enumerate}
@@ -502,7 +533,7 @@ test_error_knn =
     0.1786
 
 \end{lstlisting} \color{black}
-For $k$-nearest neighbors classifier, the training error was 0\ensuremath{\backslash}\% and the testing error was 17.86\ensuremath{\backslash}\%
+For $k$-nearest neighbors classifier, the training error was 0\% and the testing error was 17.86\%
 
    \item Why is the training error zero? (2 pts) \\
 
@@ -518,7 +549,7 @@ When predicting the class of a point in the training set with a K-NN model train
  while keeping other parameters at their default values. (3 pts) \\
 
 
-\textbf{Answer 3.4 :}
+\textbf{Answer 3.4:}
 
 \begin{lstlisting}
 %SVM model
@@ -575,7 +606,7 @@ test_error_svm =
     0.1143
 
 \end{lstlisting} \color{black}
-For the SVM classifier, the training error was 11\ensuremath{\backslash}\% and the testing error was 11.43\ensuremath{\backslash}\%
+For the SVM classifier, the training error was 11\% and the testing error was 11.43\%
 
  \item It is sometimes useful to visualize the decision boundary of
  a classifier. To do this, we'll plot the classifier's prediction
@@ -595,6 +626,168 @@ For the SVM classifier, the training error was 11\ensuremath{\backslash}\% and t
 
 \textbf{Answer 3.5:}
 
+\begin{lstlisting}
+%calculating decision boundaries
+ll = -4:0.1:4;
+ar = -3:0.1:5;
+
+[LL,AR] = meshgrid(ll,ar);
+LL = reshape(LL, [], 1);
+AR = reshape(AR,[],1);
+
+grid_norm = [LL,AR];
+\end{lstlisting}
+\begin{lstlisting}
+%Logistic regression plot
+X = trainFeats_norm;
+Y = cell2mat(train_data(:,1));
+
+%logistic regression
+[B,dev,stat] = mnrfit(X,Y);
+pihat_grid = mnrval(B,grid_norm);
+[~, Ypred_grid] = max(pihat_grid, [],2);
+
+yel = find(Ypred_grid(:,1)==1);
+cya = find(Ypred_grid(:,1)==2);
+
+%training index
+hfo_train = find(Y(:,1)==2);
+artif_train = find(Y(:,1)==1);
+
+%testing points
+X = testFeats_norm;
+Y_test = cell2mat(test_data(:,1));
+pihat = mnrval(B,X);
+[~, Ypred_test_mnr] = max(pihat, [],2);
+
+%testing index
+hfo_test = find(Ypred_test_mnr(:,1)==2);
+artif_test = find(Ypred_test_mnr(:,1)==1);
+\end{lstlisting}
+\begin{lstlisting}
+figure();
+scatter(grid_norm(yel,1), grid_norm(yel,2), 60,  'filled', 'MarkerFaceColor',[0.3010 0.7450 0.9330])
+hold on
+scatter(grid_norm(cya, 1), grid_norm(cya,2), 60, 'filled', 'MarkerFaceColor', [0.9290 0.6940 0.1250]) %HFO
+
+%training set
+scatter(trainFeats_norm(hfo_train,1), trainFeats_norm(hfo_train,2),'*', 'MarkerEdgeColor', [0 0.4470 0.7410])
+scatter(trainFeats_norm(artif_train, 1), trainFeats_norm(artif_train,2), '*', 'MarkerEdgeColor', [0.8500 0.3250 0.0980])
+
+%testing set
+scatter(testFeats_norm(hfo_test,1), testFeats_norm(hfo_test,2), 60, 'filled' ,'MarkerFaceColor', [0 0.4470 0.7410])
+scatter(testFeats_norm(artif_test, 1), testFeats_norm(artif_test,2), 60, 'filled','MarkerFaceColor', [0.8500 0.3250 0.0980])
+
+title('Logistic Regression Classifier Line Length vs Area - I521\_A0004\_D001')
+xlabel('Normalized Line Length')
+ylabel('Normalized Area')
+xlim([-4,4])
+ylim([-3,5])
+\end{lstlisting}
+
+
+\includegraphics [width=5in]{jalp_hw4_05.png}
+\begin{lstlisting}
+%KNN plot
+X = trainFeats_norm;
+Y = cell2mat(train_data(:,1));
+
+%KNN building
+knn = fitcknn(X,Y, 'NumNeighbors', 1);
+
+%grid classification
+Ypred_grid = predict(knn, grid_norm);
+
+yel = find(Ypred_grid(:,1)==1);
+cya = find(Ypred_grid(:,1)==2);
+
+%training index
+hfo_train = find(Y(:,1)==2);
+artif_train = find(Y(:,1)==1);
+
+%testing points
+X  = testFeats_norm;
+Y_test = cell2mat(test_data(:,1));
+Ypred_test_knn = predict(knn, X);
+
+%testing index
+hfo_test = find(Ypred_test_mnr(:,1)==2);
+artif_test = find(Ypred_test_mnr(:,1)==1);
+\end{lstlisting}
+\begin{lstlisting}
+figure();
+scatter(grid_norm(yel,1), grid_norm(yel,2), 60,  'filled', 'MarkerFaceColor',[0.3010 0.7450 0.9330])
+hold on
+scatter(grid_norm(cya, 1), grid_norm(cya,2), 60, 'filled', 'MarkerFaceColor', [0.9290 0.6940 0.1250]) %HFO
+
+%training set
+scatter(trainFeats_norm(hfo_train,1), trainFeats_norm(hfo_train,2),'*', 'MarkerEdgeColor', [0 0.4470 0.7410])
+scatter(trainFeats_norm(artif_train, 1), trainFeats_norm(artif_train,2), '*', 'MarkerEdgeColor', [0.8500 0.3250 0.0980])
+
+%testing set
+scatter(testFeats_norm(hfo_test,1), testFeats_norm(hfo_test,2), 60, 'filled' ,'MarkerFaceColor', [0 0.4470 0.7410])
+scatter(testFeats_norm(artif_test, 1), testFeats_norm(artif_test,2), 60, 'filled','MarkerFaceColor', [0.8500 0.3250 0.0980])
+
+title('KNN Line Length vs Area - I521\_A0004\_D001')
+xlabel('Normalized Line Length')
+ylabel('Normalized Area')
+xlim([-4,4])
+ylim([-3,5])
+\end{lstlisting}
+
+
+\includegraphics [width=5in]{jalp_hw4_06.png}
+\begin{lstlisting}
+%SVN plot
+X = trainFeats_norm;
+Y = cell2mat(train_data(:,1));
+
+%SVN model building
+svmodel = fitcsvm(X,Y, 'KernelFunction','rbf');
+
+
+%grid classification
+Ypred_grid = predict(svmodel, grid_norm);
+
+yel = find(Ypred_grid(:,1)==1);
+cya = find(Ypred_grid(:,1)==2);
+
+%training index
+hfo_train = find(Y(:,1)==2);
+artif_train = find(Y(:,1)==1);
+
+%testing points
+X  = testFeats_norm;
+Y_test = cell2mat(test_data(:,1));
+Ypred_test_knn = predict(svmodel, X);
+
+%testing index
+hfo_test = find(Ypred_test_mnr(:,1)==2);
+artif_test = find(Ypred_test_mnr(:,1)==1);
+\end{lstlisting}
+\begin{lstlisting}
+figure();
+scatter(grid_norm(yel,1), grid_norm(yel,2), 60,  'filled', 'MarkerFaceColor',[0.3010 0.7450 0.9330])
+hold on
+scatter(grid_norm(cya, 1), grid_norm(cya,2), 60, 'filled', 'MarkerFaceColor', [0.9290 0.6940 0.1250]) %HFO
+
+%training set
+scatter(trainFeats_norm(hfo_train,1), trainFeats_norm(hfo_train,2),'*', 'MarkerEdgeColor', [0 0.4470 0.7410])
+scatter(trainFeats_norm(artif_train, 1), trainFeats_norm(artif_train,2), '*', 'MarkerEdgeColor', [0.8500 0.3250 0.0980])
+
+%testing set
+scatter(testFeats_norm(hfo_test,1), testFeats_norm(hfo_test,2), 60, 'filled' ,'MarkerFaceColor', [0 0.4470 0.7410])
+scatter(testFeats_norm(artif_test, 1), testFeats_norm(artif_test,2), 60, 'filled','MarkerFaceColor', [0.8500 0.3250 0.0980])
+
+title('SVN Line Length vs Area - I521\_A0004\_D001')
+xlabel('Normalized Line Length')
+ylabel('Normalized Area')
+xlim([-4,4])
+ylim([-3,5])
+\end{lstlisting}
+
+
+\includegraphics [width=5in]{jalp_hw4_07.png}
 
  \item In a few sentences, report some observations about the three
  plots, especially similarities and differences between them. Which
@@ -633,6 +826,21 @@ training data).
 
 \textbf{Answer 4.1:}
 
+\begin{lstlisting}
+%creating a randon order of training sample indices
+% rand_ord = randperm(200);
+%reshaping it in to a 10 cell containing 20 unique indices
+rand_ord = reshape(rand_ord, 10, []);
+knn_folds = num2cell(rand_ord, 2);
+
+number_of_unique_indices = length(unique([knn_folds{:}]))
+\end{lstlisting}
+
+\color{lightgray} \begin{lstlisting}Unrecognized function or variable 'rand_ord'.
+
+Error in jalp_hw4 (line 819)
+rand_ord = reshape(rand_ord, 10, []);
+\end{lstlisting} \color{black}
 
  \item Train a new $k$-NN model (still using the default parameters)
  on the folds you just created. Predict the labels for each fold
@@ -646,6 +854,38 @@ training data).
 
 \textbf{Answer 4.2a:}
 
+\begin{lstlisting}
+%Calculating the validation error for each fold
+
+idx = 1:200;
+
+for i =1:10
+
+    %finding the index of training set
+    train_idx = idx(~ismember(idx,knn_folds{i,1}));
+
+    %training model for folds other than i
+    X = trainFeats_norm(train_idx, :);
+    Y = cell2mat(train_data(train_idx,1));
+    knn = fitcknn(X,Y, 'NumNeighbors', 1);
+
+    %val set features
+    X_val = trainFeats_norm(knn_folds{i,1},:);
+    Y_val = cell2mat(train_data(knn_folds{i,1},1));
+
+    %Calculating error
+    Ypred_train = predict(knn, X_val);
+    train_error = size(find(Ypred_train~=Y_val),1)/size(Y_val,1);
+
+    %saving error in cell array
+    knn_folds{i,2} = train_error;
+
+end
+\end{lstlisting}
+The average validation error for all folds is
+\begin{lstlisting}
+avg_val_error = mean([knn_folds{:,2}])
+\end{lstlisting}
 
 \item How does this error compare (lower,
    higher, the same?) to the error you found in question 3.3? Does
@@ -654,6 +894,7 @@ training data).
 
 \textbf{Answer 4.2b:}
 
+The average validation error varies everytime the folds were re- radomised, which is expected. The values I got were 15.5\%, 18\%, 16\% etc, which were all around the value of the testing error for K-nn got in Q3.3, 17.86\% and all of which are higher than the 0\% got as the training error. Both these results are as expected as by training the model on data from other folds and predicting the value of a given fold, this is similar to training using the complete training set and predicting the testing error. As the model was trained in a different set of data from the validation fold, the validation error was non-zero and was close to the values for testing error in Q3.3.
 
   \end{enumerate}
  \item Create a parameter space for your $k$-NN model by setting a
@@ -669,6 +910,60 @@ training data).
 
 \textbf{Answer 4.3a:}
 
+\begin{lstlisting}
+%Calculating validation and training error for differnt values of k
+knn_k = 1:30;
+val_error_mul_k = zeros(1,30);
+train_error_mul_k = zeros(1,30);
+
+for k = knn_k
+
+    for i =1:10
+
+        %finding the index of training set
+        train_idx = idx(~ismember(idx,knn_folds{i,1}));
+
+        %training model for folds other than i
+        X = trainFeats_norm(train_idx, :);
+        Y = cell2mat(train_data(train_idx,1));
+        knn = fitcknn(X,Y, 'NumNeighbors', k); %varrying k
+
+        %Calculating training error
+        Ypred_train = predict(knn, X);
+        train_error = size(find(Ypred_train~=Y),1)/size(Y,1);
+
+        %val set features
+        X_val = trainFeats_norm(knn_folds{i,1},:);
+        Y_val = cell2mat(train_data(knn_folds{i,1},1));
+
+        %Calculating validation error
+        Ypred_val = predict(knn, X_val);
+        val_error = size(find(Ypred_val~=Y_val),1)/size(Y_val,1);
+
+        %saving error in cell array
+        knn_folds{i,2+k} = [train_error, val_error];
+
+    end
+
+    %Calculating average val and training error for each k
+    temp_ = [knn_folds{:,2+k}];
+    temp_ = reshape(temp_,2,[])';
+
+    train_error_mul_k(k) = mean(temp_(:,1));
+    val_error_mul_k(k) = mean(temp_(:,2));
+end
+\end{lstlisting}
+\begin{lstlisting}
+%plotting errors against k
+figure();
+plot(knn_k,train_error_mul_k*100, 'r-o')
+hold on
+plot(knn_k,val_error_mul_k*100, 'b-o')
+title('Training and Validation error for changing k - I521\_A0004\_D001')
+xlabel('k values')
+ylabel('Percentage error')
+legend('Training error', 'Validation error')
+\end{lstlisting}
 
 \item What is the optimal $k$ value and its training and testing error?
 (1 pts) \\
@@ -676,6 +971,7 @@ training data).
 
 \textbf{Answer 4.3b:}
 
+As we increase the value of $k$ from 1:30 the validation error decreases and the traning error increases to reach stable values. The optimal k would be the one that gives the minimum value for the both the training and the validation errore. $\\$. Based on the graph, choosing a k from 26-30 should give similar results. I will choose a k=29 as the trend of error seems to be at the lowest point and the model will be more stable with new test data for a high k. With the current randomization of folds I get a validation error of 12.5\% and a training error of 12.28\%
 
    \item Explain why $k$-NN generally overfits less with higher
    values of $k$. (2 pts) \\
@@ -683,6 +979,7 @@ training data).
 
 \textbf{Answer 4.3c:}
 
+For smaller values of k the classifier is only looking a 1 nearest neighbor and so is very aggresive in fitting to every point in the training set. This causes an overfit. As k increases, the number of nearest neighbors considered increses and hence this smoothens fit and removed the micro level jaggednes of the classification boundary. As k increases we start seeing more of an average over several points which prevents overfitting and gives a more generic fit to the data.
 
   \end{enumerate}
  \item
@@ -693,6 +990,20 @@ training data).
 
 \textbf{Answer 4.4a:}
 
+\begin{lstlisting}
+%Calculating testing error for optimal k
+k = 29;
+X = trainFeats_norm;
+Y = cell2mat(train_data(:,1));
+knn = fitcknn(X,Y, 'NumNeighbors', k);
+
+X_test  = testFeats_norm;
+Y_test = cell2mat(test_data(:,1));
+Ypred_test = predict(knn, X_test);
+
+test_error_opt = size(find(Ypred_test~=Y_test),1)/size(Y_test,1)
+\end{lstlisting}
+With a $k$ of 29, the testing error is 11.43\%
 
 \item How does this
    model's testing error compare to the $k$-NN model
@@ -702,6 +1013,7 @@ training data).
 
 \textbf{Answer 4.4b:}
 
+The testing error with $k$=29 is 11.43\% while that with $k$=1 in Q3.3 was 17.86\%, so the testing error has dropped with the increase in $k$. \%\ensuremath{\backslash}\ensuremath{\backslash}\% Comparing to the errors calculated in the other models, the logistic regression gave an error of 13.33\% and the SVN gave an error of 11.43\% for the the testing data. The optimised \%k\% has shown better results than the older $k$-NN model and the logistic regression model and has the same error as the SVM classifier.
 
   \end{enumerate}
 \end{enumerate}

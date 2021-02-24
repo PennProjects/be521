@@ -724,7 +724,7 @@ X = trainFeats_norm;
 Y = cell2mat(train_data(:,1)); 
 
 %SVN model building
-svmodel = fitcsvm(X,Y, 'KernelFunction','rbf')
+svmodel = fitcsvm(X,Y, 'KernelFunction','rbf');
 
 
 %grid classification
@@ -746,6 +746,26 @@ Ypred_test_knn = predict(svmodel, X);
 hfo_test = find(Ypred_test_mnr(:,1)==2);
 artif_test = find(Ypred_test_mnr(:,1)==1);
 
+%%
+figure();
+scatter(grid_norm(yel,1), grid_norm(yel,2), 60,  'filled', 'MarkerFaceColor',[0.3010 0.7450 0.9330])
+hold on
+scatter(grid_norm(cya, 1), grid_norm(cya,2), 60, 'filled', 'MarkerFaceColor', [0.9290 0.6940 0.1250]) %HFO
+
+%training set
+scatter(trainFeats_norm(hfo_train,1), trainFeats_norm(hfo_train,2),'*', 'MarkerEdgeColor', [0 0.4470 0.7410])
+scatter(trainFeats_norm(artif_train, 1), trainFeats_norm(artif_train,2), '*', 'MarkerEdgeColor', [0.8500 0.3250 0.0980])
+
+%testing set
+scatter(testFeats_norm(hfo_test,1), testFeats_norm(hfo_test,2), 60, 'filled' ,'MarkerFaceColor', [0 0.4470 0.7410])
+scatter(testFeats_norm(artif_test, 1), testFeats_norm(artif_test,2), 60, 'filled','MarkerFaceColor', [0.8500 0.3250 0.0980])
+
+title('SVN Line Length vs Area - I521\_A0004\_D001')
+xlabel('Normalized Line Length')
+ylabel('Normalized Area')
+xlim([-4,4])
+ylim([-3,5])
+
 %% 
 % <latex>
 %  \item In a few sentences, report some observations about the three
@@ -758,6 +778,15 @@ artif_test = find(Ypred_test_mnr(:,1)==1);
 % <latex>
 % \textbf{Answer 3.6:} 
 % </latex>
+
+%%
+% In the three plots we can se the varying levels of agression of fitting
+% the data. The KNN classifier with k=1 looks the most agressive and
+% overfit where it tries to get regions for even single points. This overfitting has caused it to 
+% wrongly classify the most number of testing samples. $\\$ The SVN is
+% the next most agressive classifier where it has tried to reach for most
+% possible points in one closed boundary. We can visually also see why it
+% has the least training error. $\\$. The Logistic 
 
 %% 
 % <latex>
@@ -794,7 +823,7 @@ artif_test = find(Ypred_test_mnr(:,1)==1);
 
 %%
 %creating a randon order of training sample indices
-% rand_ord = randperm(200);
+rand_ord = randperm(200);
 %reshaping it in to a 10 cell containing 20 unique indices
 rand_ord = reshape(rand_ord, 10, []);
 knn_folds = num2cell(rand_ord, 2);
