@@ -5,8 +5,7 @@
 % cross-validation </latex>
 
 %% 
-% <latex> \begin{center} \author{Jal Mahendra Panchal \\
-%   \normalsize Collaborators: COLLABORATORS HERE \\}
+% <latex> \begin{center} \author{Jal Mahendra Panchal}
 % \end{center} 
 % </latex>
 
@@ -243,7 +242,16 @@ suptitle('FIR filter on training data in I521\_A0004\_D001')
 % </latex>
 
 %%
-% The processing in Staba ..
+% The processing of data using Staba's method involves using a equiripple
+% bandpass filter. From the image of the filtered artifacts signal above we
+% see that it the original noisy artifact signal has been converted to a sinosoidal
+% signal. Depending on how the HFO detection algorithms work, its peak and
+% profile can very easily be mistaken for a HFO. The filtering of high
+% frequencies and low frequenncy variations and possibly the impact of the
+% filter windows is amplifying mid frequency signals in the filtered
+% artifact signal which looks similar in profile as the valid HFO signals.
+% These reason could cause Staba's method to erroneously lead to false HFO
+% detection.\\
 
 %% 
 % <latex>

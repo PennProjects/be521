@@ -243,7 +243,11 @@ suptitle('FIR filter on training data in I521\_A0004\_D001')
 % </latex>
 
 %%
-% The processing in Staba ..
+% The processing of data using Staba's method involves using a equiripple
+% bandpass filter. From the image of the filtered artifacts signal above we
+% see that it the original noise signal has been converted to a sinosoidal
+% signal. Depending on how the HFO detection algorithms work, its peak and
+% profile can very easily be mistaken for a HFO. 
 
 %% 
 % <latex>
@@ -786,7 +790,9 @@ ylim([-3,5])
 % wrongly classify the most number of testing samples. $\\$ The SVN is
 % the next most agressive classifier where it has tried to reach for most
 % possible points in one closed boundary. We can visually also see why it
-% has the least training error. $\\$. The Logistic 
+% has the least training error. $\\$. The Logistic regression classifier
+% seems like underfit where several training and testing samples are
+% classified incorrectly.
 
 %% 
 % <latex>

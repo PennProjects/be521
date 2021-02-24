@@ -26,8 +26,7 @@
 \\{\normalsize Spring 2021}} \author{58 points} \date{Due: Tuesday,
 2/23/2021 10:00pm} \maketitle \textbf{Objective:} HFO detection and
 cross-validation 
- \begin{center} \author{Jal Mahendra Panchal \\
-  \normalsize Collaborators: COLLABORATORS HERE \\}
+ \begin{center} \author{Jal Mahendra Panchal}
 \end{center}
 
 
@@ -92,6 +91,12 @@ datestr(seconds(duration_in_sec_hfo),'HH:MM:SS:FFF')
 \end{lstlisting}
 
 \color{lightgray} \begin{lstlisting}IEEGSETUP: Adding 'ieeg-matlab.jar' to dynamic classpath
+Warning: Objects of
+edu/upenn/cis/db/mefview/services/TimeSeriesDetails
+class exist - not clearing java 
+Warning: Objects of
+edu/upenn/cis/db/mefview/services/TimeSeriesInterface
+class exist - not clearing java 
 IEEGSETUP: Found log4j on Java classpath.
 URL: https://www.ieeg.org/services
 Client user: jalpanchal
@@ -102,6 +107,9 @@ ans =
     '00:00:09:466'
 
 \end{lstlisting} \color{black}
+
+
+\includegraphics [width=5in]{jalp_hw4_01.png}
 \begin{lstlisting}
 %Get annotations
 dataset = session_hfo.data;
@@ -183,7 +191,7 @@ suptitle('First samples in training window in I521\_A0004\_D001')
 \end{lstlisting}
 
 
-\includegraphics [width=5in]{jalp_hw4_01.png}
+\includegraphics [width=5in]{jalp_hw4_02.png}
 
     \item Using the \texttt{fdatool} in MATLAB, build an FIR
     bandpass filter of the equiripple type of order 100.
@@ -254,7 +262,7 @@ suptitle('FIR filter on training data in I521\_A0004\_D001')
 \end{lstlisting}
 
 
-\includegraphics [width=5in]{jalp_hw4_02.png}
+\includegraphics [width=5in]{jalp_hw4_03.png}
 
     \item Speculate how processing the data using Staba's method may
     have erroneously led to a false HFO detection (3 pts) \\
@@ -262,7 +270,7 @@ suptitle('FIR filter on training data in I521\_A0004\_D001')
 
 \textbf{Answer 1.5:}
 
-The processing in Staba ..
+The processing of data using Staba's method involves using a equiripple bandpass filter. From the image of the filtered artifacts signal above we see that it the original noisy artifact signal has been converted to a sinosoidal signal. Depending on how the HFO detection algorithms work, its peak and profile can very easily be mistaken for a HFO. The filtering of high frequencies and low frequenncy variations and possibly the impact of the filter windows is amplifying mid frequency signals in the filtered artifact signal which looks similar in profile as the valid HFO signals. These reason could cause Staba's method to erroneously lead to false HFO detection.\ensuremath{\backslash}\ensuremath{\backslash}
 
 \end{enumerate}
 \section{Defining Features for HFOs (9 pts)} In this section we will
@@ -306,9 +314,6 @@ for i = 2:size(allEvents,2)
         session_hfo.data.getvalues(allEvents(i).start, allEvents(i).stop-allEvents(i).start, 1) }];
 end
 \end{lstlisting}
-
-
-\includegraphics [width=5in]{jalp_hw4_03.png}
 \begin{lstlisting}
 %Function definition
 %LineLength
@@ -797,6 +802,7 @@ ylim([-3,5])
 
 \textbf{Answer 3.6:}
 
+In the three plots we can se the varying levels of agression of fitting the data. The KNN classifier with k=1 looks the most agressive and overfit where it tries to get regions for even single points. This overfitting has caused it to wrongly classify the most number of testing samples. $\\$ The SVN is the next most agressive classifier where it has tried to reach for most possible points in one closed boundary. We can visually also see why it has the least training error. $\\$. The Logistic regression classifier seems like underfit where several training and testing samples are classified incorrectly.
 
 \end{enumerate}
 \section{Cross-Validation (17 pts)} In this section, you will
@@ -828,7 +834,7 @@ training data).
 
 \begin{lstlisting}
 %creating a randon order of training sample indices
-% rand_ord = randperm(200);
+rand_ord = randperm(200);
 %reshaping it in to a 10 cell containing 20 unique indices
 rand_ord = reshape(rand_ord, 10, []);
 knn_folds = num2cell(rand_ord, 2);
@@ -836,10 +842,11 @@ knn_folds = num2cell(rand_ord, 2);
 number_of_unique_indices = length(unique([knn_folds{:}]))
 \end{lstlisting}
 
-\color{lightgray} \begin{lstlisting}Unrecognized function or variable 'rand_ord'.
+\color{lightgray} \begin{lstlisting}
+number_of_unique_indices =
 
-Error in jalp_hw4 (line 819)
-rand_ord = reshape(rand_ord, 10, []);
+   200
+
 \end{lstlisting} \color{black}
 
  \item Train a new $k$-NN model (still using the default parameters)
@@ -886,6 +893,13 @@ The average validation error for all folds is
 \begin{lstlisting}
 avg_val_error = mean([knn_folds{:,2}])
 \end{lstlisting}
+
+\color{lightgray} \begin{lstlisting}
+avg_val_error =
+
+    0.1800
+
+\end{lstlisting} \color{black}
 
 \item How does this error compare (lower,
    higher, the same?) to the error you found in question 3.3? Does
@@ -965,6 +979,9 @@ ylabel('Percentage error')
 legend('Training error', 'Validation error')
 \end{lstlisting}
 
+
+\includegraphics [width=5in]{jalp_hw4_08.png}
+
 \item What is the optimal $k$ value and its training and testing error?
 (1 pts) \\
 
@@ -1003,6 +1020,13 @@ Ypred_test = predict(knn, X_test);
 
 test_error_opt = size(find(Ypred_test~=Y_test),1)/size(Y_test,1)
 \end{lstlisting}
+
+\color{lightgray} \begin{lstlisting}
+test_error_opt =
+
+    0.1143
+
+\end{lstlisting} \color{black}
 With a $k$ of 29, the testing error is 11.43\%
 
 \item How does this
