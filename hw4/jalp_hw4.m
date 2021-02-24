@@ -612,16 +612,14 @@ test_error_svm = size(find(Ypred_test_svm~=Y_test),1)/size(Y_test,1)
 
 %%
 %calculating decision boundaries
-% ll = 0:0.1:3.5;
-% ar = 0:1:55;
-% 
-% [LL,AR] = meshgrid(ll,ar);
-% LL = reshape(LL, [], 1);
-% AR = reshape(AR,[],1);
-% 
-% %normalising grid
-% grid = [LL,AR];
-% grid_norm = (grid-mean_ll_area)./std_ll_area;
+ll = -4:0.1:4;
+ar = -3:0.1:5;
+
+[LL,AR] = meshgrid(ll,ar);
+LL = reshape(LL, [], 1);
+AR = reshape(AR,[],1);
+
+grid_norm = [LL,AR];
 
 %%
 %Logistic regression plot
@@ -636,9 +634,19 @@ pihat_grid = mnrval(B,grid_norm);
 yel = find(Ypred_grid(:,1)==1);
 cya = find(Ypred_grid(:,1)==2);
 
-
+%training index
 hfo_train = find(Y(:,1)==2);
 artif_train = find(Y(:,1)==1);
+
+%testing points
+X = testFeats_norm;
+Y_test = cell2mat(test_data(:,1)); 
+pihat = mnrval(B,X);
+[~, Ypred_test_mnr] = max(pihat, [],2);
+
+%testing index
+hfo_test = find(Ypred_test_mnr(:,1)==2);
+artif_test = find(Ypred_test_mnr(:,1)==1);
 
 
 
@@ -646,16 +654,118 @@ artif_train = find(Y(:,1)==1);
 figure();
 scatter(grid_norm(yel,1), grid_norm(yel,2), 60,  'filled', 'MarkerFaceColor',[0.3010 0.7450 0.9330])
 hold on
-scatter(grid_norm(cya, 1), grid_norm(cya,2), 60, 'filled', 'MarkerFaceColor', [0.9290 0.6940 0.1250])
+scatter(grid_norm(cya, 1), grid_norm(cya,2), 60, 'filled', 'MarkerFaceColor', [0.9290 0.6940 0.1250]) %HFO
 
 %training set
-scatter(trainFeats_norm(hfo_train,1), trainFeats_norm(hfo_train,2), 60,  'filled', 'MarkerFaceColor', [0 0.4470 0.7410])
-scatter(trainFeats_norm(artif_train, 1), trainFeats_norm(artif_train,2), 60, 'filled', 'MarkerFaceColor', [0.8500 0.3250 0.0980])
+scatter(trainFeats_norm(hfo_train,1), trainFeats_norm(hfo_train,2),'*', 'MarkerEdgeColor', [0 0.4470 0.7410])
+scatter(trainFeats_norm(artif_train, 1), trainFeats_norm(artif_train,2), '*', 'MarkerEdgeColor', [0.8500 0.3250 0.0980])
+
+%testing set
+scatter(testFeats_norm(hfo_test,1), testFeats_norm(hfo_test,2), 60, 'filled' ,'MarkerFaceColor', [0 0.4470 0.7410])
+scatter(testFeats_norm(artif_test, 1), testFeats_norm(artif_test,2), 60, 'filled','MarkerFaceColor', [0.8500 0.3250 0.0980])
+
+title('Logistic Regression Classifier Line Length vs Area - I521\_A0004\_D001')
+xlabel('Normalized Line Length')
+ylabel('Normalized Area')
+xlim([-4,4])
+ylim([-3,5])
 
 
-title('Training set Line Length vs Area - I521\_A0004\_D001')
-xlabel('Line Length')
-ylabel('Area')
+%%
+%KNN plot
+X = trainFeats_norm;
+Y = cell2mat(train_data(:,1)); 
+
+%KNN building
+knn = fitcknn(X,Y, 'NumNeighbors', 1);
+
+%grid classification
+Ypred_grid = predict(knn, grid_norm);
+
+yel = find(Ypred_grid(:,1)==1);
+cya = find(Ypred_grid(:,1)==2);
+
+%training index
+hfo_train = find(Y(:,1)==2);
+artif_train = find(Y(:,1)==1);
+
+%testing points
+X  = testFeats_norm;
+Y_test = cell2mat(test_data(:,1)); 
+Ypred_test_knn = predict(knn, X);
+
+%testing index
+hfo_test = find(Ypred_test_mnr(:,1)==2);
+artif_test = find(Ypred_test_mnr(:,1)==1);
+
+%%
+figure();
+scatter(grid_norm(yel,1), grid_norm(yel,2), 60,  'filled', 'MarkerFaceColor',[0.3010 0.7450 0.9330])
+hold on
+scatter(grid_norm(cya, 1), grid_norm(cya,2), 60, 'filled', 'MarkerFaceColor', [0.9290 0.6940 0.1250]) %HFO
+
+%training set
+scatter(trainFeats_norm(hfo_train,1), trainFeats_norm(hfo_train,2),'*', 'MarkerEdgeColor', [0 0.4470 0.7410])
+scatter(trainFeats_norm(artif_train, 1), trainFeats_norm(artif_train,2), '*', 'MarkerEdgeColor', [0.8500 0.3250 0.0980])
+
+%testing set
+scatter(testFeats_norm(hfo_test,1), testFeats_norm(hfo_test,2), 60, 'filled' ,'MarkerFaceColor', [0 0.4470 0.7410])
+scatter(testFeats_norm(artif_test, 1), testFeats_norm(artif_test,2), 60, 'filled','MarkerFaceColor', [0.8500 0.3250 0.0980])
+
+title('KNN Line Length vs Area - I521\_A0004\_D001')
+xlabel('Normalized Line Length')
+ylabel('Normalized Area')
+xlim([-4,4])
+ylim([-3,5])
+
+%%
+%SVN plot
+X = trainFeats_norm;
+Y = cell2mat(train_data(:,1)); 
+
+%SVN model building
+svmodel = fitcsvm(X,Y, 'KernelFunction','rbf');
+
+
+%grid classification
+Ypred_grid = predict(svmodel, grid_norm);
+
+yel = find(Ypred_grid(:,1)==1);
+cya = find(Ypred_grid(:,1)==2);
+
+%training index
+hfo_train = find(Y(:,1)==2);
+artif_train = find(Y(:,1)==1);
+
+%testing points
+X  = testFeats_norm;
+Y_test = cell2mat(test_data(:,1)); 
+Ypred_test_knn = predict(svmodel, X);
+
+%testing index
+hfo_test = find(Ypred_test_mnr(:,1)==2);
+artif_test = find(Ypred_test_mnr(:,1)==1);
+
+%%
+figure();
+scatter(grid_norm(yel,1), grid_norm(yel,2), 60,  'filled', 'MarkerFaceColor',[0.3010 0.7450 0.9330])
+hold on
+scatter(grid_norm(cya, 1), grid_norm(cya,2), 60, 'filled', 'MarkerFaceColor', [0.9290 0.6940 0.1250]) %HFO
+
+%training set
+scatter(trainFeats_norm(hfo_train,1), trainFeats_norm(hfo_train,2),'*', 'MarkerEdgeColor', [0 0.4470 0.7410])
+scatter(trainFeats_norm(artif_train, 1), trainFeats_norm(artif_train,2), '*', 'MarkerEdgeColor', [0.8500 0.3250 0.0980])
+
+%testing set
+scatter(testFeats_norm(hfo_test,1), testFeats_norm(hfo_test,2), 60, 'filled' ,'MarkerFaceColor', [0 0.4470 0.7410])
+scatter(testFeats_norm(artif_test, 1), testFeats_norm(artif_test,2), 60, 'filled','MarkerFaceColor', [0.8500 0.3250 0.0980])
+
+title('SVN Line Length vs Area - I521\_A0004\_D001')
+xlabel('Normalized Line Length')
+ylabel('Normalized Area')
+xlim([-4,4])
+ylim([-3,5])
+
 %% 
 % <latex>
 %  \item In a few sentences, report some observations about the three
