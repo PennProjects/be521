@@ -365,7 +365,7 @@ legend('HFOs','artifacts')
 % </latex>
 
 %%
-% The statistical term for the normalized value is a %\emph{Z-score}%. It
+% The statistical term for the normalized value is a $\emph{z-score}%. It
 % tells us how many standard deviations above or below the mean the given
 % value is.
 
@@ -657,6 +657,25 @@ hfo_test = find(Ypred_test_mnr(:,1)==2);
 artif_test = find(Ypred_test_mnr(:,1)==1);
 
 
+%%
+figure();
+scatter(grid_norm(yel,1), grid_norm(yel,2), 60,  'filled', 'MarkerFaceColor',[0.3010 0.7450 0.9330])
+hold on
+scatter(grid_norm(cya, 1), grid_norm(cya,2), 60, 'filled', 'MarkerFaceColor', [0.9290 0.6940 0.1250]) %HFO
+
+%training set
+scatter(trainFeats_norm(hfo_train,1), trainFeats_norm(hfo_train,2),'*', 'MarkerEdgeColor', [0 0.4470 0.7410])
+scatter(trainFeats_norm(artif_train, 1), trainFeats_norm(artif_train,2), '*', 'MarkerEdgeColor', [0.8500 0.3250 0.0980])
+
+% %testing set
+% scatter(testFeats_norm(hfo_test,1), testFeats_norm(hfo_test,2), 60, 'filled' ,'MarkerFaceColor', [0 0.4470 0.7410])
+% scatter(testFeats_norm(artif_test, 1), testFeats_norm(artif_test,2), 60, 'filled','MarkerFaceColor', [0.8500 0.3250 0.0980])
+
+title('Logistic Regression Classifier Line Length vs Area - I521\_A0004\_D001')
+xlabel('Normalized Line Length')
+ylabel('Normalized Area')
+xlim([-4,4])
+ylim([-3,5])
 
 %%
 figure();
@@ -717,6 +736,27 @@ scatter(trainFeats_norm(hfo_train,1), trainFeats_norm(hfo_train,2),'*', 'MarkerE
 scatter(trainFeats_norm(artif_train, 1), trainFeats_norm(artif_train,2), '*', 'MarkerEdgeColor', [0.8500 0.3250 0.0980])
 
 %testing set
+% scatter(testFeats_norm(hfo_test,1), testFeats_norm(hfo_test,2), 60, 'filled' ,'MarkerFaceColor', [0 0.4470 0.7410])
+% scatter(testFeats_norm(artif_test, 1), testFeats_norm(artif_test,2), 60, 'filled','MarkerFaceColor', [0.8500 0.3250 0.0980])
+
+title('KNN Line Length vs Area - I521\_A0004\_D001')
+xlabel('Normalized Line Length')
+ylabel('Normalized Area')
+xlim([-4,4])
+ylim([-3,5])
+
+
+%%
+figure();
+scatter(grid_norm(yel,1), grid_norm(yel,2), 60,  'filled', 'MarkerFaceColor',[0.3010 0.7450 0.9330])
+hold on
+scatter(grid_norm(cya, 1), grid_norm(cya,2), 60, 'filled', 'MarkerFaceColor', [0.9290 0.6940 0.1250]) %HFO
+
+%training set
+scatter(trainFeats_norm(hfo_train,1), trainFeats_norm(hfo_train,2),'*', 'MarkerEdgeColor', [0 0.4470 0.7410])
+scatter(trainFeats_norm(artif_train, 1), trainFeats_norm(artif_train,2), '*', 'MarkerEdgeColor', [0.8500 0.3250 0.0980])
+
+%testing set
 scatter(testFeats_norm(hfo_test,1), testFeats_norm(hfo_test,2), 60, 'filled' ,'MarkerFaceColor', [0 0.4470 0.7410])
 scatter(testFeats_norm(artif_test, 1), testFeats_norm(artif_test,2), 60, 'filled','MarkerFaceColor', [0.8500 0.3250 0.0980])
 
@@ -753,6 +793,26 @@ Ypred_test_knn = predict(svmodel, X);
 %testing index
 hfo_test = find(Ypred_test_mnr(:,1)==2);
 artif_test = find(Ypred_test_mnr(:,1)==1);
+
+%%
+figure();
+scatter(grid_norm(yel,1), grid_norm(yel,2), 60,  'filled', 'MarkerFaceColor',[0.3010 0.7450 0.9330])
+hold on
+scatter(grid_norm(cya, 1), grid_norm(cya,2), 60, 'filled', 'MarkerFaceColor', [0.9290 0.6940 0.1250]) %HFO
+
+%training set
+scatter(trainFeats_norm(hfo_train,1), trainFeats_norm(hfo_train,2),'*', 'MarkerEdgeColor', [0 0.4470 0.7410])
+scatter(trainFeats_norm(artif_train, 1), trainFeats_norm(artif_train,2), '*', 'MarkerEdgeColor', [0.8500 0.3250 0.0980])
+
+% %testing set
+% scatter(testFeats_norm(hfo_test,1), testFeats_norm(hfo_test,2), 60, 'filled' ,'MarkerFaceColor', [0 0.4470 0.7410])
+% scatter(testFeats_norm(artif_test, 1), testFeats_norm(artif_test,2), 60, 'filled','MarkerFaceColor', [0.8500 0.3250 0.0980])
+
+title('SVN Line Length vs Area - I521\_A0004\_D001')
+xlabel('Normalized Line Length')
+ylabel('Normalized Area')
+xlim([-4,4])
+ylim([-3,5])
 
 %%
 figure();

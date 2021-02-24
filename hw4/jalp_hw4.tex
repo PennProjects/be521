@@ -91,12 +91,6 @@ datestr(seconds(duration_in_sec_hfo),'HH:MM:SS:FFF')
 \end{lstlisting}
 
 \color{lightgray} \begin{lstlisting}IEEGSETUP: Adding 'ieeg-matlab.jar' to dynamic classpath
-Warning: Objects of
-edu/upenn/cis/db/mefview/services/TimeSeriesDetails
-class exist - not clearing java 
-Warning: Objects of
-edu/upenn/cis/db/mefview/services/TimeSeriesInterface
-class exist - not clearing java 
 IEEGSETUP: Found log4j on Java classpath.
 URL: https://www.ieeg.org/services
 Client user: jalpanchal
@@ -107,9 +101,6 @@ ans =
     '00:00:09:466'
 
 \end{lstlisting} \color{black}
-
-
-\includegraphics [width=5in]{jalp_hw4_01.png}
 \begin{lstlisting}
 %Get annotations
 dataset = session_hfo.data;
@@ -191,7 +182,7 @@ suptitle('First samples in training window in I521\_A0004\_D001')
 \end{lstlisting}
 
 
-\includegraphics [width=5in]{jalp_hw4_02.png}
+\includegraphics [width=5in]{jalp_hw4_01.png}
 
     \item Using the \texttt{fdatool} in MATLAB, build an FIR
     bandpass filter of the equiripple type of order 100.
@@ -262,7 +253,7 @@ suptitle('FIR filter on training data in I521\_A0004\_D001')
 \end{lstlisting}
 
 
-\includegraphics [width=5in]{jalp_hw4_03.png}
+\includegraphics [width=5in]{jalp_hw4_02.png}
 
     \item Speculate how processing the data using Staba's method may
     have erroneously led to a false HFO detection (3 pts) \\
@@ -314,6 +305,9 @@ for i = 2:size(allEvents,2)
         session_hfo.data.getvalues(allEvents(i).start, allEvents(i).stop-allEvents(i).start, 1) }];
 end
 \end{lstlisting}
+
+
+\includegraphics [width=5in]{jalp_hw4_03.png}
 \begin{lstlisting}
 %Function definition
 %LineLength
