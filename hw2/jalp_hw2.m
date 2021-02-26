@@ -55,6 +55,7 @@ F = 96480;
 T = 310;
 V_t = R*T/F
 
+
 %%
 % <latex>
 % The $V_T$ at human physiological temperatures is 0.0267 V or 26.7 mV.\\
@@ -436,7 +437,7 @@ for i=0:10:duration_us
     if V_m_t_curr_V > V_m_thresh_V
         V_m_t_curr_V = V_m_rest_V;      
         %After an action potential, r_m*g_sra increases by 0.06
-        r_m_g_sra = r_m_g_sra + 0.01;
+        r_m_g_sra = r_m_g_sra + 0.06;
         
         spike_time_stamp_us = [spike_time_stamp_us, i];
     end 
