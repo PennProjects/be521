@@ -8,8 +8,7 @@
 
 %% 
 % <latex> 
-% \begin{center} \author{NAME HERE \\
-%   \normalsize Collaborators: COLLABORATORS HERE \\}
+% \begin{center} \author{Jal Mahendra Panchal}
 % \end{center} 
 % </latex>
 
@@ -32,7 +31,14 @@
 % </latex>
 
 %%
-% $\textbf{Answer 1.1}$
+% $\textbf{Answer 1.1} \\$
+
+%%
+mv1 = load('mouseV1.mat');
+
+%%
+unique_angles = unique(mv1.stimuli(:,2));
+ % There are 12 uni
 
 %% 
 % <latex> 
@@ -40,7 +46,7 @@
 % </latex>
 
 %%
-% $\textbf{Answer 1.2}$
+% $\textbf{Answer 1.2} \\$
 
 %% 
 % <latex> 
@@ -49,7 +55,7 @@
 % </latex>
 
 %%
-% $\textbf{Answer 1.2a}$
+% $\textbf{Answer 1.2a} \\$
 
 %% 
 % <latex> 
@@ -57,7 +63,7 @@
 % </latex>
 
 %%
-% $\textbf{Answer 1.2b}$
+% $\textbf{Answer 1.2b} \\$
 
 %% 
 % <latex> 
@@ -85,8 +91,7 @@
 % </latex>
 
 %%
-%%
-% $\textbf{Answer 2.1}$
+% $\textbf{Answer 2.1} \\$
 
 %% 
 % <latex> 
@@ -98,7 +103,7 @@
 % </latex>
 
 %%
-% $\textbf{Answer 2.2a}$
+% $\textbf{Answer 2.2a} \\$
 
 %% 
 % <latex> 
@@ -106,7 +111,7 @@
 % </latex>
 
 %%
-% $\textbf{Answer 2.2b}$
+% $\textbf{Answer 2.2b} \\$
 
 %% 
 % <latex> 
@@ -117,7 +122,7 @@
 % </latex>
 
 %%
-% $\textbf{Answer 2.2c}$
+% $\textbf{Answer 2.2c} \\$
 
 %% 
 % <latex> 
@@ -127,7 +132,7 @@
 % </latex>
 
 %%
-% $\textbf{Answer 2.2d}$
+% $\textbf{Answer 2.2d} \\$
 
 %% 
 % <latex> 
@@ -137,7 +142,7 @@
 % </latex>
 
 %%
-% $\textbf{Answer 2.3a}$
+% $\textbf{Answer 2.3a} \\$
 
 %% 
 % <latex> 
@@ -145,7 +150,7 @@
 % </latex>
 
 %%
-% $\textbf{Answer 2.3b}$
+% $\textbf{Answer 2.3b} \\$
 
 %% 
 % <latex> 

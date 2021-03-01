@@ -8,8 +8,7 @@
 
 %% 
 % <latex> 
-% \begin{center} \author{NAME HERE \\
-%   \normalsize Collaborators: COLLABORATORS HERE \\}
+% \begin{center} \author{Jal Mahendra Panchal}
 % \end{center} 
 % </latex>
 
@@ -33,6 +32,15 @@
 
 %%
 % $\textbf{Answer 1.1} \\$
+
+%%
+mv1 = load('mouseV1.mat');
+
+%%
+unique_angles = unique(mv1.stimuli(:,2));
+ % There are 12 unique grating angles in the stimuli, though 6 of the
+ % angles >= 180 will essentially have the same grating pattern as the 6 below 180
+ % deg.
 
 %% 
 % <latex> 
