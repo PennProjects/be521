@@ -139,32 +139,42 @@ suptitle('Average spikes vs grating angle for different neurons')
 % so the neuron would respond identically to both the angles. \\
 % Here are a few examples of neurons that show this phenomenon.
 
+
 %%
 %plot
 figure();   
 subplot(2,2,1)
 plot(unique_angles, tuning_curve_avg(2,:));
+xline(180)
 title('Neuron 2')
 xlabel('Grating angle')
 ylabel('Average number of spikes')
+xlim([0, 360])
+
 
 subplot(2,2,2)
 plot(unique_angles, tuning_curve_avg(6,:));
+xline(180)
 title('Neuron 6')
 xlabel('Grating angle')
 ylabel('Average number of spikes')
+xlim([0, 360])
 
 subplot(2,2,3)
 plot(unique_angles, tuning_curve_avg(7,:));
+xline(180)
 title('Neuron 7')
 xlabel('Grating angle')
 ylabel('Average number of spikes')
+xlim([0, 360])
 
 subplot(2,2,4)
-plot(unique_angles, tuning_curve_avg(,:));
-title('Neuron 8')
+plot(unique_angles, tuning_curve_avg(14,:));
+xline(180)
+title('Neuron 14')
 xlabel('Grating angle')
 ylabel('Average number of spikes')
+xlim([0, 360])
 
 suptitle('Showing symmetry in response for $\theta$ and $\theta+180$')
 
@@ -176,6 +186,12 @@ suptitle('Showing symmetry in response for $\theta$ and $\theta+180$')
 
 %%
 % $\textbf{Answer 1.2b} \\$
+
+%%
+% Yes, the neurons in V1 would only respond to the orientation of the
+% grating images. As the orientation of the images for $\theta$ and $\theta
+% + 180$ would look the same. The neurons will not be able to differentiate
+% between the two images and fire similarly for both. Thus we se
 
 %% 
 % <latex> 

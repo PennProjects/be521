@@ -187,6 +187,14 @@ suptitle('Showing symmetry in response for $\theta$ and $\theta+180$')
 %%
 % $\textbf{Answer 1.2b} \\$
 
+%%
+% Yes, the neurons in V1 would only respond to the orientation of the
+% grating images. As the orientation of the images for $\theta$ and $\theta
+% + 180$ would look the same. The neurons will not be able to differentiate
+% between the two images and fire similarly for both. Thus we see this
+% behavior of response of a neuron being similar for $\theta$ and $\theta +
+% 180$.
+
 %% 
 % <latex> 
 %   \end{enumerate}
