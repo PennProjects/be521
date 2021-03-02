@@ -8,7 +8,8 @@
 
 %% 
 % <latex> 
-% \begin{center} \author{Jal Mahendra Panchal}
+% \begin{center} \author{Jal Mahendra Panchal \\
+%                   Collaborator : Sam Gaardsmoe}
 % \end{center} 
 % </latex>
 
@@ -96,25 +97,25 @@ tuning_curve_avg = tuning_curve_data ./num_stim_angle';
 %plot
 figure();   
 subplot(2,2,1)
-plot(unique_angles, tuning_curve_avg(1,:));
+plot(unique_angles, tuning_curve_avg(1,:), 'Linewidth', 2);
 title('Neuron 1')
 xlabel('Grating angle')
 ylabel('Average number of spikes')
 
 subplot(2,2,2)
-plot(unique_angles, tuning_curve_avg(2,:));
+plot(unique_angles, tuning_curve_avg(2,:), 'Linewidth', 2);
 title('Neuron 2')
 xlabel('Grating angle')
 ylabel('Average number of spikes')
 
 subplot(2,2,3)
-plot(unique_angles, tuning_curve_avg(3,:));
+plot(unique_angles, tuning_curve_avg(3,:), 'Linewidth', 2);
 title('Neuron 3')
 xlabel('Grating angle')
 ylabel('Average number of spikes')
 
 subplot(2,2,4)
-plot(unique_angles, tuning_curve_avg(4,:));
+plot(unique_angles, tuning_curve_avg(4,:), 'Linewidth', 2);
 title('Neuron 4')
 xlabel('Grating angle')
 ylabel('Average number of spikes')
@@ -142,7 +143,7 @@ suptitle('Average spikes vs grating angle for different neurons')
 %plot
 figure();   
 subplot(2,2,1)
-plot(unique_angles, tuning_curve_avg(2,:));
+plot(unique_angles, tuning_curve_avg(2,:),'Linewidth', 2);
 xline(180)
 title('Neuron 2')
 xlabel('Grating angle')
@@ -151,7 +152,7 @@ xlim([0, 360])
 
 
 subplot(2,2,2)
-plot(unique_angles, tuning_curve_avg(6,:));
+plot(unique_angles, tuning_curve_avg(6,:), 'Linewidth', 2);
 xline(180)
 title('Neuron 6')
 xlabel('Grating angle')
@@ -159,7 +160,7 @@ ylabel('Average number of spikes')
 xlim([0, 360])
 
 subplot(2,2,3)
-plot(unique_angles, tuning_curve_avg(7,:));
+plot(unique_angles, tuning_curve_avg(7,:), 'Linewidth', 2);
 xline(180)
 title('Neuron 7')
 xlabel('Grating angle')
@@ -167,7 +168,7 @@ ylabel('Average number of spikes')
 xlim([0, 360])
 
 subplot(2,2,4)
-plot(unique_angles, tuning_curve_avg(14,:));
+plot(unique_angles, tuning_curve_avg(14,:), 'Linewidth', 2);
 xline(180)
 title('Neuron 14')
 xlabel('Grating angle')
@@ -432,7 +433,12 @@ pred_accuracy = (size(find(pred_ang == angles_test_folded),1)/50)*100
 % $\textbf{Answer 2.2d} \\$
 
 %%
-% The experiment had a very low probability to predict the 
+% kjhkljhkl
+
+
+%%
+% The experiment had a very low probability to predict the grating angle
+% correctly, this is possible due to the fact that the 
 %% 
 % <latex> 
 %   \item It is important to show that your findings are not a result of chance. One way to demonstrate this is using a ``permutation test.'' Here, we will perform a permutation test by randomly reassigning new grating angles to the 50 test responses and then calculating how often the new grating angles match the true stimulation angles.
@@ -442,6 +448,29 @@ pred_accuracy = (size(find(pred_ang == angles_test_folded),1)/50)*100
 
 %%
 % $\textbf{Answer 2.3a} \\$
+
+%%
+%calculating probability of random chance
+p_test_acc = zeros(1000,1);
+for i = 1:1000
+    
+   random_test_trial = zeros(50,1);
+   for j = 1:50
+       
+%        seed = (i-1)*50+j;
+%        rng(seed);
+       r_idx = randperm(6,1);
+       r_ang = unique_angles(r_idx);
+       random_test_trial(j) = r_ang;
+   end
+   
+   acc_n = (size(find(random_test_trial == mv1_test.stimuli(:,2)),1)/50)*100;
+   p_test_acc(i) = acc_n;
+end
+
+%%
+figure();
+histogram(p_test_acc);
 
 %% 
 % <latex> 

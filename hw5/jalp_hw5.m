@@ -8,7 +8,8 @@
 
 %% 
 % <latex> 
-% \begin{center} \author{Jal Mahendra Panchal}
+% \begin{center} \author{Jal Mahendra Panchal \\
+%                   Collaborator : Sam Gaardsmoe}
 % \end{center} 
 % </latex>
 
@@ -447,6 +448,35 @@ pred_accuracy = (size(find(pred_ang == angles_test_folded),1)/50)*100
 
 %%
 % $\textbf{Answer 2.3a} \\$
+
+%%
+%calculating probability of random chance
+p_test_acc = zeros(1000,1);
+for i = 1:1000
+    
+   random_test_trial = zeros(50,1);
+   for j = 1:50
+       
+       seed = (i-1)*50+j;
+       rng(seed);
+       r_idx = randperm(6,1);
+       r_ang = unique_angles(r_idx);
+       random_test_trial(j) = r_ang;
+   end
+   
+   acc_n = (size(find(random_test_trial == angles_test_folded),1)/50)*100;
+   p_test_acc(i) = acc_n;
+end
+
+%%
+figure();
+histogram(p_test_acc);
+xline(pred_accuracy, 'color', 'red', 'Linewidth', 2);
+title('Null distribution for 50 trials for 6 grating angles, n = 1000');
+legend('Null' , 'MLE')
+xlabel('Accuracy %')
+ylabel('Number of experiments')
+
 
 %% 
 % <latex> 
