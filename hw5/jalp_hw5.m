@@ -206,7 +206,7 @@ suptitle('Showing symmetry in response for $\theta$ and $\theta+180$')
 % the data. \\ \\
 % Here, the data is the number of spikes $s_i$ that cell $i$ fires when the subject sees a stimulus with grating angle $\theta$. One way to think about our likelihood function is to ask the question ``given a stimulus angle $\theta$, how many spikes would I expect this cell to fire?'' We can represent this number of spikes $s_i$ using a Poisson process with parameter $f_i(\theta)$ for a stimulus $\theta$, where $f_i$ represents neuron $i$'s tuning function.
 % A Poisson distribution is often used to model count data that occurs at a constant rate, and in this case the rate is given by $f_i(\theta)$. In other words, our likelihood function $L_i(\theta)$ for each neuron $i$ is the probability $p(s_i|\theta)$ of neuron $i$ firing $s_i$ spikes for a given value of $\theta$. 
-% The idea in this method is to calculate the log likelihood\footnote{log = natural log unless otherwise specified} function of each neuron and then add them all together to get the log likelihood function of the entire population of ($n$) neurons. We often work with the $\emph{log}$ likelihood because it allows adding of probabilities instead of multiplying, which can lead to numerical problems.
+% The idea in this method is to calculate the log likelihood\footnote{log = natural log unless other    wise specified} function of each neuron and then add them all together to get the log likelihood function of the entire population of ($n$) neurons. We often work with the $\emph{log}$ likelihood because it allows adding of probabilities instead of multiplying, which can lead to numerical problems.
 % \begin{align*}
 % p(s_i|\theta) \sim &\; Pois(f_i(\theta)) = \frac{f_i(\theta)^{s_i}}{s_i!} e^{-{f_i(\theta)}} \tag{Poisson probability density}\\
 % \L_i(\theta) =&\; p(s_i|\theta) \tag{Likelihood of a given neuron firing at $s_i$}\\
@@ -223,6 +223,67 @@ suptitle('Showing symmetry in response for $\theta$ and $\theta+180$')
 %%
 % $\textbf{Answer 2.1} \\$
 
+%%
+%seprating training data 
+mv1_train = mv1;
+mv1_train.stimuli = mv1_train.stimuli(1:70,:);
+
+%%
+tuning_curve_train = zeros(18, 12);
+num_stim_angle_train = zeros(12,1);
+%loop through all training trials of each of the 12 angles
+for i = 1 : size(unique_angles,1)
+    
+    ang = unique_angles(i);
+    %find the trials for each angle
+    stim_index = find(mv1_train.stimuli(:,2)==ang);
+    
+    num_stim_angle_train(i) = size(stim_index,1);
+    
+    %loop through all trials and check how many triggers for each cell is
+    % within the duration of a trial
+    for j= 1: size(stim_index,1)
+        
+        idx = stim_index(j);
+        %find the start and stop time of each trial
+        % here we are approximating to secs as the question says approx 1.5
+        % wait after a 2 sec show of image11
+        start_time_ms = mv1.stimuli(idx,1)/1000;
+        start_time_s = round(start_time_ms,1);
+        end_time_s = start_time_s + 3.5; % 3.5 sec window
+        
+        %cheecking if the trigger for any neuron lies within time range of
+        %a given trial
+        for k = 1:18
+            trig_time_s = round([mv1_train.neurons{k}]./1000,1);
+%             temp_ = [temp_, find(trig_time_s>= start_time_s & trig_time_s <=end_time_s)];
+            num_trig = size(find(trig_time_s>= start_time_s & trig_time_s <=end_time_s),1);
+            
+            tuning_curve_train(k,i) = tuning_curve_train(k,i) + num_trig;
+        end
+        
+    end
+end
+
+%%
+%folding the matrix to combine angles above 180
+tuning_curve_train = tuning_curve_train(:, 1:6) + tuning_curve_train(:,7:12);
+num_stim_angle_train = (num_stim_angle_train(1:6) + num_stim_angle_train(7:12))';
+tuning_curve_train_avg = tuning_curve_train ./ num_stim_angle_train;
+
+%%
+%plotting histogram
+% After combining the trials above and below 150 deg, we get the following
+% histogram for number of trials for each angle. \\
+figure();
+angles_trian_folded = [mv1.stimuli((mv1_train.stimuli(:,2)<180),2)', (mv1.stimuli((mv1_train.stimuli(:,2)>=180),2)-180)'];
+ax = histogram(angles_trian_folded, 30).Parent;
+set(ax, 'XTick', 0:30:150);
+title('Number of trials for each grating angle')
+xlabel('Grating Angles')
+ylabel('Number of trials')
+ 
+
 %% 
 % <latex> 
 %  \item For the 50 ``testing'' trials, compute a $n \times 50$ matrix \verb|S| where each row 
@@ -234,6 +295,7 @@ suptitle('Showing symmetry in response for $\theta$ and $\theta+180$')
 
 %%
 % $\textbf{Answer 2.2a} \\$
+
 
 %% 
 % <latex> 
