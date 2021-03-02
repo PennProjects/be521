@@ -380,13 +380,15 @@ suptitle('Log Likelihood Function for test stimuli')
 % $\textbf{Answer 2.2b} \\$
 
 %% 
-% For the trials 1, 2 and 3 the prediction is accurate, the rue grating
+% For the trials 1, 2 and 3 the prediction is accurate, the true grating
 % angle is correctly predicted by the angle with the highest probability
-% from the likelihood function. \\
+% from the likelihood function which is 0 for trial 1, 0(or 180) for trial
+% 2 and 60 for trial 3. \\
 % For trial 4 the max value from the likelihood funtion is obtained for 60
 % deg but the grating angle is 0 deg. This is probably due to the higher
 % sensitivity of the 4th neuron to 60 deg as compared to 0 deg. Also, the
-% 4th neuron has the most number of spikes for an angle so it biases the li
+% 4th neuron has the most number of spikes for an stimulus so it dominates the
+% prediction of the likelikhod function. 
 
 %% 
 % <latex> 
@@ -399,6 +401,26 @@ suptitle('Log Likelihood Function for test stimuli')
 %%
 % $\textbf{Answer 2.2c} \\$
 
+%%
+%calculating max probability
+[max_l, max_l_indx] = max(l_test, [],2);
+pred_ang = unique_angles(max_l_indx,1);
+
+%finding the accuracy of MLE
+angles_test_folded = zeros(50,1);
+for i = 1:50
+    if mv1_test.stimuli(i,2) < 180
+        angles_test_folded(i) = mv1_test.stimuli(i,2);
+    else
+        angles_test_folded(i) = mv1_test.stimuli(i,2)-180;
+    end
+end
+
+
+pred_accuracy = (size(find(pred_ang == angles_test_folded),1)/50)*100
+
+%%
+% The MLE only predicted 44% of the trials correctly.
 %% 
 % <latex> 
 % 	\item 
@@ -409,6 +431,8 @@ suptitle('Log Likelihood Function for test stimuli')
 %%
 % $\textbf{Answer 2.2d} \\$
 
+%%
+% The experiment had a very low probability to predict the 
 %% 
 % <latex> 
 %   \item It is important to show that your findings are not a result of chance. One way to demonstrate this is using a ``permutation test.'' Here, we will perform a permutation test by randomly reassigning new grating angles to the 50 test responses and then calculating how often the new grating angles match the true stimulation angles.
