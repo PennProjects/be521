@@ -38,7 +38,9 @@ mv1 = load('mouseV1.mat');
 
 %%
 unique_angles = unique(mv1.stimuli(:,2));
- % There are 12 unique grating angles in the stimuli, though 6 of the
+size(unique_angles,1)
+ % There are 12 unique grating angles in the stimuli, 0, 30, 60, 90, 120, 150, 
+ % 180, 210, 240, 270, 300, 330,  though 6 of the
  % angles >= 180 will essentially have the same grating pattern as the 6 below 180
  % deg.
 
@@ -50,6 +52,78 @@ unique_angles = unique(mv1.stimuli(:,2));
 %%
 % $\textbf{Answer 1.2} \\$
 
+%%
+tuning_curve_data = zeros(18, 12);
+temp_ = {};
+num_stim_angle = zeros(12,1);
+%loop through all trials of each of the 12 angles
+for i = 1 : size(unique_angles,1)
+    
+    ang = unique_angles(i);
+    %find the trials for each angle
+    stim_index = find(mv1.stimuli(:,2)==ang);
+    
+    num_stim_angle(i) = size(stim_index,1);
+    
+    %loop through all trials and check how many triggers for each cell is
+    % within the duration of a trial
+    for j= 1: size(stim_index,1)
+        
+        idx = stim_index(j);
+        %find the start and stop time of each trial
+        % here we are approximating to secs as the question says approx 1.5
+        % wait after a 2 sec show of image11
+        start_time_ms = mv1.stimuli(idx,1)/1000;
+        start_time_s = round(start_time_ms,1);
+        end_time_s = start_time_s + 3.5; % 3.5 sec window
+        
+        %cheecking if the trigger for any neuron lies within time range of
+        %a given trial
+        for k = 1:18
+            trig_time_s = round([mv1.neurons{k}]./1000,1);
+%             temp_ = [temp_, find(trig_time_s>= start_time_s & trig_time_s <=end_time_s)];
+            num_trig = size(find(trig_time_s>= start_time_s & trig_time_s <=end_time_s),1);
+            
+            tuning_curve_data(k,i) = tuning_curve_data(k,i) + num_trig;
+        end
+        
+    end
+end
+
+%%
+%Calculating average for each grating angle
+tuning_curve_avg = tuning_curve_data ./num_stim_angle';
+
+%%
+%plot
+figure();   
+subplot(2,2,1)
+plot(unique_angles, tuning_curve_avg(1,:));
+title('Neuron 1')
+xlabel('Grating angle')
+ylabel('Average number of spikes')
+
+subplot(2,2,2)
+plot(unique_angles, tuning_curve_avg(2,:));
+title('Neuron 2')
+xlabel('Grating angle')
+ylabel('Average number of spikes')
+
+subplot(2,2,3)
+plot(unique_angles, tuning_curve_avg(3,:));
+title('Neuron 3')
+xlabel('Grating angle')
+ylabel('Average number of spikes')
+
+subplot(2,2,4)
+plot(unique_angles, tuning_curve_avg(4,:));
+title('Neuron 4')
+xlabel('Grating angle')
+ylabel('Average number of spikes')
+
+suptitle('Average spikes vs grating angle for different neurons')
+
+
 %% 
 % <latex> 
 %   \begin{enumerate}
@@ -58,6 +132,52 @@ unique_angles = unique(mv1.stimuli(:,2));
 
 %%
 % $\textbf{Answer 1.2a} \\$
+
+%%
+% Based on how the grating patterns look, the pattern for $\theta$ and
+% $\theta+180$ would look the same as they are the same when flipped by 180
+% so the neuron would respond identically to both the angles. \\
+% Here are a few examples of neurons that show this phenomenon.
+
+
+%%
+%plot
+figure();   
+subplot(2,2,1)
+plot(unique_angles, tuning_curve_avg(2,:));
+xline(180)
+title('Neuron 2')
+xlabel('Grating angle')
+ylabel('Average number of spikes')
+xlim([0, 360])
+
+
+subplot(2,2,2)
+plot(unique_angles, tuning_curve_avg(6,:));
+xline(180)
+title('Neuron 6')
+xlabel('Grating angle')
+ylabel('Average number of spikes')
+xlim([0, 360])
+
+subplot(2,2,3)
+plot(unique_angles, tuning_curve_avg(7,:));
+xline(180)
+title('Neuron 7')
+xlabel('Grating angle')
+ylabel('Average number of spikes')
+xlim([0, 360])
+
+subplot(2,2,4)
+plot(unique_angles, tuning_curve_avg(14,:));
+xline(180)
+title('Neuron 14')
+xlabel('Grating angle')
+ylabel('Average number of spikes')
+xlim([0, 360])
+
+suptitle('Showing symmetry in response for $\theta$ and $\theta+180$')
+
 
 %% 
 % <latex> 
