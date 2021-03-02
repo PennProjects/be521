@@ -54,7 +54,6 @@ size(unique_angles,1)
 
 %%
 tuning_curve_data = zeros(18, 12);
-temp_ = {};
 num_stim_angle = zeros(12,1);
 %loop through all trials of each of the 12 angles
 for i = 1 : size(unique_angles,1)
@@ -81,7 +80,6 @@ for i = 1 : size(unique_angles,1)
         %a given trial
         for k = 1:18
             trig_time_s = round([mv1.neurons{k}]./1000,1);
-%             temp_ = [temp_, find(trig_time_s>= start_time_s & trig_time_s <=end_time_s)];
             num_trig = size(find(trig_time_s>= start_time_s & trig_time_s <=end_time_s),1);
             
             tuning_curve_data(k,i) = tuning_curve_data(k,i) + num_trig;
@@ -224,22 +222,6 @@ suptitle('Showing symmetry in response for $\theta$ and $\theta+180$')
 % $\textbf{Answer 2.1} \\$
 
 %%
- sl
- 
-
-%% 
-% <latex> 
-%  \item For the 50 ``testing'' trials, compute a $n \times 50$ matrix \verb|S| where each row 
-% represents the number of spikes one neuron fired in response to a each of the 50 trials. With this, you can easily compute the log likelihood functions for all the trials at 
-% once with the command: \verb|L_test = S'*log(F)|. (Hint: add a small number to \verb|F| to avoid taking the log of 0)
-%   \begin{enumerate}
-% 	\item Plot the likelihood functions for the first four testing trials in a $2\times 2$ subplot. In the title of each plot, give the trial number (1, 2, 3, or 4) and the true stimulation angle. Make sure to label your axes correctly. (5 pts)
-% </latex>
-
-%%
-% $\textbf{Answer 2.2a} \\$
-
-%%
 %seprating training data 
 mv1_train = mv1;
 mv1_train.stimuli = mv1_train.stimuli(1:70,:);
@@ -289,7 +271,8 @@ tuning_curve_train_avg = tuning_curve_train ./ num_stim_angle_train;
 
 %%
 %plotting histogram
-% After combining the trials above and below 150 deg, we get the follo
+% After combining the trials above and below 150 deg, we get the following
+% histogram for number of trials for each angle. \\
 figure();
 angles_trian_folded = [mv1.stimuli((mv1_train.stimuli(:,2)<180),2)', (mv1.stimuli((mv1_train.stimuli(:,2)>=180),2)-180)'];
 ax = histogram(angles_trian_folded, 30).Parent;
@@ -297,6 +280,96 @@ set(ax, 'XTick', 0:30:150);
 title('Number of trials for each grating angle')
 xlabel('Grating Angles')
 ylabel('Number of trials')
+ 
+
+%% 
+% <latex> 
+%  \item For the 50 ``testing'' trials, compute a $n \times 50$ matrix \verb|S| where each row 
+% represents the number of spikes one neuron fired in response to a each of the 50 trials. With this, you can easily compute the log likelihood functions for all the trials at 
+% once with the command: \verb|L_test = S'*log(F)|. (Hint: add a small number to \verb|F| to avoid taking the log of 0)
+%   \begin{enumerate}
+% 	\item Plot the likelihood functions for the first four testing trials in a $2\times 2$ subplot. In the title of each plot, give the trial number (1, 2, 3, or 4) and the true stimulation angle. Make sure to label your axes correctly. (5 pts)
+% </latex>
+
+%%
+% $\textbf{Answer 2.2a} \\$
+
+%seprating testing data 
+%testing set starts from 71st trial
+mv1_test = mv1;
+mv1_test.stimuli = mv1_test.stimuli(71:120,:);
+
+%%
+%computing testing set
+spike_count_test = zeros(18, 50);
+%loop through all 50 testing trials
+for j= 1:50
+        
+    idx = j; 
+    
+    %find the start and stop time of each trial
+    % here we are approximating to secs as the question says approx 1.5
+    % wait after a 2 sec show of image11
+    start_time_ms = mv1_test.stimuli(idx,1)/1000;
+    start_time_s = round(start_time_ms,1);
+    end_time_s = start_time_s + 3.5; % 3.5 sec window
+    
+    %cheecking if the trigger for any neuron lies within time range of
+    %a given trial
+    for k = 1:18
+        trig_time_s = round([mv1_test.neurons{k}]./1000,1);
+        num_trig = size(find(trig_time_s>= start_time_s & trig_time_s <=end_time_s),1);
+        
+        spike_count_test(k,j) = spike_count_test(k,i) + num_trig;
+    end
+    
+end
+
+%%
+%calculating l_test
+l_test = spike_count_test'*log(tuning_curve_train);
+
+%%
+%ploting l_test
+figure();   
+subplot(2,2,1)
+n = 1;
+ang = mv1_test.stimuli(n,2);
+plot(unique_angles(1:6), l_test(n,:));
+title(['Test Trial :', num2str(n), '  True angle :',num2str(ang)])
+xlabel('Grating angle')
+ylabel('Log likelihood function')
+xlim([0, 150])
+
+
+subplot(2,2,2)
+n = 2;
+ang = mv1_test.stimuli(n,2);
+plot(unique_angles(1:6), l_test(n,:));
+title(['Test Trial :', num2str(n), '  True angle :',num2str(ang)])
+xlabel('Grating angle')
+ylabel('Log likelihood function')
+xlim([0, 150])
+
+subplot(2,2,3)
+n = 3;
+ang = mv1_test.stimuli(n,2);
+plot(unique_angles(1:6), l_test(n,:));
+title(['Test Trial :', num2str(n), '  True angle :',num2str(ang)])
+xlabel('Grating angle')
+ylabel('Log likelihood function')
+xlim([0, 150])
+
+subplot(2,2,4)
+n = 4;
+ang = mv1_test.stimuli(n,2);
+plot(unique_angles(1:6), l_test(n,:));
+title(['Test Trial :', num2str(n), '  True angle :',num2str(ang)])
+xlabel('Grating angle')
+ylabel('Log likelihood function')
+xlim([0, 150])
+
+suptitle('Log Likilihood Funct')
 %% 
 % <latex> 
 % 	\item How well do these four likelihood functions seem to match the true stimulation angle? Explain in a few sentences. (3 pts)

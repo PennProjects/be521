@@ -54,7 +54,6 @@ size(unique_angles,1)
 
 %%
 tuning_curve_data = zeros(18, 12);
-temp_ = {};
 num_stim_angle = zeros(12,1);
 %loop through all trials of each of the 12 angles
 for i = 1 : size(unique_angles,1)
@@ -81,7 +80,6 @@ for i = 1 : size(unique_angles,1)
         %a given trial
         for k = 1:18
             trig_time_s = round([mv1.neurons{k}]./1000,1);
-%             temp_ = [temp_, find(trig_time_s>= start_time_s & trig_time_s <=end_time_s)];
             num_trig = size(find(trig_time_s>= start_time_s & trig_time_s <=end_time_s),1);
             
             tuning_curve_data(k,i) = tuning_curve_data(k,i) + num_trig;
@@ -296,7 +294,83 @@ ylabel('Number of trials')
 %%
 % $\textbf{Answer 2.2a} \\$
 
+%seprating testing data 
+%testing set starts from 71st trial
+mv1_test = mv1;
+mv1_test.stimuli = mv1_test.stimuli(71:120,:);
 
+%%
+%computing testing set
+spike_count_test = zeros(18, 50);
+%loop through all 50 testing trials
+for j= 1:50
+        
+    idx = j; 
+    
+    %find the start and stop time of each trial
+    % here we are approximating to secs as the question says approx 1.5
+    % wait after a 2 sec show of image11
+    start_time_ms = mv1_test.stimuli(idx,1)/1000;
+    start_time_s = round(start_time_ms,1);
+    end_time_s = start_time_s + 3.5; % 3.5 sec window
+    
+    %cheecking if the trigger for any neuron lies within time range of
+    %a given trial
+    for k = 1:18
+        trig_time_s = round([mv1_test.neurons{k}]./1000,1);
+        num_trig = size(find(trig_time_s>= start_time_s & trig_time_s <=end_time_s),1);
+        
+        spike_count_test(k,j) = spike_count_test(k,i) + num_trig;
+    end
+    
+end
+
+%%
+%calculating l_test using tuning curve of average spikes per grating angle
+%from training data
+l_test = spike_count_test'*log(tuning_curve_train_avg);
+
+%%
+%ploting l_test
+figure();   
+subplot(2,2,1)
+n = 1;
+ang = mv1_test.stimuli(n,2);
+plot(unique_angles(1:6), l_test(n,:), 'Linewidth', 2);
+title(['Test Trial :', num2str(n), '  True angle :',num2str(ang)])
+xlabel('Grating angle')
+ylabel('Log likelihood function')
+xlim([0, 150])
+
+
+subplot(2,2,2)
+n = 2;
+ang = mv1_test.stimuli(n,2);
+plot(unique_angles(1:6), l_test(n,:), 'Linewidth', 2);
+title(['Test Trial :', num2str(n), '  True angle :',num2str(ang),'(=0)'])
+xlabel('Grating angle')
+ylabel('Log likelihood function')
+xlim([0, 150])
+
+subplot(2,2,3)
+n = 3;
+ang = mv1_test.stimuli(n,2);
+plot(unique_angles(1:6), l_test(n,:), 'Linewidth', 2);
+title(['Test Trial :', num2str(n), '  True angle :',num2str(ang)])
+xlabel('Grating angle')
+ylabel('Log likelihood function')
+xlim([0, 150])
+
+subplot(2,2,4)
+n = 4;
+ang = mv1_test.stimuli(n,2);
+plot(unique_angles(1:6), l_test(n,:), 'Linewidth', 2);
+title(['Test Trial :', num2str(n), '  True angle :',num2str(ang)])
+xlabel('Grating angle')
+ylabel('Log likelihood function')
+xlim([0, 150])
+
+suptitle('Log Likelihood Function for test stimuli')
 %% 
 % <latex> 
 % 	\item How well do these four likelihood functions seem to match the true stimulation angle? Explain in a few sentences. (3 pts)
