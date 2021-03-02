@@ -326,8 +326,9 @@ for j= 1:50
 end
 
 %%
-%calculating l_test
-l_test = spike_count_test'*log(tuning_curve_train);
+%calculating l_test using tuning curve of average spikes per grating angle
+%from training data
+l_test = spike_count_test'*log(tuning_curve_train_avg);
 
 %%
 %ploting l_test
@@ -335,7 +336,7 @@ figure();
 subplot(2,2,1)
 n = 1;
 ang = mv1_test.stimuli(n,2);
-plot(unique_angles(1:6), l_test(n,:));
+plot(unique_angles(1:6), l_test(n,:), 'Linewidth', 2);
 title(['Test Trial :', num2str(n), '  True angle :',num2str(ang)])
 xlabel('Grating angle')
 ylabel('Log likelihood function')
@@ -345,8 +346,8 @@ xlim([0, 150])
 subplot(2,2,2)
 n = 2;
 ang = mv1_test.stimuli(n,2);
-plot(unique_angles(1:6), l_test(n,:));
-title(['Test Trial :', num2str(n), '  True angle :',num2str(ang)])
+plot(unique_angles(1:6), l_test(n,:), 'Linewidth', 2);
+title(['Test Trial :', num2str(n), '  True angle :',num2str(ang),'(=0)'])
 xlabel('Grating angle')
 ylabel('Log likelihood function')
 xlim([0, 150])
@@ -354,7 +355,7 @@ xlim([0, 150])
 subplot(2,2,3)
 n = 3;
 ang = mv1_test.stimuli(n,2);
-plot(unique_angles(1:6), l_test(n,:));
+plot(unique_angles(1:6), l_test(n,:), 'Linewidth', 2);
 title(['Test Trial :', num2str(n), '  True angle :',num2str(ang)])
 xlabel('Grating angle')
 ylabel('Log likelihood function')
@@ -363,13 +364,13 @@ xlim([0, 150])
 subplot(2,2,4)
 n = 4;
 ang = mv1_test.stimuli(n,2);
-plot(unique_angles(1:6), l_test(n,:));
+plot(unique_angles(1:6), l_test(n,:), 'Linewidth', 2);
 title(['Test Trial :', num2str(n), '  True angle :',num2str(ang)])
 xlabel('Grating angle')
 ylabel('Log likelihood function')
 xlim([0, 150])
 
-suptitle('Log Likilihood Funct')
+suptitle('Log Likelihood Function for test stimuli')
 %% 
 % <latex> 
 % 	\item How well do these four likelihood functions seem to match the true stimulation angle? Explain in a few sentences. (3 pts)
@@ -377,6 +378,15 @@ suptitle('Log Likilihood Funct')
 
 %%
 % $\textbf{Answer 2.2b} \\$
+
+%% 
+% For the trials 1, 2 and 3 the prediction is accurate, the rue grating
+% angle is correctly predicted by the angle with the highest probability
+% from the likelihood function. \\
+% For trial 4 the max value from the likelihood funtion is obtained for 60
+% deg but the grating angle is 0 deg. This is probably due to the higher
+% sensitivity of the 4th neuron to 60 deg as compared to 0 deg. Also, the
+% 4th neuron has the most number of spikes for an angle so it biases the li
 
 %% 
 % <latex> 

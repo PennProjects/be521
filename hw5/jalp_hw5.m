@@ -380,6 +380,17 @@ suptitle('Log Likelihood Function for test stimuli')
 % $\textbf{Answer 2.2b} \\$
 
 %% 
+% For the trials 1, 2 and 3 the prediction is accurate, the true grating
+% angle is correctly predicted by the angle with the highest probability
+% from the likelihood function which is 0 for trial 1, 0(or 180) for trial
+% 2 and 60 for trial 3. \\
+% For trial 4 the max value from the likelihood funtion is obtained for 60
+% deg but the grating angle is 0 deg. This is probably due to the higher
+% sensitivity of the 4th neuron to 60 deg as compared to 0 deg. Also, the
+% 4th neuron has the most number of spikes for an stimulus so it dominates the
+% prediction of the likelikhod function. 
+
+%% 
 % <latex> 
 % 	\item Compute the maximum likelihood estimate (MLE) for each of
 % 	the 50 trials. This is another way of asking which angle $\theta$ has the highest probability.
