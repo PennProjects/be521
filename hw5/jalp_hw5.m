@@ -547,6 +547,9 @@ p_val_test = (size(samples_great_test, 1)/1000)*100
 %%
 % $\textbf{Answer 2.3e} \\$
 
+%%
+% This value of probability of finding the observed accuracy or more
+% extreme given null hypothesis is true is called the p-value
 %% 
 % <latex> 
 % 	\end{enumerate}  
