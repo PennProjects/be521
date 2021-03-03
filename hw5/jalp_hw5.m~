@@ -457,20 +457,28 @@ for i = 1:1000
    random_test_trial = zeros(50,1);
    for j = 1:50
        
-%        seed = (i-1)*50+j;
-%        rng(seed);
+       %fixing seed
+       seed = (i-1)*50+j;
+       rng(seed);
+       
        r_idx = randperm(6,1);
        r_ang = unique_angles(r_idx);
        random_test_trial(j) = r_ang;
    end
    
-   acc_n = (size(find(random_test_trial == mv1_test.stimuli(:,2)),1)/50)*100;
+   acc_n = (size(find(random_test_trial == angles_test_folded),1)/50)*100;
    p_test_acc(i) = acc_n;
 end
 
 %%
 figure();
 histogram(p_test_acc);
+xline(pred_accuracy, 'color', 'red', 'Linewidth', 2);
+title('Null distribution for 50 trials for 6 grating angles, n = 1000');
+legend('Null' , 'MLE')
+xlabel('Accuracy %')
+ylabel('Number of experiments')
+
 
 %% 
 % <latex> 
@@ -480,6 +488,24 @@ histogram(p_test_acc);
 %%
 % $\textbf{Answer 2.3b} \\$
 
+%%
+% Yes, for a large sample size like 1000 we would expect the null
+% hypothesis to have a bell shaped distribution of binomial distibution or
+% an approximately normal distribution for given parameters. \\
+% Comparing the results to a binomial
+% distribution of 50 trials with a probability of 1/6 we get  similarly
+% shaped curve. With a mean close to 1/6 or 16.66%
+
+%%
+%Example Binomial distribution 
+%50 trials with a p of 1/6 for each
+y  = binopdf(0:50, 50, 1/6);
+figure();
+plot(0:2:100, y);
+xlim([0,50])
+title('Binomial distribution n=50, p=1/6', 'Linewidth', 2)
+xlabel('Accuracy %')
+ylabel('Probabilty density')
 %% 
 % <latex> 
 % 	\item What is the probability that your actual accuracy measurement comes from the null-distribution?  That is, calculate the fraction of permutation samples with accuracy \emph{more extreme} relative to the mean of the null distribution (less than your measurement if your value is less than the mean, or more than your measurement if your value is more than the mean). (2 pts)
@@ -487,6 +513,14 @@ histogram(p_test_acc);
 
 %%
 % $\textbf{Answer 2.3c} \\$
+
+%%
+samples_great_meas = p_test_acc(p_test_acc>pred_accuracy);
+p_val_meas = (size(samples_great_meas, 1)/1000)*100
+
+%%
+% From our null hypothesis distribution, 0% of the values are above the
+% predicted probability of 44% from MLE.
 
 %% 
 % <latex> 
@@ -496,6 +530,14 @@ histogram(p_test_acc);
 %%
 % $\textbf{Answer 2.3d} \\$
 
+%%
+% Calculating probabilty that 25 comes from null hypothesis
+test_val = 25;
+samples_great_test = p_test_acc(p_test_acc>test_val);
+p_val_test = (size(samples_great_test, 1)/1000)*100
+
+%%
+% In this iteration of radomization for null distribut
 %% 
 % <latex> 
 % 	\item What is this value typically called? (1 pt) 
