@@ -560,6 +560,14 @@ p_val_test = (size(samples_great_test, 1)/1000)*100
 %%
 % $\textbf{Answer 2.4} \\$
 
+%%
+% Here we are considering that all the neurons show have the same weightage
+% in number of spikes/fires per stimuli for the calculation. To do this we can
+% normalize the number of spikes for each neuron by the average spike of
+% that neuron for for the whole range of angles, this was the multi spike
+% of some neurons dont bias the log weights as compared to neuron that are
+% orientation sensitive but have fewer spikes for a stumulus. \\
+
 %% 
 % <latex> 
 % \end{enumerate}

@@ -537,7 +537,8 @@ samples_great_test = p_test_acc(p_test_acc>test_val);
 p_val_test = (size(samples_great_test, 1)/1000)*100
 
 %%
-% In this iteration of radomization for null distribut
+% In this iteration of radomization for null distribution, we get a
+% p-value of 7.2% for a 25% accurary in the null hypothesis.
 %% 
 % <latex> 
 % 	\item What is this value typically called? (1 pt) 
@@ -546,6 +547,9 @@ p_val_test = (size(samples_great_test, 1)/1000)*100
 %%
 % $\textbf{Answer 2.3e} \\$
 
+%%
+% This value of probability of finding the observed accuracy or more
+% extreme given null hypothesis is true is called the p-value
 %% 
 % <latex> 
 % 	\end{enumerate}  
@@ -555,6 +559,13 @@ p_val_test = (size(samples_great_test, 1)/1000)*100
 
 %%
 % $\textbf{Answer 2.4} \\$
+
+%%
+% Here we are considering that all the neurons show have the same weightage
+% in number of fires per stimuli for the calculation. To do this we can
+% normalize the number of spikes for each neuron by the average spike of
+% that neuron for for the whole range of angles, this was the multi spike
+% of some neurons dont bias the log 
 
 %% 
 % <latex> 
