@@ -9,7 +9,7 @@
 %% 
 % <latex> 
 % \begin{center} \author{Jal Mahendra Panchal \\
-%                   Collaborator : Sam Gaardsmoe}
+%   \normalsize Collaborators: Sam Gaardsmoe \\}
 % \end{center} 
 % </latex>
 
@@ -134,7 +134,9 @@ suptitle('Average spikes vs grating angle for different neurons')
 
 %%
 % Based on how the grating patterns look, the pattern for $\theta$ and
-% $\theta+180$ would look the same as they are the same when flipped by 180
+% $\theta+180$ do look similar in most cases , the patterns are jagged due to low
+% number of samples. The response for stimuli images for $\theta$ and
+% $\theta+180$ is similar as the stimuli are the same when flipped by 180
 % so the neuron would respond identically to both the angles. \\
 % Here are a few examples of neurons that show this phenomenon.
 
@@ -187,9 +189,9 @@ suptitle('Showing symmetry in response for $\theta$ and $\theta+180$')
 % $\textbf{Answer 1.2b} \\$
 
 %%
-% Yes, the neurons in V1 would only respond to the orientation of the
+% Yes, the neurons in V1 would respond to the orientation of the
 % grating images. As the orientation of the images for $\theta$ and $\theta
-% + 180$ would look the same. The neurons will not be able to differentiate
+% + 180$ would look the same, the neurons will not be able to differentiate
 % between the two images and fire similarly for both. Thus we see this
 % behavior of response of a neuron being similar for $\theta$ and $\theta +
 % 180$.
@@ -278,7 +280,7 @@ figure();
 angles_trian_folded = [mv1.stimuli((mv1_train.stimuli(:,2)<180),2)', (mv1.stimuli((mv1_train.stimuli(:,2)>=180),2)-180)'];
 ax = histogram(angles_trian_folded, 30).Parent;
 set(ax, 'XTick', 0:30:150);
-title('Number of trials for each grating angle')
+title('Number of trials for each grating angle, training set, n=70')
 xlabel('Grating Angles')
 ylabel('Number of trials')
  
@@ -421,7 +423,7 @@ end
 pred_accuracy = (size(find(pred_ang == angles_test_folded),1)/50)*100
 
 %%
-% The MLE only predicted 44% of the trials correctly.
+% The MLE predicted 44% of the trials correctly.
 %% 
 % <latex> 
 % 	\item 
@@ -433,7 +435,17 @@ pred_accuracy = (size(find(pred_ang == angles_test_folded),1)/50)*100
 % $\textbf{Answer 2.2d} \\$
 
 %%
-% kjhkljhkl
+% At 44% percent, the MLE algorith did a good job for prediction if we
+% compare it to the binomial distribution of expected accuracy of 16.7 %
+% .\\But from a
+% pratical application, the accuracy is below 50% so it gets the angle
+% wrong most of the time which seems like not a good result. This can be improved
+% by training from a much larger training sample as compared to 70 trials
+% in this case. Also, some neurons fire/spike much more than other neurons,
+% they dominate and bias the prediction of the algorithm. Depending on if
+% we prefer this or if want to weigh the spikes for each neuron equally, we
+% can normalize the number if spikes for each nueron depending on the
+% average spike of that neuron for all angles.
 
 
 %%
