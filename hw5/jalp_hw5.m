@@ -467,9 +467,10 @@ p_test_acc = zeros(1000,1);
 for i = 1:1000
     
    random_test_trial = zeros(50,1);
+   %finding a random set of angles for 50 trials
    for j = 1:50
        
-       %fixing seed
+       %fixing seed for randomization
        seed = (i-1)*50+j;
        rng(seed);
        
@@ -483,6 +484,7 @@ for i = 1:1000
 end
 
 %%
+%Plotting null distribution
 figure();
 histogram(p_test_acc);
 xline(pred_accuracy, 'color', 'red', 'Linewidth', 2);
@@ -532,7 +534,9 @@ p_val_meas = (size(samples_great_meas, 1)/1000)*100
 
 %%
 % From our null hypothesis distribution, 0% of the values are above the
-% predicted probability of 44% from MLE.
+% predicted probability of 44% from MLE. This is expected as the MLE has a
+% much higher accuracy than the null distribution and it would never
+% predict it.
 
 %% 
 % <latex> 
