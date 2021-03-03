@@ -40,8 +40,10 @@ mv1 = load('mouseV1.mat');
 %%
 unique_angles = unique(mv1.stimuli(:,2));
 size(unique_angles,1)
+
+%%
  % There are 12 unique grating angles in the stimuli, 0, 30, 60, 90, 120, 150, 
- % 180, 210, 240, 270, 300, 330,  though 6 of the
+ % 180, 210, 240, 270, 300, 330. Though 6 of the
  % angles >= 180 will essentially have the same grating pattern as the 6 below 180
  % deg.
 
@@ -101,24 +103,28 @@ plot(unique_angles, tuning_curve_avg(1,:), 'Linewidth', 2);
 title('Neuron 1')
 xlabel('Grating angle')
 ylabel('Average number of spikes')
+xlim([0,360])
 
 subplot(2,2,2)
 plot(unique_angles, tuning_curve_avg(2,:), 'Linewidth', 2);
 title('Neuron 2')
 xlabel('Grating angle')
 ylabel('Average number of spikes')
+xlim([0,360])
 
 subplot(2,2,3)
 plot(unique_angles, tuning_curve_avg(3,:), 'Linewidth', 2);
 title('Neuron 3')
 xlabel('Grating angle')
 ylabel('Average number of spikes')
+xlim([0,360])
 
 subplot(2,2,4)
 plot(unique_angles, tuning_curve_avg(4,:), 'Linewidth', 2);
 title('Neuron 4')
 xlabel('Grating angle')
 ylabel('Average number of spikes')
+xlim([0,360])
 
 suptitle('Average spikes vs grating angle for different neurons')
 
@@ -137,7 +143,7 @@ suptitle('Average spikes vs grating angle for different neurons')
 % $\theta+180$ do look similar in most cases , the patterns are jagged due to low
 % number of samples. The response for stimuli images for $\theta$ and
 % $\theta+180$ is similar as the stimuli are the same when flipped by 180
-% so the neuron would respond identically to both the angles. \\
+% so the neuron would respond identically to both the angles. $\\$
 % Here are a few examples of neurons that show this phenomenon.
 
 
@@ -189,8 +195,8 @@ suptitle('Showing symmetry in response for $\theta$ and $\theta+180$')
 % $\textbf{Answer 1.2b} \\$
 
 %%
-% Yes, the neurons in V1 would respond to the orientation of the
-% grating images. As the orientation of the images for $\theta$ and $\theta
+% Yes, the neurons in V1 would have high sensitivity for orientation of the
+% grating images(stimuli). As the orientation of the images for $\theta$ and $\theta
 % + 180$ would look the same, the neurons will not be able to differentiate
 % between the two images and fire similarly for both. Thus we see this
 % behavior of response of a neuron being similar for $\theta$ and $\theta +
@@ -277,11 +283,12 @@ tuning_curve_train_avg = tuning_curve_train ./ num_stim_angle_train;
 % After combining the trials above and below 150 deg, we get the following
 % histogram for number of trials for each angle. \\
 figure();
-angles_trian_folded = [mv1.stimuli((mv1_train.stimuli(:,2)<180),2)', (mv1.stimuli((mv1_train.stimuli(:,2)>=180),2)-180)'];
+angles_trian_folded = [mv1.stimuli((mv1_train.stimuli(:,2)<180),2)',...
+    (mv1.stimuli((mv1_train.stimuli(:,2)>=180),2)-180)'];
 ax = histogram(angles_trian_folded, 30).Parent;
 set(ax, 'XTick', 0:30:150);
 title('Number of trials for each grating angle, training set, n=70')
-xlabel('Grating Angles')
+xlabel('Grating angle')
 ylabel('Number of trials')
  
 
@@ -383,15 +390,15 @@ suptitle('Log Likelihood Function for test stimuli')
 % $\textbf{Answer 2.2b} \\$
 
 %% 
-% For the trials 1, 2 and 3 the prediction is accurate, the true grating
+% For the trials 1, 2 and 3 the prediction is quite accurate, the true grating
 % angle is correctly predicted by the angle with the highest probability
 % from the likelihood function which is 0 for trial 1, 0(or 180) for trial
-% 2 and 60 for trial 3. \\
-% For trial 4 the max value from the likelihood funtion is obtained for 60
+% 2 and 60 for trial 3. $\\$
+% For trial 4, the max value from the likelihood funtion is obtained for 60
 % deg but the grating angle is 0 deg. This is probably due to the higher
 % sensitivity of the 4th neuron to 60 deg as compared to 0 deg. Also, the
-% 4th neuron has the most number of spikes for an stimulus so it dominates the
-% prediction of the likelikhod function. 
+% 4th neuron has the most number of spikes for a stimulus so it dominates the
+% prediction of the likelihood function. 
 
 %% 
 % <latex> 
@@ -423,7 +430,7 @@ end
 pred_accuracy = (size(find(pred_ang == angles_test_folded),1)/50)*100
 
 %%
-% The MLE predicted 44% of the trials correctly.
+% The MLE predicted 44% of the trials or 22 of the 50 test trials correctly.
 %% 
 % <latex> 
 % 	\item 
@@ -435,10 +442,10 @@ pred_accuracy = (size(find(pred_ang == angles_test_folded),1)/50)*100
 % $\textbf{Answer 2.2d} \\$
 
 %%
-% At 44% percent, the MLE algorith did a good job for prediction if we
+% At 44% percent, the MLE algorithm did a good job for prediction if we
 % compare it to the binomial distribution of expected accuracy of 16.7 %
-% .\\But from a
-% pratical application, the accuracy is below 50% so it gets the angle
+% . $\\$ But from a
+% practical application, the accuracy is below 50% so it gets the angle
 % wrong most of the time which seems like not a good result. This can be improved
 % by training from a much larger training sample as compared to 70 trials
 % in this case. Also, some neurons fire/spike much more than other neurons,
@@ -448,9 +455,6 @@ pred_accuracy = (size(find(pred_ang == angles_test_folded),1)/50)*100
 % average spike of that neuron for all angles.
 
 
-%%
-% The experiment had a very low probability to predict the grating angle
-% correctly, this is possible due to the fact that the 
 %% 
 % <latex> 
 %   \item It is important to show that your findings are not a result of chance. One way to demonstrate this is using a ``permutation test.'' Here, we will perform a permutation test by randomly reassigning new grating angles to the 50 test responses and then calculating how often the new grating angles match the true stimulation angles.
@@ -463,7 +467,7 @@ pred_accuracy = (size(find(pred_ang == angles_test_folded),1)/50)*100
 
 %%
 %calculating probability of random chance
-p_test_acc = zeros(1000,1);
+null_dist_acc = zeros(1000,1);
 for i = 1:1000
     
    random_test_trial = zeros(50,1);
@@ -480,13 +484,13 @@ for i = 1:1000
    end
    
    acc_n = (size(find(random_test_trial == angles_test_folded),1)/50)*100;
-   p_test_acc(i) = acc_n;
+   null_dist_acc(i) = acc_n;
 end
 
 %%
 %Plotting null distribution
 figure();
-histogram(p_test_acc);
+histogram(null_dist_acc);
 xline(pred_accuracy, 'color', 'red', 'Linewidth', 2);
 title('Null distribution for 50 trials for 6 grating angles, n = 1000');
 legend('Null' , 'MLE')
@@ -505,19 +509,19 @@ ylabel('Number of experiments')
 %%
 % Yes, for a large sample size like 1000 we would expect the null
 % hypothesis to have a bell shaped distribution of binomial distibution or
-% an approximately normal distribution for given parameters. \\
+% an approximately normal distribution for given parameters. $\\$
 % Comparing the results to a binomial
-% distribution of 50 trials with a probability of 1/6 we get  similarly
-% shaped curve. With a mean close to 1/6 or 16.66%
+% distribution of 50 trials with a probability of 1/6 for each trial we get  
+% similarly shaped curve with a mean close to 1/6 or 16.66%
 
 %%
 %Example Binomial distribution 
 %50 trials with a p of 1/6 for each
 y  = binopdf(0:50, 50, 1/6);
 figure();
-plot(0:2:100, y);
+plot(0:2:100, y,  'Linewidth', 2);
 xlim([0,50])
-title('Binomial distribution n=50, p=1/6', 'Linewidth', 2)
+title('Binomial distribution n=50, p=1/6')
 xlabel('Accuracy %')
 ylabel('Probabilty density')
 %% 
@@ -529,7 +533,7 @@ ylabel('Probabilty density')
 % $\textbf{Answer 2.3c} \\$
 
 %%
-samples_great_meas = p_test_acc(p_test_acc>pred_accuracy);
+samples_great_meas = null_dist_acc(null_dist_acc>pred_accuracy);
 p_val_meas = (size(samples_great_meas, 1)/1000)*100
 
 %%
@@ -547,9 +551,9 @@ p_val_meas = (size(samples_great_meas, 1)/1000)*100
 % $\textbf{Answer 2.3d} \\$
 
 %%
-% Calculating probabilty that 25 comes from null hypothesis
+%calculating probabilty that 25% is predicted from null hypothesis
 test_val = 25;
-samples_great_test = p_test_acc(p_test_acc>test_val);
+samples_great_test = null_dist_acc(null_dist_acc>test_val);
 p_val_test = (size(samples_great_test, 1)/1000)*100
 
 %%
@@ -577,12 +581,16 @@ p_val_test = (size(samples_great_test, 1)/1000)*100
 % $\textbf{Answer 2.4} \\$
 
 %%
-% Here we are considering that all the neurons show have the same weightage
+% Here we are considering that all the neurons should have the same weightage
 % in number of spikes/fires per stimuli for the calculation. To do this we can
 % normalize the number of spikes for each neuron by the average spike of
-% that neuron for for the whole range of angles, this was the multi spike
+% that neuron for for the whole range of angles, this way the multi spike
 % of some neurons dont bias the log weights as compared to neuron that are
-% orientation sensitive but have fewer spikes for a stumulus. \\
+% orientation sensitive but have fewer spikes for a stumulus. $\\$
+% We could also explore different weights like a cosinosoidal weights instead of a
+% log weight for the tuning function as touched upton in Jazayeri & Movshon
+% 2006 for calculating likelihood of direction of motion and explore
+% different ways to weight the spikes and normalize for each neuron.
 
 %% 
 % <latex> 
