@@ -29,9 +29,32 @@
 %   Clearly specify the denominator and numerator coefficients obtained for your filter function. (2pts)
 % </latex>
 
+
+
+
 %%
 % $\textbf{Answer 1.1} \\$
 
+%%
+%ellip filter 
+n = 4 ; %4th order filter 
+Rp = 0.1 ; %pass band ripple in db 
+Rs  = 40 ; % stop band attenuation in db 
+Wp = 300 ; %pass band edge frequency in hz
+
+fs = 2000; %sampling freq in hz
+Wp  = Wp/fs; % converting cutoff freq to a ratio of sampling freq 
+
+[nmtr_b , den_a ] = ellip(n,Rp, Rs , Wp, 'high') ;
+
+%%
+% The filter's numerator and denomerator respectively are
+nmtr_b
+den_a
+
+figure();
+freqz(nmtr, den);
+title('4th order elliptic filter')
 %% 
 % <latex>
 %   \item Using the \verb|filter| function and \verb|filtfilt| function, obtain two different filtered outputs of the nerve signal.
@@ -39,10 +62,62 @@
 %         \item In a 2x1 subplot, plot the first 50 ms of the unfiltered nerve signal in the top subplot; in the bottom subplot, plot the \verb|filter| output in blue and the \verb|filtfilt| output in red. Use a potential range (y-axis) of -20 to 50 millivolts. (4 pts)
 % </latex>
 
+%%
+% $\textbf{Answer 1.2a} \\$
+
+%%
+%obtaining the I521_A0006_D001 signal
+addpath(genpath('/Users/jalpanchal/git/be521'));
+
+session_cray = IEEGSession('I521_A0006_D001', 'jalpanchal', 'jal_ieeglogin.bin');
+sampling_frequency_hz_cray = session_cray.data.sampleRate;
+duration_in_sec_cray = session_cray.data(1).rawChannels(1).get_tsdetails.getDuration/1e6;
+
+muscle_raw = session_cray.data.getvalues(0, duration_in_sec_cray * 1e6, 1);
+nerve_raw = session_cray.data.getvalues(0, duration_in_sec_cray * 1e6, 2);
+
+duration = datestr(seconds(duration_in_sec_cray),'HH:MM:SS:FFF');
+
+%%
+%filtering using filter
+nerve_filter = filter(nmtr_b,den_a,nerve_raw);
+
+%filtering using filtfilt
+nerve_filtfilt = filtfilt(nmtr_b,den_a,nerve_raw);
+
+%%
+%plot 
+fs = sampling_frequency_hz_cray;
+t = 0 : 1e3/sampling_frequency_hz_cray : duration_in_sec_cray*1e3 - 1e3/sampling_frequency_hz_cray ;
+
+figure();
+ax1 = subplot(2,1,1);
+plot(t, nerve_raw, 'Linewidth', 1);
+title('Nerves channel raw')
+xlabel('Time (ms)')
+ylabel('Signal Amplitude (\muV)')
+% xlim([0, 50])
+
+ax2 = subplot(2,1,2);
+plot(t, nerve_filter, 'Linewidth', 1, 'color',[0 0.4470 0.7410] );
+hold on 
+plot(t, nerve_filtfilt, 'Linewidth', 1, 'color', [0.8500 0.3250 0.0980]);
+hold off
+title('Nerves channel filtered')
+xlabel('Time (ms)')
+ylabel('Signal Amplitude (\muV)')
+legend('aia', 'dhd')
+% xlim([0, 50]) 
+
+suptitle('Filtering nerve data for I521\_A0006\_D001')
+
 %% 
 % <latex>
 %         \item How is the unfiltered signal different from the filtered signal? What is different about the two filtered (red and blue) signals? (2 pts)
 % </latex>
+
+%%
+% $\textbf{Answer 1.2b} \\$
 
 %% 
 % <latex>
@@ -50,15 +125,25 @@
 % </latex>
 
 %%
+% $\textbf{Answer 1.2c} \\$
+
+%%
 % <latex>
 %       \end{enumerate}
 %         \item Using a spike threshold of +30 mV, calculate the index and value of the peak voltage for each spike in the \textbf{filtered} nerve signal (select the best one). Use these values to plot the first 2.5 seconds of the nerve signal with a red dot above (e.g. 10 mV above) each spike. (Hint: Plot the entire length of the nerve signal with all the spikes marked but then restrict the x-axis using \verb|xlim| to [0, 2.5] seconds) (4 pts)
 % </latex>
 
+%%
+% $\textbf{Answer 1.3} \\$
+
+
 %% 
 % <latex>
 %  \item Under the assumption that different cells produce different action potentials with distinct peak amplitudes, decide how many cells you think were recorded (some number between 1 and 6). You may find it helpful to zoom in and pan on the plot you made in question 1.3. You may also find it useful to plot the sorted peak values to gain insight into where ``plateaus'' might be. (No need to include these preliminary plots in the report, though.) Use thresholds (which you well set manually/by eye) to separate the different spikes. Make a plot of the first 2.5 seconds similar to that in 1.3 except now color the spike dots of each group a different color (e.g., \verb|'r.'|,\verb|'g.'|,\verb|'k.'|,\verb|'m.'|).(6 pts)
 % </latex>
+
+%%
+% $\textbf{Answer 1.4} \\$
 
 %% 
 % <latex>
@@ -67,10 +152,16 @@
 % 	\item Using the same color order (for increasing spike amplitude) as you did for the thresholds in question 1.4, plot the spike cluster colors as little dots slightly above those you made for question 1.4. The final figure should be a new plot of the nerve voltage and two dots above each spike, the first being your manual label and the second your clustered label, which (hopefully/usually) should be the same color. (4 pts)
 % </latex>
 
+%%
+% $\textbf{Answer 1.5a} \\$
+
 %% 
 % <latex>
 % 	\item Which labeling, your manual ones or the ones learned by clustering) seem best, or do they both seem just as good? (Again, panning over the entire plot may be helpful.) (2 pts)
 % </latex>
+
+%%
+% $\textbf{Answer 1.5b} \\$
 
 %% 
 % <latex>
@@ -81,10 +172,17 @@
 %    \item Using the cell groups you either manually defined or found via $k$-means clustering (just specify which you're using) again with different colors, plot a colored point for each spike where the x-value is the spike amplitude and the y-value is the muscle potential change. (6 pts)
 % </latex>
 
+
+%%
+% $\textbf{Answer 1.6a} \\$
+
 %% 
 % <latex>
 %    \item Does this plot support the hypothesis that the muscle fiber responses are only due to a subset of the cells. Explain why or why not. (3 pts)
 % </latex>
+
+%%
+% $\textbf{Answer 1.6b} \\$
 
 %% 
 % <latex>
@@ -97,16 +195,27 @@
 %    \item Using a threshold six standard deviations above the mean of the signal, detect the spikes in the signal. In addition, extract the waveform from 1 ms before the peak to 1 ms after it with peak value in the middle. (You will end up with a matrix where each row corresponds to the number of data points in 2 ms of signal minus 1 data point. Use the closest integer number of data points for the $\pm$ 1 ms window.) 
 % </latex>
 
+%%
+% $\textbf{Answer 2.1} \\$
+
+
 %% 
 % <latex>
 % 	\begin{enumerate}
 % 	  \item Plot the waveforms of all the spikes overlaid on each other in the same color. (4 pts)
 % </latex>
 
+%%
+% $\textbf{Answer 2.1a} \\$
+
 %% 
 % <latex>
 % 	  \item Does it looks like there is more than one type of spike? (1 pt)
 % </latex>
+
+%%
+% $\textbf{Answer 2.1b} \\$
+
 
 %% 
 % <latex>
@@ -116,10 +225,17 @@
 % 	  \item Run principal component analysis on all the spike waveforms and represent your data with the top two principal components. Make a scatterplot of your data in this principal component (PC) space. (3 pts)
 % </latex>
 
+%%
+% $\textbf{Answer 2.2a} \\$
+
 %% 
 % <latex>
 % 	  \item Each PC also has an associated eigenvalue, representing the amount of variance explained by that PC. This an output of the \verb|PCA| command. Plot the  principal component vs the total (cumulative) percent variance explained. What is the percent variance explained if you include the top two principal components? (3 pts)
 % </latex>
+
+%%
+% $\textbf{Answer 2.2b} \\$
+
 
 %% 
 % <latex>
@@ -127,25 +243,46 @@
 % 	\end{enumerate} 
 % </latex>
 
+%%
+% $\textbf{Answer 2.2c} \\$
+
+
 %% 
 % <latex>
 %    \item Use the same \verb|kmeans| function as you used before to cluster the spikes based on these two (normalized) features (the waveforms represented by the top two PCs). You will use a slight twist, though, in that you will perform $k$-medians (which uses the medians instead of the mean for the cluster centers) by using the \verb|'cityblock'| distance metric (instead of the default \verb|'sqEuclidean'| distance). Make a plot similar to that in 2.2.a but now coloring the two clusters red and green. (3 pts)
 % </latex>
+
+
+%%
+% $\textbf{Answer 2.3} \\$
+
 
 %% 
 % <latex>
 %   \item Make a plot similar to 2.1 but now coloring the traces red and green according to which cluster they are in. Overlay the mean of the waveforms in each cluster with a thick black line (use the parameter \verb|'LineWidth'| and value \verb|'4'|). (3 pts)
 % </latex>
 
+%%
+% $\textbf{Answer 2.4} \\$
+
+
 %% 
 % <latex>
 %   \item What is a disadvantage of using principal component analysis? (1 pts)
 % </latex>
 
+%%
+% $\textbf{Answer 2.5} \\$
+
+
 %% 
 % <latex>
 %   \item What are some dangers of using the clustering techniques in this homework? (List 3) (3 pts)
 % </latex>
+
+%%
+% $\textbf{Answer 2.6} \\$
+
 
 %% 
 % <latex> 

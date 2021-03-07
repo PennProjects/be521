@@ -29,9 +29,32 @@
 %   Clearly specify the denominator and numerator coefficients obtained for your filter function. (2pts)
 % </latex>
 
+
+
+
 %%
 % $\textbf{Answer 1.1} \\$
 
+%%
+%ellip filter 
+n = 4 ; %4th order filter 
+Rp = 0.1 ; %pass band ripple in db 
+Rs  = 40 ; % stop band attenuation in db 
+Wp = 300 ; %pass band edge frequency in hz
+
+fs = 2000; %sampling freq in hz
+Wp  = Wp/fs; % converting cutoff freq to a ratio of sampling freq 
+
+[nmtr_b , den_a ] = ellip(n,Rp, Rs , Wp, 'high') ;
+
+%%
+% The filter's numerator and denomerator respectively are
+nmtr_b
+den_a
+
+figure();
+freqz(nmtr, den);
+title('4th order elliptic filter')
 %% 
 % <latex>
 %   \item Using the \verb|filter| function and \verb|filtfilt| function, obtain two different filtered outputs of the nerve signal.
@@ -41,6 +64,54 @@
 
 %%
 % $\textbf{Answer 1.2a} \\$
+
+%%
+%obtaining the I521_A0006_D001 signal
+addpath(genpath('/Users/jalpanchal/git/be521'));
+
+session_cray = IEEGSession('I521_A0006_D001', 'jalpanchal', 'jal_ieeglogin.bin');
+sampling_frequency_hz_cray = session_cray.data.sampleRate;
+duration_in_sec_cray = session_cray.data(1).rawChannels(1).get_tsdetails.getDuration/1e6;
+
+muscle_raw = session_cray.data.getvalues(0, duration_in_sec_cray * 1e6, 1);
+nerve_raw = session_cray.data.getvalues(0, duration_in_sec_cray * 1e6, 2);
+
+duration = datestr(seconds(duration_in_sec_cray),'HH:MM:SS:FFF');
+
+%%
+%filtering using filter
+nerve_filter = filter(nmtr_b,den_a,nerve_raw);
+
+%filtering using filtfilt
+nerve_filtfilt = filtfilt(nmtr_b,den_a,nerve_raw);
+
+%%
+%plot 
+fs = sampling_frequency_hz_cray;
+t = 0 : 1e3/sampling_frequency_hz_cray : duration_in_sec_cray*1e3 - 1e3/sampling_frequency_hz_cray ;
+
+figure();
+ax1 = subplot(2,1,1);
+plot(t, nerve_raw, 'Linewidth', 1);
+title('Nerves channel raw')
+xlabel('Time (ms)')
+ylabel('Signal Amplitude (\muV)')
+xlim([0, 50])
+ylim([-20*1e3 50*1e3])
+
+ax2 = subplot(2,1,2);
+plot(t, nerve_filter, 'Linewidth', 1, 'color',[0 0.4470 0.7410] );
+hold on 
+plot(t, nerve_filtfilt, 'Linewidth', 1, 'color', [0.8500 0.3250 0.0980]);
+hold off
+title('Nerves channel filtered')
+xlabel('Time (ms)')
+ylabel('Signal Amplitude (\muV)')
+legend('filter()', 'filtfilt()')
+xlim([0, 50]) 
+ylim([-20*1e3 50*1e3])
+
+suptitle('Filtering nerve data for I521\_A0006\_D001')
 
 %% 
 % <latex>
