@@ -53,7 +53,7 @@ nmtr_b
 den_a
 
 figure();
-freqz(nmtr, den);
+freqz(nmtr_b, den_a);
 title('4th order elliptic filter')
 %% 
 % <latex>
@@ -73,17 +73,17 @@ session_cray = IEEGSession('I521_A0006_D001', 'jalpanchal', 'jal_ieeglogin.bin')
 sampling_frequency_hz_cray = session_cray.data.sampleRate;
 duration_in_sec_cray = session_cray.data(1).rawChannels(1).get_tsdetails.getDuration/1e6;
 
-muscle_raw = session_cray.data.getvalues(0, duration_in_sec_cray * 1e6, 1);
-nerve_raw = session_cray.data.getvalues(0, duration_in_sec_cray * 1e6, 2);
+muscle_raw_uV = session_cray.data.getvalues(0, duration_in_sec_cray * 1e6, 1);
+nerve_raw_uV = session_cray.data.getvalues(0, duration_in_sec_cray * 1e6, 2);
 
 duration = datestr(seconds(duration_in_sec_cray),'HH:MM:SS:FFF');
 
 %%
 %filtering using filter
-nerve_filter = filter(nmtr_b,den_a,nerve_raw);
+nerve_filter_uV = filter(nmtr_b,den_a,nerve_raw_uV);
 
 %filtering using filtfilt
-nerve_filtfilt = filtfilt(nmtr_b,den_a,nerve_raw);
+nerve_filtfilt_uV = filtfilt(nmtr_b,den_a,nerve_raw_uV);
 
 %%
 %plot 
@@ -92,24 +92,26 @@ t = 0 : 1e3/sampling_frequency_hz_cray : duration_in_sec_cray*1e3 - 1e3/sampling
 
 figure();
 ax1 = subplot(2,1,1);
-plot(t, nerve_raw, 'Linewidth', 1);
+plot(t, nerve_raw_uV/1000, 'Linewidth', 1)                   
 title('Nerves channel raw')
 xlabel('Time (ms)')
-ylabel('Signal Amplitude (\muV)')
-% xlim([0, 50])
+ylabel('Signal Amplitude (mV)')
+xlim([0, 50])
+ylim([-20 50])
 
 ax2 = subplot(2,1,2);
-plot(t, nerve_filter, 'Linewidth', 1, 'color',[0 0.4470 0.7410] );
+plot(t, nerve_filter_uV/1000, 'Linewidth', 1, 'color',[0 0.4470 0.7410] );
 hold on 
-plot(t, nerve_filtfilt, 'Linewidth', 1, 'color', [0.8500 0.3250 0.0980]);
+plot(t, nerve_filtfilt_uV/1000, 'Linewidth', 1, 'color', [0.8500 0.3250 0.0980]);
 hold off
 title('Nerves channel filtered')
 xlabel('Time (ms)')
-ylabel('Signal Amplitude (\muV)')
-legend('aia', 'dhd')
-% xlim([0, 50]) 
+ylabel('Signal Amplitude (mV)')
+legend('filter()', 'filtfilt()')
+xlim([0, 50]) 
+ylim([-20 50])
 
-suptitle('Filtering nerve data for I521\_A0006\_D001')
+suptitle('Filtering nerve channel data for I521\_A0006\_D001')
 
 %% 
 % <latex>
@@ -118,6 +120,19 @@ suptitle('Filtering nerve data for I521\_A0006\_D001')
 
 %%
 % $\textbf{Answer 1.2b} \\$
+
+%%
+% The unfiltered signal has low frequency components and a 60 hz power line
+% noise that can be seen as a base line fluctuation. In the filtered
+% signals, the lower frequencies have been removed and a stable baseline
+% can be seen. $\\$
+% The $filtfilt$ function processes the signal in the forward and reverse
+% direction to cause a zero phase distortion as compared to the $filter$
+% function which prosses the signal only in the forward direction which can
+% result in a phase shift. The $filtfilt$ function due to its two direction
+% approach results in doubling of the order of filter as specified by the
+% filter coefficients b(numerator) and a(denomerator). The $filter$  function in
+% contrast maintains the order of the filter.
 
 %% 
 % <latex>
@@ -128,6 +143,8 @@ suptitle('Filtering nerve data for I521\_A0006\_D001')
 % $\textbf{Answer 1.2c} \\$
 
 %%
+% nthnsthsth
+%%
 % <latex>
 %       \end{enumerate}
 %         \item Using a spike threshold of +30 mV, calculate the index and value of the peak voltage for each spike in the \textbf{filtered} nerve signal (select the best one). Use these values to plot the first 2.5 seconds of the nerve signal with a red dot above (e.g. 10 mV above) each spike. (Hint: Plot the entire length of the nerve signal with all the spikes marked but then restrict the x-axis using \verb|xlim| to [0, 2.5] seconds) (4 pts)
@@ -136,6 +153,32 @@ suptitle('Filtering nerve data for I521\_A0006\_D001')
 %%
 % $\textbf{Answer 1.3} \\$
 
+%%
+%peak identification
+x = nerve_filtfilt_uV/1000;
+threshold = 30;
+
+%finding peak using signal change in second derivative for signal above
+%threshold
+peak_find = @(x, th) (find((diff(diff(x) < 0 ) .* (x(2:end-1) >th))>0));
+
+nerve_ff_peakidx = peak_find(x,threshold);
+
+
+%%
+%plotting peaks in filtered signal
+fs = sampling_frequency_hz_cray;
+t = 0 : 1e3/sampling_frequency_hz_cray : duration_in_sec_cray*1e3 - 1e3/sampling_frequency_hz_cray ;
+figure();
+plot(t/1000, x);
+hold on;
+plot(0 + (nerve_ff_peakidx/fs), x(nerve_ff_peakidx+1), '.');
+hold off;
+ylabel('Amplitude (mV)');
+xlabel('Time (sec)');
+title('Nerves channel filtered');
+legend('filtered signal' 'peaks >30mV')
+xlim([0 2.5])
 
 %% 
 % <latex>
