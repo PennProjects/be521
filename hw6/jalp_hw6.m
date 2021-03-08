@@ -178,7 +178,7 @@ ylabel('Amplitude (mV)');
 xlabel('Time (sec)');
 title('Nerves channel filtered for I521\_A0006\_D001');
 legend('filtered signal', 'peaks>30mV')
-xlim([0 2.5])
+% xlim([0 2.5])
 
 %% 
 % <latex>
@@ -187,6 +187,49 @@ xlim([0 2.5])
 
 %%
 % $\textbf{Answer 1.4} \\$
+
+%%
+nerve_peak_amp = sort(x(nerve_ff_peakidx+1));
+%%
+plot(nerve_peak_amp);
+%%
+plot(diff(nerve_peak_amp))
+%%
+histogram( x(nerve_ff_peakidx+1), 1000);
+
+
+%%
+%plotting peaks in filtered signal
+fs = sampling_frequency_hz_cray;
+t = 0 : 1e3/sampling_frequency_hz_cray : duration_in_sec_cray*1e3 - 1e3/sampling_frequency_hz_cray ;
+
+n1 = find(x(nerve_ff_peakidx+1) <50 & x(nerve_ff_peakidx+1)>30);
+n2 = find(x(nerve_ff_peakidx+1) <85 & x(nerve_ff_peakidx+1)>50);
+n3 = find(x(nerve_ff_peakidx+1) <110 & x(nerve_ff_peakidx+1)>85);
+n4 = find(x(nerve_ff_peakidx+1) <155 & x(nerve_ff_peakidx+1)>110);
+n5 = find(x(nerve_ff_peakidx+1) <201 & x(nerve_ff_peakidx+1)>155);
+n6 = find(x(nerve_ff_peakidx+1) <350 & x(nerve_ff_peakidx+1)>201);
+figure();
+plot(t/1000, x, 'Linewidth', 1);
+hold on;
+%plot all peaks
+% plot(0 + (nerve_ff_peakidx/fs), x(nerve_ff_peakidx+1)+10, '.', 'Markersize',10, 'color' ,[0.8500 0.3250 0.0980] );
+
+plot(nerve_ff_peakidx(n1)/fs, x(nerve_ff_peakidx(n1)+1), '.-','color','r', 'Markersize',15);
+
+plot(nerve_ff_peakidx(n2)/fs, x(nerve_ff_peakidx(n2)+1),'.-','color','b', 'Markersize',15);
+plot(nerve_ff_peakidx(n3)/fs, x(nerve_ff_peakidx(n3)+1),'.-','color','g', 'Markersize',15);
+plot(nerve_ff_peakidx(n4)/fs, x(nerve_ff_peakidx(n4)+1),'.-','color','k', 'Markersize',15);
+plot(nerve_ff_peakidx(n5)/fs, x(nerve_ff_peakidx(n5)+1),'.-','color','m', 'Markersize',15);
+plot(nerve_ff_peakidx(n6)/fs, x(nerve_ff_peakidx(n6)+1), '.-','color','r', 'Markersize',15);
+
+hold off;
+ylabel('Amplitude (mV)');
+xlabel('Time (sec)');
+title('Nerves channel filtered for I521\_A0006\_D001');
+legend('filtered signal', 'peaks>30mV')
+% xlim([0 2.5])
+
 
 %% 
 % <latex>
