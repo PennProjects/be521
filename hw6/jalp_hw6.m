@@ -226,8 +226,8 @@ plot(nerve_ff_peakidx(n6)/fs, x(nerve_ff_peakidx(n6)+1), '.-','color','r', 'Mark
 hold off;
 ylabel('Amplitude (mV)');
 xlabel('Time (sec)');
-title('Nerves channel filtered for I521\_A0006\_D001');
-legend('filtered signal', 'peaks>30mV')
+title('Nerves channel manual clustering for I521\_A0006\_D001');
+legend('filtered signal','neuron1', 'neuron2', 'neuron3', 'neuron4', 'neuron5', 'neuron6')
 % xlim([0 2.5])
 
 
@@ -240,6 +240,49 @@ legend('filtered signal', 'peaks>30mV')
 
 %%
 % $\textbf{Answer 1.5a} \\$
+
+%%
+%kmeans clustering
+[idx, centroid] = kmeans( x(nerve_ff_peakidx+1), 5);
+[~,i] = sort(centroid);
+
+km_n1 = find(idx==i(1));
+km_n2 = find(idx==i(2));
+km_n3 = find(idx==i(3));
+km_n4 = find(idx==i(4));
+km_n5 = find(idx==i(5));
+% km_n6 = find(idx==i(6));
+
+%%
+%plotting clusters
+
+figure();
+plot(t/1000, x, 'Linewidth', 1);
+hold on;
+%plot all peaks
+% plot(0 + (nerve_ff_peakidx/fs), x(nerve_ff_peakidx+1)+10, '.', 'Markersize',10, 'color' ,[0.8500 0.3250 0.0980] );
+
+plot(nerve_ff_peakidx(n1)/fs, x(nerve_ff_peakidx(n1)+1), '.-','color','r', 'Markersize',15);
+plot(nerve_ff_peakidx(n2)/fs, x(nerve_ff_peakidx(n2)+1),'.-','color','b', 'Markersize',15);
+plot(nerve_ff_peakidx(n3)/fs, x(nerve_ff_peakidx(n3)+1),'.-','color','g', 'Markersize',15);
+plot(nerve_ff_peakidx(n4)/fs, x(nerve_ff_peakidx(n4)+1),'.-','color','k', 'Markersize',15);
+plot(nerve_ff_peakidx(n5)/fs, x(nerve_ff_peakidx(n5)+1),'.-','color','m', 'Markersize',15);
+plot(nerve_ff_peakidx(n6)/fs, x(nerve_ff_peakidx(n6)+1), '.-','color','r', 'Markersize',15);
+
+plot(nerve_ff_peakidx(km_n1)/fs, x(nerve_ff_peakidx(km_n1)+1)+10, '.-','color','r', 'Markersize',15);
+plot(nerve_ff_peakidx(km_n2)/fs, x(nerve_ff_peakidx(km_n2)+1)+10,'.-','color','b', 'Markersize',15);
+plot(nerve_ff_peakidx(km_n3)/fs, x(nerve_ff_peakidx(km_n3)+1)+10,'.-','color','g', 'Markersize',15);
+plot(nerve_ff_peakidx(km_n4)/fs, x(nerve_ff_peakidx(km_n4)+1)+10,'.-','color','k', 'Markersize',15);
+plot(nerve_ff_peakidx(km_n5)/fs, x(nerve_ff_peakidx(km_n5)+1)+10,'.-','color','m', 'Markersize',15);
+% plot(nerve_ff_peakidx(km_n6)/fs, x(nerve_ff_peakidx(km_n6)+1)+10, '.-','color','r', 'Markersize',15);
+
+hold off;
+ylabel('Amplitude (mV)');
+xlabel('Time (sec)');
+title('Nerves channel comparing manual clustering to kmeans clustering for I521\_A0006\_D001');
+legend('filtered signal', 'neuron1', 'neuron2', 'neuron3', 'neuron4', 'neuron5', 'neuron6')
+xlim([0 2.5])
+
 
 %% 
 % <latex>
