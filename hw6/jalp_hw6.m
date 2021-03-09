@@ -143,7 +143,7 @@ suptitle('Filtering nerve channel data for I521\_A0006\_D001')
 % $\textbf{Answer 1.2c} \\$
 
 %%
-% nthnsthsth
+% The $filter$ function..
 %%
 % <latex>
 %       \end{enumerate}
@@ -172,7 +172,7 @@ t = 0 : 1e3/sampling_frequency_hz_cray : duration_in_sec_cray*1e3 - 1e3/sampling
 figure();
 plot(t/1000, x, 'Linewidth', 1);
 hold on;
-plot(0 + (nerve_ff_peakidx/fs), x(nerve_ff_peakidx+1), '.', 'Markersize',10, 'color' ,[0.8500 0.3250 0.0980] );
+plot(0 + (nerve_ff_peakidx/fs), x(nerve_ff_peakidx+1)+10, '.', 'Markersize',10, 'color' ,[0.8500 0.3250 0.0980] );
 hold off;
 ylabel('Amplitude (mV)');
 xlabel('Time (sec)');
@@ -199,6 +199,11 @@ histogram( x(nerve_ff_peakidx+1), 1000);
 
 
 %%
+% Based on manual insoection of the spike amplitude and shape, it appears
+% that 6 different neurons are recorded in the nerve channel of the signal
+
+
+%%
 %plotting peaks in filtered signal
 fs = sampling_frequency_hz_cray;
 t = 0 : 1e3/sampling_frequency_hz_cray : duration_in_sec_cray*1e3 - 1e3/sampling_frequency_hz_cray ;
@@ -215,20 +220,20 @@ hold on;
 %plot all peaks
 % plot(0 + (nerve_ff_peakidx/fs), x(nerve_ff_peakidx+1)+10, '.', 'Markersize',10, 'color' ,[0.8500 0.3250 0.0980] );
 
-plot(nerve_ff_peakidx(n1)/fs, x(nerve_ff_peakidx(n1)+1), '.-','color','r', 'Markersize',15);
+plot(nerve_ff_peakidx(n1)/fs, x(nerve_ff_peakidx(n1)+1) +10,'r.', 'Markersize',15);
 
-plot(nerve_ff_peakidx(n2)/fs, x(nerve_ff_peakidx(n2)+1),'.-','color','b', 'Markersize',15);
-plot(nerve_ff_peakidx(n3)/fs, x(nerve_ff_peakidx(n3)+1),'.-','color','g', 'Markersize',15);
-plot(nerve_ff_peakidx(n4)/fs, x(nerve_ff_peakidx(n4)+1),'.-','color','k', 'Markersize',15);
-plot(nerve_ff_peakidx(n5)/fs, x(nerve_ff_peakidx(n5)+1),'.-','color','m', 'Markersize',15);
-plot(nerve_ff_peakidx(n6)/fs, x(nerve_ff_peakidx(n6)+1), '.-','color','r', 'Markersize',15);
+plot(nerve_ff_peakidx(n2)/fs, x(nerve_ff_peakidx(n2)+1)+ 10,'b.', 'Markersize',15);
+plot(nerve_ff_peakidx(n3)/fs, x(nerve_ff_peakidx(n3)+1)+ 10,'g.', 'Markersize',15);
+plot(nerve_ff_peakidx(n4)/fs, x(nerve_ff_peakidx(n4)+1)+ 10,'k.', 'Markersize',15);
+plot(nerve_ff_peakidx(n5)/fs, x(nerve_ff_peakidx(n5)+1)+ 10,'m.', 'Markersize',15);
+plot(nerve_ff_peakidx(n6)/fs, x(nerve_ff_peakidx(n6)+1)+ 10,'c.', 'Markersize',15);
 
 hold off;
 ylabel('Amplitude (mV)');
 xlabel('Time (sec)');
-title('Nerves channel manual clustering for I521\_A0006\_D001');
+title('Nerves channel manual clustering of neurons for I521\_A0006\_D001');
 legend('filtered signal','neuron1', 'neuron2', 'neuron3', 'neuron4', 'neuron5', 'neuron6')
-% xlim([0 2.5])
+xlim([0 2.5])
 
 
 %% 
@@ -243,7 +248,8 @@ legend('filtered signal','neuron1', 'neuron2', 'neuron3', 'neuron4', 'neuron5', 
 
 %%
 %kmeans clustering
-[idx, centroid] = kmeans( x(nerve_ff_peakidx+1), 5);
+rng(1); % For reproducibility
+[idx, centroid] = kmeans( x(nerve_ff_peakidx+1), 6, 'Display','iter');
 [~,i] = sort(centroid);
 
 km_n1 = find(idx==i(1));
@@ -255,26 +261,27 @@ km_n5 = find(idx==i(5));
 
 %%
 %plotting clusters
-
 figure();
 plot(t/1000, x, 'Linewidth', 1);
 hold on;
 %plot all peaks
 % plot(0 + (nerve_ff_peakidx/fs), x(nerve_ff_peakidx+1)+10, '.', 'Markersize',10, 'color' ,[0.8500 0.3250 0.0980] );
 
-plot(nerve_ff_peakidx(n1)/fs, x(nerve_ff_peakidx(n1)+1), '.-','color','r', 'Markersize',15);
-plot(nerve_ff_peakidx(n2)/fs, x(nerve_ff_peakidx(n2)+1),'.-','color','b', 'Markersize',15);
-plot(nerve_ff_peakidx(n3)/fs, x(nerve_ff_peakidx(n3)+1),'.-','color','g', 'Markersize',15);
-plot(nerve_ff_peakidx(n4)/fs, x(nerve_ff_peakidx(n4)+1),'.-','color','k', 'Markersize',15);
-plot(nerve_ff_peakidx(n5)/fs, x(nerve_ff_peakidx(n5)+1),'.-','color','m', 'Markersize',15);
-plot(nerve_ff_peakidx(n6)/fs, x(nerve_ff_peakidx(n6)+1), '.-','color','r', 'Markersize',15);
+%plotting manaul peaks
+plot(nerve_ff_peakidx(n1)/fs, x(nerve_ff_peakidx(n1)+1) + 10, 'r.', 'Markersize',15);
+plot(nerve_ff_peakidx(n2)/fs, x(nerve_ff_peakidx(n2)+1) + 10,'b.', 'Markersize',15);
+plot(nerve_ff_peakidx(n3)/fs, x(nerve_ff_peakidx(n3)+1) + 10 ,'g.', 'Markersize',15);
+plot(nerve_ff_peakidx(n4)/fs, x(nerve_ff_peakidx(n4)+1) + 10,'k.', 'Markersize',15);
+plot(nerve_ff_peakidx(n5)/fs, x(nerve_ff_peakidx(n5)+1) + 10,'m.', 'Markersize',15);
+plot(nerve_ff_peakidx(n6)/fs, x(nerve_ff_peakidx(n6)+1) + 10, 'c.', 'Markersize',15);
 
-plot(nerve_ff_peakidx(km_n1)/fs, x(nerve_ff_peakidx(km_n1)+1)+10, '.-','color','r', 'Markersize',15);
-plot(nerve_ff_peakidx(km_n2)/fs, x(nerve_ff_peakidx(km_n2)+1)+10,'.-','color','b', 'Markersize',15);
-plot(nerve_ff_peakidx(km_n3)/fs, x(nerve_ff_peakidx(km_n3)+1)+10,'.-','color','g', 'Markersize',15);
-plot(nerve_ff_peakidx(km_n4)/fs, x(nerve_ff_peakidx(km_n4)+1)+10,'.-','color','k', 'Markersize',15);
-plot(nerve_ff_peakidx(km_n5)/fs, x(nerve_ff_peakidx(km_n5)+1)+10,'.-','color','m', 'Markersize',15);
-% plot(nerve_ff_peakidx(km_n6)/fs, x(nerve_ff_peakidx(km_n6)+1)+10, '.-','color','r', 'Markersize',15);
+%plotting kmeans clusters
+plot(nerve_ff_peakidx(km_n1)/fs, x(nerve_ff_peakidx(km_n1)+1)+20,'r.', 'Markersize',15);
+plot(nerve_ff_peakidx(km_n2)/fs, x(nerve_ff_peakidx(km_n2)+1)+20,'b.', 'Markersize',15);
+plot(nerve_ff_peakidx(km_n3)/fs, x(nerve_ff_peakidx(km_n3)+1)+20,'g.', 'Markersize',15);
+plot(nerve_ff_peakidx(km_n4)/fs, x(nerve_ff_peakidx(km_n4)+1)+20,'k.', 'Markersize',15);
+plot(nerve_ff_peakidx(km_n5)/fs, x(nerve_ff_peakidx(km_n5)+1)+20,'m.', 'Markersize',15);
+plot(nerve_ff_peakidx(km_n6)/fs, x(nerve_ff_peakidx(km_n6)+1)+20,'c.', 'Markersize',15);
 
 hold off;
 ylabel('Amplitude (mV)');
