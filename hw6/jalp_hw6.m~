@@ -484,9 +484,9 @@ hold on
 for i = 2:size(humn_peak_idx,1)
     plot(t,peak_stack_uV(i,:), 'color', [0 0.4470 0.7410])
 end
-ylabel('Signal Amplitude(mV)');
-xlabel('Peak Amplitude(mV)');
-title('Spike peak amplitude vs Muscle potential change, I521\_A0006\_D001');
+ylabel('Signal Amplitude(\muV)');
+xlabel('Time around peak (ms)');
+title('Stacking aligned peaks above threshold for I521\_A0006\_D002');
 
 
 %% 
@@ -496,6 +496,14 @@ title('Spike peak amplitude vs Muscle potential change, I521\_A0006\_D001');
 
 %%
 % $\textbf{Answer 2.1b} \\$
+
+%%
+% Yes, based on the stacked plots we see that there are at least 2 "groups"
+% of peaks stacked together, one with a peak amplitde alose to 50 uV and
+% another with a peak amplitude of about 100 uV. This means that there are
+% at 
+% There are some peaks/spike
+% at a highter amplitude which
 
 
 %% 

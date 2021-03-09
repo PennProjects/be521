@@ -497,6 +497,12 @@ title('Stacking aligned peaks above threshold for I521\_A0006\_D002');
 %%
 % $\textbf{Answer 2.1b} \\$
 
+%%
+% Yes, based on the stacked plots we see that there are at least 2 "groups"
+% of peaks stacked together, one with a peak amplitde alose to 50 uV and
+% another with a peak amplitude of about 100 uV. This means that there are
+% at least 2 types of spikes.There are some peaks/spikes at a highter
+% amplitude around 125 uV which could be another type of spike/peak.
 
 %% 
 % <latex>
