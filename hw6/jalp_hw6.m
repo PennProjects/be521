@@ -537,8 +537,21 @@ title('PC1 vs PC2, I521\_A0006\_D002 data in Principle compponent space');
 %%
 % $\textbf{Answer 2.2b} \\$
 
+%%
+%plotting variance for each principle component
+plot(explained, 'Linewidth', 2);
+ylabel('Percentage variance (%)');
+xlabel('Principle component number');
+title('Principle component vs percentage variance in I521\_A0006\_D002');
 
 
+
+%%
+%variance by first 2 PCs
+pc12_percentage_variance  = explained(1)+explained(2)
+
+%%
+% The top 2 principle components explain a variance of 73.73%
 %% 
 % <latex>
 % 	  \item Does it look like there is more than one cluster of spikes? (1 pt)
@@ -547,6 +560,10 @@ title('PC1 vs PC2, I521\_A0006\_D002 data in Principle compponent space');
 
 %%
 % $\textbf{Answer 2.2c} \\$
+
+%%
+% Yes, From the PC1 vs PC2 scatter plot above, it looks like there are 2 clusters of
+% spikes. 
 
 
 %% 

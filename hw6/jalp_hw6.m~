@@ -520,11 +520,15 @@ title('Stacking aligned peaks above threshold for I521\_A0006\_D002');
 %%
 %performing pca analysis
 humn_peak_amp_uV = peak_stack_uV(:,33); 
-[coeff,score,latent,tsquared,explained] = pca(peak_stack_uV);
+[coeff,score,latent,tsquared,explained,mu] = pca(peak_stack_uV);
 
 %%
-plot(score(1,:)
-
+%plotting a scatter plot in PC space
+figure();
+scatter(score(:,1), score(:,2))
+ylabel('Principle component 2');
+xlabel('Principle component 1');
+title('PC1 vs PC2, I521\_A0006\_D002 data in Principle compponent space');
 %% 
 % <latex>
 % 	  \item Each PC also has an associated eigenvalue, representing the amount of variance explained by that PC. This an output of the \verb|PCA| command. Plot the  principal component vs the total (cumulative) percent variance explained. What is the percent variance explained if you include the top two principal components? (3 pts)
@@ -533,6 +537,9 @@ plot(score(1,:)
 %%
 % $\textbf{Answer 2.2b} \\$
 
+%%
+%plotting variance for each principle component
+plot(explained)
 
 
 %% 
