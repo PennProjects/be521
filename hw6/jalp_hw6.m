@@ -353,13 +353,41 @@ xlim([0 2.5])
 
 %%
 %calculating muscle fiber potential change after neuron spike
-pot_change = {};
+pot_change_peak = {};
 %first we loop through the different sets of neuron clusters
 for i= 1:n_clusters
-    
+    idx = n{i};
+    temp_ = zeros(size(idx,1),3);
+    for j = 1:size(idx,1)
+       %calculating max and min mulscle voltage in 25 ms window after peak
+       window_ms = 25;
+       samples = window_ms*fs/1000;
+       %index of signal of peak #j in neuron cluster i
+       pk_idx = nerve_ff_peakidx(idx(j))+1;
+       muscle_sig = muscle_raw_uV(pk_idx : pk_idx+samples);
+       muscle_pot_mV = (max(muscle_sig)-min(muscle_sig))/1000;
+       
+       %saving, peak index, muscle pot change and spike amplitude in matrix
+       temp_(j,:) = [pk_idx-1, muscle_pot_mV,x(pk_idx)];
+    end
+    %cell array of temp_ matrix for each cluster
+    pot_change_peak{i} = temp_; 
 end
 
-
+%%
+%plotting peaks in filtered signal
+fs = sampling_frequency_hz_cray;
+t = 0 : 1e3/sampling_frequency_hz_cray : duration_in_sec_cray*1e3 - 1e3/sampling_frequency_hz_cray ;
+figure();
+plot(t/1000, x, 'Linewidth', 1);
+hold on;
+plot(pot_change_peak{6}(:,1)/fs, pot_change_peak{6}(:,3)+10, 'r.', 'Markersize',10);
+hold off;
+ylabel('Amplitude (mV)');
+xlabel('Time (sec)');
+title('Nerves channel filtered for I521\_A0006\_D001');
+legend('filtered signal', 'peaks>30mV')
+% xlim([0 2.5])
 
 %% 
 % <latex>
