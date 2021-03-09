@@ -158,7 +158,7 @@ suptitle('Filtering nerve channel data for I521\_A0006\_D001')
 x = nerve_filtfilt_uV/1000;
 threshold = 30;
 
-%finding peak using signal change in second derivative for signal above
+%finding peak using sign change in second derivative(maxima) for signal above
 %threshold
 peak_find = @(x, th) (find((diff(diff(x) < 0 ) .* (x(2:end-1) >th))>0));
 
@@ -172,13 +172,13 @@ t = 0 : 1e3/sampling_frequency_hz_cray : duration_in_sec_cray*1e3 - 1e3/sampling
 figure();
 plot(t/1000, x, 'Linewidth', 1);
 hold on;
-plot(0 + (nerve_ff_peakidx/fs), x(nerve_ff_peakidx+1)+10, '.', 'Markersize',10, 'color' ,[0.8500 0.3250 0.0980] );
+plot(0 + ((nerve_ff_peakidx+1)/fs), x(nerve_ff_peakidx+1)+10, '.', 'Markersize',10, 'color' ,[0.8500 0.3250 0.0980] );
 hold off;
 ylabel('Amplitude (mV)');
 xlabel('Time (sec)');
 title('Nerves channel filtered for I521\_A0006\_D001');
 legend('filtered signal', 'peaks>30mV')
-% xlim([0 2.5])
+xlim([0 2.5])
 
 %% 
 % <latex>
@@ -248,8 +248,9 @@ xlim([0 2.5])
 
 %%
 %kmeans clustering
-rng(2); % For reproducibility
-[idx, centroid] = kmeans( x(nerve_ff_peakidx+1), 6, 'Display','iter');
+rng(1); % For reproducibility
+n_clusters = 6;
+[idx, centroid] = kmeans( x(nerve_ff_peakidx+1), n_clusters, 'Display','iter');
 [~,i] = sort(centroid);
 
 km_n1 = find(idx==i(1));
@@ -275,19 +276,20 @@ plot(nerve_ff_peakidx(n4)/fs, x(nerve_ff_peakidx(n4)+1) + 10,'k.', 'Markersize',
 plot(nerve_ff_peakidx(n5)/fs, x(nerve_ff_peakidx(n5)+1) + 10,'m.', 'Markersize',15);
 plot(nerve_ff_peakidx(n6)/fs, x(nerve_ff_peakidx(n6)+1) + 10, 'c.', 'Markersize',15);
 
-plot(nerve_ff_peakidx(km_n1)/fs, x(nerve_ff_peakidx(km_n1)+1)+15, '.-','color','r', 'Markersize',15);
-plot(nerve_ff_peakidx(km_n2)/fs, x(nerve_ff_peakidx(km_n2)+1)+15,'.-','color','b', 'Markersize',15);
-plot(nerve_ff_peakidx(km_n3)/fs, x(nerve_ff_peakidx(km_n3)+1)+15,'.-','color','g', 'Markersize',15);
-plot(nerve_ff_peakidx(km_n4)/fs, x(nerve_ff_peakidx(km_n4)+1)+15,'.-','color','k', 'Markersize',15);
-plot(nerve_ff_peakidx(km_n5)/fs, x(nerve_ff_peakidx(km_n5)+1)+15,'.-','color','m', 'Markersize',15);
-% plot(nerve_ff_peakidx(km_n6)/fs, x(nerve_ff_peakidx(km_n6)+1)+10, '.-','color','r', 'Markersize',15);
+%plotting kmeans clusters
+plot(nerve_ff_peakidx(km_n1)/fs, x(nerve_ff_peakidx(km_n1)+1)+20,'r.', 'Markersize',15);
+plot(nerve_ff_peakidx(km_n2)/fs, x(nerve_ff_peakidx(km_n2)+1)+20,'b.', 'Markersize',15);
+plot(nerve_ff_peakidx(km_n3)/fs, x(nerve_ff_peakidx(km_n3)+1)+20,'g.', 'Markersize',15);
+plot(nerve_ff_peakidx(km_n4)/fs, x(nerve_ff_peakidx(km_n4)+1)+20,'k.', 'Markersize',15);
+plot(nerve_ff_peakidx(km_n5)/fs, x(nerve_ff_peakidx(km_n5)+1)+20,'m.', 'Markersize',15);
+plot(nerve_ff_peakidx(km_n6)/fs, x(nerve_ff_peakidx(km_n6)+1)+20,'c.', 'Markersize',15);
 
 hold off;
 ylabel('Amplitude (mV)');
 xlabel('Time (sec)');
 title('Nerves channel comparing manual clustering to kmeans clustering for I521\_A0006\_D001');
 legend('filtered signal', 'neuron1', 'neuron2', 'neuron3', 'neuron4', 'neuron5', 'neuron6')
-% xlim([0 2.5])
+xlim([0 2.5])
 
 
 %% 
@@ -297,6 +299,9 @@ legend('filtered signal', 'neuron1', 'neuron2', 'neuron3', 'neuron4', 'neuron5',
 
 %%
 % $\textbf{Answer 1.5b} \\$
+
+%%
+%
 
 %% 
 % <latex>
@@ -310,6 +315,46 @@ legend('filtered signal', 'neuron1', 'neuron2', 'neuron3', 'neuron4', 'neuron5',
 
 %%
 % $\textbf{Answer 1.6a} \\$
+
+
+
+%%
+%plotting peaks in filtered signal
+fs = sampling_frequency_hz_cray;
+t = 0 : 1e3/sampling_frequency_hz_cray : duration_in_sec_cray*1e3 - 1e3/sampling_frequency_hz_cray ;
+figure();
+yyaxis left
+plot(t/1000, x, 'Linewidth', 1);
+ylabel('Amplitude (mV)');
+hold on;
+
+yyaxis right
+plot(t/1000, muscle_raw_uV/1000,  'color' ,[0.8500 0.3250 0.0980] );
+ylabel('Amplitude (mV)');
+ylim([-76, -50]) 
+
+%plotting markers for peaks
+% hold on
+% for i = 1:size(nerve_ff_peakidx/fs,1)
+%         xline(nerve_ff_peakidx(i)/fs);
+% end
+
+hold off;
+
+xlabel('Time (sec)');
+title('nerve and muscle channel for I521\_A0006\_D001');
+legend('filtered nerve signal', 'muscle channel')
+xlim([0 2.5])
+
+%%
+%calculating muscle fiber potential change after neuron spike
+pot_change = {};
+%first we loop through the different sets of neuron clusters
+for i= 1:n_clusters
+    
+end
+
+
 
 %% 
 % <latex>
