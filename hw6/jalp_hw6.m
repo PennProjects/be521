@@ -379,14 +379,20 @@ end
 fs = sampling_frequency_hz_cray;
 t = 0 : 1e3/sampling_frequency_hz_cray : duration_in_sec_cray*1e3 - 1e3/sampling_frequency_hz_cray ;
 figure();
-plot(t/1000, x, 'Linewidth', 1);
-hold on;
-plot(pot_change_peak{6}(:,1)/fs, pot_change_peak{6}(:,3)+10, 'r.', 'Markersize',10);
+
+plot(pot_change_peak{1}(:,3), pot_change_peak{1}(:,2),'r.', 'Markersize',15);
+hold on 
+plot(pot_change_peak{2}(:,3), pot_change_peak{2}(:,2),'b.', 'Markersize',15);
+plot(pot_change_peak{3}(:,3), pot_change_peak{3}(:,2),'g.', 'Markersize',15);
+plot(pot_change_peak{4}(:,3), pot_change_peak{4}(:,2),'k.', 'Markersize',15);
+plot(pot_change_peak{5}(:,3), pot_change_peak{5}(:,2),'m.', 'Markersize',15);
+plot(pot_change_peak{6}(:,3), pot_change_peak{6}(:,2),'c.', 'Markersize',15);
 hold off;
-ylabel('Amplitude (mV)');
-xlabel('Time (sec)');
-title('Nerves channel filtered for I521\_A0006\_D001');
-legend('filtered signal', 'peaks>30mV')
+
+ylabel('Potential Difference(mV)');
+xlabel('Peak Amplitude(mV)');
+title('Spike Voltage vs Muscle potential change, manual clustering I521\_A0006\_D001');
+legend('neuron1', 'neuron2', 'neuron3', 'neuron4', 'neuron5', 'neuron6')
 % xlim([0 2.5])
 
 %% 

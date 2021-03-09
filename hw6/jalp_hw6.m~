@@ -357,6 +357,7 @@ pot_change_peak = {};
 %first we loop through the different sets of neuron clusters
 for i= 1:n_clusters
     idx = n{i};
+    temp_ = zeros(size(idx,1),3);
     for j = 1:size(idx,1)
        %calculating max and min mulscle voltage in 25 ms window after peak
        window_ms = 25;
@@ -366,13 +367,33 @@ for i= 1:n_clusters
        muscle_sig = muscle_raw_uV(pk_idx : pk_idx+samples);
        muscle_pot_mV = (max(muscle_sig)-min(muscle_sig))/1000;
        
-       %saving, peak index, muscle pot change and spike amplitude in cell
-       pot_change_peak{i,j} = [pk_idx-1, muscle_pot_mV,x(pk_idx)]; 
+       %saving, peak index, muscle pot change and spike amplitude in matrix
+       temp_(j,:) = [pk_idx-1, muscle_pot_mV,x(pk_idx)];
     end
+    %cell array of temp_ matrix for each cluster
+    pot_change_peak{i} = temp_; 
 end
 
 %%
-%plotting
+%plotting peaks in filtered signal
+fs = sampling_frequency_hz_cray;
+t = 0 : 1e3/sampling_frequency_hz_cray : duration_in_sec_cray*1e3 - 1e3/sampling_frequency_hz_cray ;
+figure();
+
+plot(pot_change_peak{1}(:,3), x(nerve_ff_peakidx(km_n{1})+1)+20,'r.', 'Markersize',15);
+hold on 
+plot(pot_change_peak{1}(:,3), x(nerve_ff_peakidx(km_n{2})+1)+20,'b.', 'Markersize',15);
+plot(pot_change_peak{1}(:,3), x(nerve_ff_peakidx(km_n{3})+1)+20,'g.', 'Markersize',15);
+plot(nerve_ff_peakidx(km_n{4})/fs, x(nerve_ff_peakidx(km_n{4})+1)+20,'k.', 'Markersize',15);
+plot(nerve_ff_peakidx(km_n{5})/fs, x(nerve_ff_peakidx(km_n{5})+1)+20,'m.', 'Markersize',15);
+plot(nerve_ff_peakidx(km_n{6})/fs, x(nerve_ff_peakidx(km_n{6})+1)+20,'c.', 'Markersize',15);
+hold off;
+
+ylabel('Potential Difference(mV)');
+xlabel('Peak Amplitude(mV)');
+title('Spike Voltage vs Muscle potential change, manual clustering I521\_A0006\_D001');
+legend('neuron1', 'neuron2', 'neuron3', 'neuron4', 'neuron5', 'neuron6')
+% xlim([0 2.5])
 
 %% 
 % <latex>
