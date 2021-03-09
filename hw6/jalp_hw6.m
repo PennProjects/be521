@@ -608,16 +608,22 @@ title('PC1 vs PC2, 2 clusters: k-medians for I521\_A0006\_D002');
 t = (-32:1:32)/32258;
 
 figure();
-
+%cluster 2 stacks
 plot(t,peak_stack_uV(km_pc_idx{2},:), 'color', [0.4660 0.6740 0.1880])
 hold on
+%plotting mean for cluster 2
+plot(t, mean(peak_stack_uV(km_pc_idx{2},:)), 'Linewidth', 4, 'color', 'k')
 
+%cluster 1 stacks
 plot(t,peak_stack_uV(km_pc_idx{1},:), 'color', [0.8500 0.3250 0.0980])
+%plotting mean for cluster 1
+plot(t, mean(peak_stack_uV(km_pc_idx{1},:)), 'Linewidth', 4, 'color', 'k')
 
 xline(0)
 ylabel('Signal Amplitude(\muV)');
 xlabel('Time around peak (ms)');
-title('Stacking aligned peaks above threshold for I521\_A0006\_D002');
+title('Stacking aligned peaks showing 2 clusters for I521\_A0006\_D002');
+
 
 %% 
 % <latex>
