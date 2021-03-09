@@ -172,7 +172,7 @@ t = 0 : 1e3/sampling_frequency_hz_cray : duration_in_sec_cray*1e3 - 1e3/sampling
 figure();
 plot(t/1000, x, 'Linewidth', 1);
 hold on;
-plot(0 + ((nerve_ff_peakidx+1)/fs), x(nerve_ff_peakidx+1)+10, '.', 'Markersize',10, 'color' ,[0.8500 0.3250 0.0980] );
+plot(0 + ((nerve_ff_peakidx)/fs), x(nerve_ff_peakidx+1)+10, '.', 'Markersize',10, 'color' ,[0.8500 0.3250 0.0980] );
 hold off;
 ylabel('Amplitude (mV)');
 xlabel('Time (sec)');
@@ -251,8 +251,8 @@ xlim([0 2.5])
 
 %%
 %kmeans clustering
-rng(1); % For reproducibility
-n_clusters = 6;
+% rng(1); % For reproducibility
+n_clusters = 4;
 [idx, centroid] = kmeans( x(nerve_ff_peakidx+1), n_clusters, 'Display','iter');
 [~,i] = sort(centroid);
 
@@ -262,8 +262,8 @@ km_n{1} = find(idx==i(1));
 km_n{2} = find(idx==i(2));
 km_n{3} = find(idx==i(3));
 km_n{4} = find(idx==i(4));
-km_n{5} = find(idx==i(5));
-km_n{6} = find(idx==i(6));
+% km_n{5} = find(idx==i(5));
+% km_n{6} = find(idx==i(6));
 
 %%
 %plotting clusters
@@ -339,12 +339,12 @@ ylabel('Amplitude (mV)');
 ylim([-76, -50]) 
 
 %plotting markers for peaks
-% hold on
-% for i = 1:size(nerve_ff_peakidx/fs,1)
-%         xline(nerve_ff_peakidx(i)/fs);
-% end
+hold on
+for i = 1:size(nerve_ff_peakidx/fs,1)
+        xline(nerve_ff_peakidx(i)/fs);
+end
 
-hold off;
+hold off; 
 
 xlabel('Time (sec)');
 title('nerve and muscle channel for I521\_A0006\_D001');
@@ -356,7 +356,7 @@ xlim([0 2.5])
 pot_change_peak = {};
 %first we loop through the different sets of neuron clusters
 for i= 1:n_clusters
-    idx = n{i};
+    idx = km_n{i};
     temp_ = zeros(size(idx,1),3);
     for j = 1:size(idx,1)
        %calculating max and min mulscle voltage in 25 ms window after peak
@@ -380,18 +380,18 @@ fs = sampling_frequency_hz_cray;
 t = 0 : 1e3/sampling_frequency_hz_cray : duration_in_sec_cray*1e3 - 1e3/sampling_frequency_hz_cray ;
 figure();
 
-plot(pot_change_peak{1}(:,3), x(nerve_ff_peakidx(km_n{1})+1)+20,'r.', 'Markersize',15);
+plot(pot_change_peak{1}(:,3), pot_change_peak{1}(:,2),'r.', 'Markersize',15);
 hold on 
-plot(pot_change_peak{1}(:,3), x(nerve_ff_peakidx(km_n{2})+1)+20,'b.', 'Markersize',15);
-plot(pot_change_peak{1}(:,3), x(nerve_ff_peakidx(km_n{3})+1)+20,'g.', 'Markersize',15);
-plot(nerve_ff_peakidx(km_n{4})/fs, x(nerve_ff_peakidx(km_n{4})+1)+20,'k.', 'Markersize',15);
-plot(nerve_ff_peakidx(km_n{5})/fs, x(nerve_ff_peakidx(km_n{5})+1)+20,'m.', 'Markersize',15);
-plot(nerve_ff_peakidx(km_n{6})/fs, x(nerve_ff_peakidx(km_n{6})+1)+20,'c.', 'Markersize',15);
+plot(pot_change_peak{2}(:,3), pot_change_peak{2}(:,2),'b.', 'Markersize',15);
+plot(pot_change_peak{3}(:,3), pot_change_peak{3}(:,2),'g.', 'Markersize',15);
+plot(pot_change_peak{4}(:,3), pot_change_peak{4}(:,2),'k.', 'Markersize',15);
+% plot(pot_change_peak{5}(:,3), pot_change_peak{5}(:,2),'m.', 'Markersize',15);
+% plot(pot_change_peak{6}(:,3), pot_change_peak{6}(:,2),'c.', 'Markersize',15);
 hold off;
 
 ylabel('Potential Difference(mV)');
 xlabel('Peak Amplitude(mV)');
-title('Spike Voltage vs Muscle potential change, manual clustering I521\_A0006\_D001');
+title('Spike peak amplitude vs Muscle potential change, I521\_A0006\_D001');
 legend('neuron1', 'neuron2', 'neuron3', 'neuron4', 'neuron5', 'neuron6')
 % xlim([0 2.5])
 
@@ -402,6 +402,9 @@ legend('neuron1', 'neuron2', 'neuron3', 'neuron4', 'neuron5', 'neuron6')
 
 %%
 % $\textbf{Answer 1.6b} \\$
+
+%%
+% mnl,khjkl
 
 %% 
 % <latex>
@@ -414,9 +417,6 @@ legend('neuron1', 'neuron2', 'neuron3', 'neuron4', 'neuron5', 'neuron6')
 %    \item Using a threshold six standard deviations above the mean of the signal, detect the spikes in the signal. In addition, extract the waveform from 1 ms before the peak to 1 ms after it with peak value in the middle. (You will end up with a matrix where each row corresponds to the number of data points in 2 ms of signal minus 1 data point. Use the closest integer number of data points for the $\pm$ 1 ms window.) 
 % </latex>
 
-%%
-% $\textbf{Answer 2.1} \\$
-
 
 %% 
 % <latex>
@@ -424,8 +424,70 @@ legend('neuron1', 'neuron2', 'neuron3', 'neuron4', 'neuron5', 'neuron6')
 % 	  \item Plot the waveforms of all the spikes overlaid on each other in the same color. (4 pts)
 % </latex>
 
+
 %%
 % $\textbf{Answer 2.1a} \\$
+
+%%
+%obtaining the I521_A0006_D002 signal
+addpath(genpath('/Users/jalpanchal/git/be521'));
+
+session_humn = IEEGSession('I521_A0006_D002', 'jalpanchal', 'jal_ieeglogin.bin');
+sampling_frequency_hz_humn = session_humn.data.sampleRate;
+duration_in_sec_humn = session_humn.data(1).rawChannels(1).get_tsdetails.getDuration/1e6;
+
+intcran_raw_uV = session_humn.data.getvalues(0, duration_in_sec_humn * 1e6, 1);
+
+%%
+%calculating peaks above 6 std above mean
+
+std_humn_uV = std(intcran_raw_uV);
+mean_humn_uV = mean(intcran_raw_uV);
+
+threshold_uV = mean_humn_uV + 6*std_humn_uV;
+
+humn_peak_idx = peak_find(intcran_raw_uV, threshold_uV);
+%%
+%plotting human intercranial signal raw
+fs = sampling_frequency_hz_humn;
+t = 0 : 1/fs : duration_in_sec_humn;
+x = intcran_raw_uV;
+figure();
+plot(t, x, 'Linewidth', 1);
+hold on
+yline(threshold_uV, '-','threshold');
+plot(0 + ((humn_peak_idx)/fs), x(humn_peak_idx+1)+1, '.', 'Markersize',10, 'color' ,[0.8500 0.3250 0.0980] );
+hold off;
+ylabel('Signal Amplitude (\muV)');
+xlabel('Time (sec)');
+title('Intracranial human data for I521\_A0006\_D002');
+
+
+%%
+%stacking ±1 ms around all peaks
+%for a sampling frequency of 32258, 1ms has 32.258 points
+% to acquire 1 ms before and after the peak, we can acquire 32 points before
+% and 32 points after the peak 
+peak_stack_uV = zeros(size(humn_peak_idx,1), 65);
+for i = 1:size(humn_peak_idx,1)
+    pk_idx = humn_peak_idx(i);
+   peak_stack_uV(i, :) = intcran_raw_uV(pk_idx-32 : pk_idx+32);
+end
+
+%%
+%plotting stacked peaks
+t = (-32:1:32)/32258;
+
+figure();
+plot(t,peak_stack_uV(1,:), 'color', [0 0.4470 0.7410]);
+hold on
+for i = 2:size(humn_peak_idx,1)
+    plot(t,peak_stack_uV(i,:), 'color', [0 0.4470 0.7410])
+end
+ylabel('Signal Amplitude(mV)');
+xlabel('Peak Amplitude(mV)');
+title('Spike peak amplitude vs Muscle potential change, I521\_A0006\_D001');
+
 
 %% 
 % <latex>
@@ -454,6 +516,7 @@ legend('neuron1', 'neuron2', 'neuron3', 'neuron4', 'neuron5', 'neuron6')
 
 %%
 % $\textbf{Answer 2.2b} \\$
+
 
 
 %% 
