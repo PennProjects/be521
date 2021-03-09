@@ -205,6 +205,7 @@ histogram( x(nerve_ff_peakidx+1), 1000);
 
 %%
 %plotting peaks in filtered signal
+x = nerve_filtfilt_uV/1000;
 fs = sampling_frequency_hz_cray;
 t = 0 : 1e3/sampling_frequency_hz_cray : duration_in_sec_cray*1e3 - 1e3/sampling_frequency_hz_cray ;
 
@@ -252,7 +253,7 @@ xlim([0 2.5])
 %%
 %kmeans clustering
 % rng(1); % For reproducibility
-n_clusters = 4;
+n_clusters = 6;
 [idx, centroid] = kmeans( x(nerve_ff_peakidx+1), n_clusters, 'Display','iter');
 [~,i] = sort(centroid);
 
@@ -262,8 +263,8 @@ km_n{1} = find(idx==i(1));
 km_n{2} = find(idx==i(2));
 km_n{3} = find(idx==i(3));
 km_n{4} = find(idx==i(4));
-% km_n{5} = find(idx==i(5));
-% km_n{6} = find(idx==i(6));
+km_n{5} = find(idx==i(5));
+km_n{6} = find(idx==i(6));
 
 %%
 %plotting clusters
@@ -385,8 +386,8 @@ hold on
 plot(pot_change_peak{2}(:,3), pot_change_peak{2}(:,2),'b.', 'Markersize',15);
 plot(pot_change_peak{3}(:,3), pot_change_peak{3}(:,2),'g.', 'Markersize',15);
 plot(pot_change_peak{4}(:,3), pot_change_peak{4}(:,2),'k.', 'Markersize',15);
-% plot(pot_change_peak{5}(:,3), pot_change_peak{5}(:,2),'m.', 'Markersize',15);
-% plot(pot_change_peak{6}(:,3), pot_change_peak{6}(:,2),'c.', 'Markersize',15);
+plot(pot_change_peak{5}(:,3), pot_change_peak{5}(:,2),'m.', 'Markersize',15);
+plot(pot_change_peak{6}(:,3), pot_change_peak{6}(:,2),'c.', 'Markersize',15);
 hold off;
 
 ylabel('Potential Difference(mV)');
@@ -470,7 +471,7 @@ title('Intracranial human data for I521\_A0006\_D002');
 % and 32 points after the peak 
 peak_stack_uV = zeros(size(humn_peak_idx,1), 65);
 for i = 1:size(humn_peak_idx,1)
-    pk_idx = humn_peak_idx(i);
+    pk_idx = humn_peak_idx(i)+1;
    peak_stack_uV(i, :) = intcran_raw_uV(pk_idx-32 : pk_idx+32);
 end
 
@@ -484,6 +485,7 @@ hold on
 for i = 2:size(humn_peak_idx,1)
     plot(t,peak_stack_uV(i,:), 'color', [0 0.4470 0.7410])
 end
+xline(0)
 ylabel('Signal Amplitude(\muV)');
 xlabel('Time around peak (ms)');
 title('Stacking aligned peaks above threshold for I521\_A0006\_D002');
@@ -515,6 +517,18 @@ title('Stacking aligned peaks above threshold for I521\_A0006\_D002');
 %%
 % $\textbf{Answer 2.2a} \\$
 
+%%
+%performing pca analysis
+humn_peak_amp_uV = peak_stack_uV(:,33); 
+[coeff,score,latent,tsquared,explained,mu] = pca(peak_stack_uV);
+
+%%
+%plotting a scatter plot in PC space
+figure();
+scatter(score(:,1), score(:,2))
+ylabel('Principle component 2');
+xlabel('Principle component 1');
+title('PC1 vs PC2, I521\_A0006\_D002 data in Principle compponent space');
 %% 
 % <latex>
 % 	  \item Each PC also has an associated eigenvalue, representing the amount of variance explained by that PC. This an output of the \verb|PCA| command. Plot the  principal component vs the total (cumulative) percent variance explained. What is the percent variance explained if you include the top two principal components? (3 pts)
