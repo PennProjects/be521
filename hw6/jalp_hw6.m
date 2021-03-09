@@ -254,7 +254,7 @@ xlim([0 2.5])
 %kmeans clustering
 % rng(1); % For reproducibility
 n_clusters = 6;
-[idx, centroid] = kmeans( x(nerve_ff_peakidx+1), n_clusters, 'Display','iter');
+[idx, centroid] = kmeans( x(nerve_ff_peakidx+1), n_clusters);
 [~,i] = sort(centroid);
 
 km_n = {};
@@ -525,7 +525,7 @@ humn_peak_amp_uV = peak_stack_uV(:,33);
 %%
 %plotting a scatter plot in PC space
 figure();
-scatter(score(:,1), score(:,2))
+scatter(score(:,1), score(:,2), 'filled')
 ylabel('Principle component 2');
 xlabel('Principle component 1');
 title('PC1 vs PC2, I521\_A0006\_D002 data in Principle compponent space');
@@ -539,6 +539,7 @@ title('PC1 vs PC2, I521\_A0006\_D002 data in Principle compponent space');
 
 %%
 %plotting variance for each principle component
+figure();
 plot(explained, 'Linewidth', 2);
 ylabel('Percentage variance (%)');
 xlabel('Principle component number');
@@ -575,7 +576,28 @@ pc12_percentage_variance  = explained(1)+explained(2)
 %%
 % $\textbf{Answer 2.3} \\$
 
+%%
+%normalizing the vales in the PC space
+score_norm = normalize(score);
 
+%kmedians clusturing on normalized data in PC space
+[idx, centroid] = kmeans( score_norm(:,1:2), 2, 'Distance', 'cityblock');
+
+km_pc_idx = {};
+
+km_pc_idx{1} = find(idx==1);
+km_pc_idx{2} = find(idx==2);
+
+%%
+%scatter plot for clusters
+figure();
+scatter(score_norm(km_pc_idx{1},1), score_norm(km_pc_idx{1},2), 'filled','MarkerfaceColor', [0.8500 0.3250 0.0980])
+hold on 
+scatter(score_norm(km_pc_idx{2},1), score_norm(km_pc_idx{2},2), 'filled', 'MarkerfaceColor', [0.4660 0.6740 0.1880])
+hold off
+ylabel('Principle component 2');
+xlabel('Principle component 1');
+title('PC1 vs PC2, 2 clusters: k-medians for I521\_A0006\_D002');
 %% 
 % <latex>
 %   \item Make a plot similar to 2.1 but now coloring the traces red and green according to which cluster they are in. Overlay the mean of the waveforms in each cluster with a thick black line (use the parameter \verb|'LineWidth'| and value \verb|'4'|). (3 pts)
