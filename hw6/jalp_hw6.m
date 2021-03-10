@@ -279,16 +279,13 @@ km_n{5} = find(idx==i(5));
 figure();
 plot(t/1000, x, 'Linewidth', 1);
 hold on;
-%plot all peaks
-% plot(0 + (nerve_ff_peakidx/fs), x(nerve_ff_peakidx+1)+10, '.', 'Markersize',10, 'color' ,[0.8500 0.3250 0.0980] );
 
 %plotting manaul peaks
-% plot(nerve_ff_peakidx(n{1})/fs, x(nerve_ff_peakidx(n{1})+1) +10,'r.', 'Markersize',15);
-% plot(nerve_ff_peakidx(n{2})/fs, x(nerve_ff_peakidx(n{2})+1)+ 10,'b.', 'Markersize',15);
-% plot(nerve_ff_peakidx(n{3})/fs, x(nerve_ff_peakidx(n{3})+1)+ 10,'g.', 'Markersize',15);
-% plot(nerve_ff_peakidx(n{4})/fs, x(nerve_ff_peakidx(n{4})+1)+ 10,'k.', 'Markersize',15);
-% plot(nerve_ff_peakidx(n{5})/fs, x(nerve_ff_peakidx(n{5})+1)+ 10,'m.', 'Markersize',15);
-% plot(nerve_ff_peakidx(n{6})/fs, x(nerve_ff_peakidx(n{6})+1)+ 10,'c.', 'Markersize',15);
+plot(nerve_ff_peakidx(n{1})/fs, x(nerve_ff_peakidx(n{1})+1) +10,'r.', 'Markersize',15);
+plot(nerve_ff_peakidx(n{2})/fs, x(nerve_ff_peakidx(n{2})+1)+ 10,'b.', 'Markersize',15);
+plot(nerve_ff_peakidx(n{3})/fs, x(nerve_ff_peakidx(n{3})+1)+ 10,'g.', 'Markersize',15);
+plot(nerve_ff_peakidx(n{4})/fs, x(nerve_ff_peakidx(n{4})+1)+ 10,'k.', 'Markersize',15);
+plot(nerve_ff_peakidx(n{5})/fs, x(nerve_ff_peakidx(n{5})+1)+ 10,'m.', 'Markersize',15);
 
 %plotting kmeans clusters
 plot(nerve_ff_peakidx(km_n{1})/fs, x(nerve_ff_peakidx(km_n{1})+1)+20,'r.', 'Markersize',15);
@@ -296,7 +293,6 @@ plot(nerve_ff_peakidx(km_n{2})/fs, x(nerve_ff_peakidx(km_n{2})+1)+20,'b.', 'Mark
 plot(nerve_ff_peakidx(km_n{3})/fs, x(nerve_ff_peakidx(km_n{3})+1)+20,'g.', 'Markersize',15);
 plot(nerve_ff_peakidx(km_n{4})/fs, x(nerve_ff_peakidx(km_n{4})+1)+20,'k.', 'Markersize',15);
 plot(nerve_ff_peakidx(km_n{5})/fs, x(nerve_ff_peakidx(km_n{5})+1)+20,'m.', 'Markersize',15);
-plot(nerve_ff_peakidx(km_n{6})/fs, x(nerve_ff_peakidx(km_n{6})+1)+20,'c.', 'Markersize',15);
 
 hold off;
 ylabel('Amplitude (mV)');
@@ -315,7 +311,18 @@ xlim([0 2.5])
 % $\textbf{Answer 1.5b} \\$
 
 %%
-%
+% Based the the graph above, I would prefer the manual clustering as
+% compared to the k-means clustering. Though the k-means clustering does a
+% pretty good job, for peaks close to each other in time, k-means
+% clustering seems to have clustered them in the same group though while
+% they were in different clusters in my sorting. Also, in manual clustering
+% I am able to see anomalies and set the threshold accordingly while kmeans
+% does not account for that. Given a very large data set, I wouldnt mind
+% using kmeans clustering as the errors average out and it might do better. 
+% But for the given data I would prefer the manual
+% clustering method. Another aspect about the kmeans clustering is the
+% random nature of clusters when I redo clustering which is unreliable and
+% not preferred.
 
 %% 
 % <latex>
