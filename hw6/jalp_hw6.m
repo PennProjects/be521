@@ -76,8 +76,6 @@ duration_in_sec_cray = session_cray.data(1).rawChannels(1).get_tsdetails.getDura
 muscle_raw_uV = session_cray.data.getvalues(0, duration_in_sec_cray * 1e6, 1);
 nerve_raw_uV = session_cray.data.getvalues(0, duration_in_sec_cray * 1e6, 2);
 
-duration = datestr(seconds(duration_in_sec_cray),'HH:MM:SS:FFF');
-
 %%
 %filtering using filter
 nerve_filter_uV = filter(nmtr_b,den_a,nerve_raw_uV);
@@ -102,7 +100,7 @@ ylim([-20 50])
 ax2 = subplot(2,1,2);
 plot(t, nerve_filter_uV/1000, 'Linewidth', 1, 'color',[0 0.4470 0.7410] );
 hold on 
-plot(t, nerve_filtfilt_uV/1000, 'Linewidth', 1, 'color', [0.8500 0.3250 0.0980]);
+plot(t, nerve_filtfilt_uV/1000, 'Linewidth', 1, 'color', [0.6350 0.0780 0.1840]);
 hold off
 title('Nerves channel filtered')
 xlabel('Time (ms)')
@@ -128,7 +126,7 @@ suptitle('Filtering nerve channel data for I521\_A0006\_D001')
 % can be seen. $\\$
 % The $filtfilt$ function processes the signal in the forward and reverse
 % direction to cause a zero phase distortion as compared to the $filter$
-% function which prosses the signal only in the forward direction which can
+% function which prosses the signal only in the forward direction and can
 % result in a phase shift. The $filtfilt$ function due to its two direction
 % approach results in doubling of the order of filter as specified by the
 % filter coefficients b(numerator) and a(denomerator). The $filter$  function in
@@ -143,7 +141,25 @@ suptitle('Filtering nerve channel data for I521\_A0006\_D001')
 % $\textbf{Answer 1.2c} \\$
 
 %%
-% The $filter$ function..
+% The $filter$ function in matlab uses a rational transfer function defined by the
+% given filter coefficients b(numerator) and a(denomerator) to convert the
+% unfiltered input signal to a filtered output signal. This process can
+% result in a phase shift between the filtered and raw signal. This is a
+% causal filter. $\\$
+% In constrast, the $filtfilt$ function is a non-causal filter that that
+% filters the signal in the forward and reverse direction. This 2 pass
+% method results in negating the phase shift of a single filter pass and
+% hence results in a zero-phase distortion of the original signal. Due to
+% the 2 pass methos, the resultant transfer function is equal to the
+% squared magnitude of the original transfer function. This also
+% results in the doubling of the order of the effective filter as compared
+% to the $filter$ function. $\\$
+% The $filtfilt$ function due to its zero-phase distortion, sharper cut-off
+% and higher attenuation in its stop band is more suitable for spike
+% detection as compared to $filter$ function. The phase shift could cause
+% shift in the peak position. Also as seen from the plot above, the
+% $filtfilt$ function does a better job of filtering low frequency signal
+% and removing baseline fluctuations and hence is the preferred choice.
 %%
 % <latex>
 %       \end{enumerate}
