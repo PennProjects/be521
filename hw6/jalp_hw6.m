@@ -588,7 +588,7 @@ km_pc_idx{2} = find(idx==2);
 %%
 %scatter plot for clusters
 figure();
-scatter(score_norm(km_pc_idx{1},1), score_norm(km_pc_idx{1},2), 'filled','MarkerfaceColor', [0.8500 0.3250 0.0980])
+scatter(score_norm(km_pc_idx{1},1), score_norm(km_pc_idx{1},2), 'filled','MarkerfaceColor', [0.6350 0.0780 0.1840])
 hold on 
 scatter(score_norm(km_pc_idx{2},1), score_norm(km_pc_idx{2},2), 'filled', 'MarkerfaceColor', [0.4660 0.6740 0.1880])
 hold off
@@ -615,7 +615,7 @@ hold on
 plot(t, mean(peak_stack_uV(km_pc_idx{2},:)), 'Linewidth', 4, 'color', 'k')
 
 %cluster 1 stacks
-plot(t,peak_stack_uV(km_pc_idx{1},:), 'color', [0.8500 0.3250 0.0980])
+plot(t,peak_stack_uV(km_pc_idx{1},:), 'color', [0.6350 0.0780 0.1840])
 %plotting mean for cluster 1
 plot(t, mean(peak_stack_uV(km_pc_idx{1},:)), 'Linewidth', 4, 'color', 'k')
 
@@ -633,6 +633,12 @@ title('Stacking aligned peaks showing 2 clusters for I521\_A0006\_D002');
 %%
 % $\textbf{Answer 2.5} \\$
 
+%%
+% The biggest disadvantage of PCA is interpretation of the principle
+% components. We dont know what the principle components actually are and
+% what they represent with respect to the data. If we want to understand
+% the physiological imprtance of features/components, this will not be possible from
+% the principle components as they are methemetical constructs.
 
 %% 
 % <latex>
