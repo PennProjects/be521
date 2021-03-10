@@ -9,7 +9,7 @@
 %% 
 % <latex> 
 % \begin{center} \author{Jal Mahendra Panchal \\
-%   \normalsize Collaborators: COLLABORATORS HERE \\}
+%   \normalsize Collaborators: Shreya Parchure \\}
 % \end{center} 
 % </latex>
 
