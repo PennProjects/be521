@@ -476,7 +476,7 @@ for i = 1:size(humn_peak_idx,1)
 end
 
 %%
-%plotting stacked peaks
+% Plotting stacked peaks
 t = (-32:1:32)/32258;
 
 figure();
@@ -525,7 +525,7 @@ figure();
 scatter(score(:,1), score(:,2), 'filled')
 ylabel('Principle component 2');
 xlabel('Principle component 1');
-title('PC1 vs PC2, I521\_A0006\_D002 data in Principle compponent space');
+title('PC1 vs PC2, I521\_A0006\_D002 data in Principle component space');
 %% 
 % <latex>
 % 	  \item Each PC also has an associated eigenvalue, representing the amount of variance explained by that PC. This an output of the \verb|PCA| command. Plot the  principal component vs the total (cumulative) percent variance explained. What is the percent variance explained if you include the top two principal components? (3 pts)
@@ -579,11 +579,11 @@ score_norm = normalize(score);
 
 %kmedians clusturing on normalized data in PC space
 [idx, centroid] = kmeans( score_norm(:,1:2), 2, 'Distance', 'cityblock');
-
+[~, i] = sort(centroid);
 km_pc_idx = {};
 
-km_pc_idx{1} = find(idx==1);
-km_pc_idx{2} = find(idx==2);
+km_pc_idx{1} = find(idx==i(1));
+km_pc_idx{2} = find(idx==i(2));
 
 %%
 %scatter plot for clusters
@@ -638,7 +638,7 @@ title('Stacking aligned peaks showing 2 clusters for I521\_A0006\_D002');
 % components. We dont know what the principle components actually are and
 % what they represent with respect to the data. If we want to understand
 % the physiological imprtance of features/components, this will not be possible from
-% the principle components as they are methemetical constructs.
+% the principle components as they are methematical constructs.
 
 %% 
 % <latex>
@@ -653,16 +653,16 @@ title('Stacking aligned peaks showing 2 clusters for I521\_A0006\_D002');
 % Some of the dangers of the clustering techniques are:
 % \begin{enumerate}
 % \item The kmeans clustering relied on the number of clusters fed by me.
-% This is a big drawback as I must analyse the data enough to identy the
-% number of clusters specifically if the borders are very close. If i choose
-% the numbers of clusters it will impact the processess down the procesing line. 
+% This is a big drawback as I must analyse the data enough to identify the
+% number of clusters, specially difficult if the borders are very close. If I choose
+% the wrong numbers of clusters it will impact the processess down the processing line. 
 % \item Another challenge with the kmeans function in matlab was the random
 % nature of iterations it computes. Due to the random initialization, I
 % found the clusters to be different at times which leads to non reliable
 % results. Its hard to assess what is the right seed to initialize the
 % function for optimal clustering.
 % \item The clusters also had hard thresholds which made the sorting of
-% points close to the border a challenge which also gets worse if the
+% points close to the border a challenge. This also gets worse if the
 % algorithm reaches a local minima due to its random initialization.
 % \end{enumerate}
 % </latex>
