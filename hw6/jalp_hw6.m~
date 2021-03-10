@@ -311,16 +311,18 @@ xlim([0 2.5])
 % $\textbf{Answer 1.5b} \\$
 
 %%
-% ABsed the the graph above, I would prefer the manual clustering as
+% Based the the graph above, I would prefer the manual clustering as
 % compared to the k-means clustering. Though the k-means clustering does a
-% preety good job, for peaks close to each other in time, k-means
+% pretty good job, for peaks close to each other in time, k-means
 % clustering seems to have clustered them in the same group though while
 % they were in different clusters in my sorting. Also, in manual clustering
 % I am able to see anomalies and set the threshold accordingly while kmeans
 % does not account for that. Given a very large data set, I wouldnt mind
-% using kmeans clustering as the errors average out and with a large data
-% set it might do better. but for the given data I would prefer the manual
-% clustering methos. Another 
+% using kmeans clustering as the errors average out and it might do better. 
+% But for the given data I would prefer the manual
+% clustering method. Another aspect about the kmeans clustering is the
+% random nature of clusters when I redo clustering which is unreliable and
+% not preferred.
 
 %% 
 % <latex>
@@ -353,10 +355,9 @@ ylabel('Amplitude (mV)');
 ylim([-76, -50]) 
 
 %plotting markers for peaks
-hold on
-for i = 1:size(nerve_ff_peakidx/fs,1)
-        xline(nerve_ff_peakidx(i)/fs);
-end
+% for i = 1:size(nerve_ff_peakidx/fs,1)
+%         xline(nerve_ff_peakidx(i)/fs);
+% end
 
 hold off; 
 
@@ -366,11 +367,15 @@ legend('filtered nerve signal', 'muscle channel')
 xlim([0 2.5])
 
 %%
+% Using manual clustering to sort cell groups for analysing muscle
+% potential responses
+
+%%
 %calculating muscle fiber potential change after neuron spike
 pot_change_peak = {};
 %first we loop through the different sets of neuron clusters
 for i= 1:n_clusters
-    idx = km_n{i};
+    idx = n{i};
     temp_ = zeros(size(idx,1),3);
     for j = 1:size(idx,1)
        %calculating max and min mulscle voltage in 25 ms window after peak
@@ -388,6 +393,7 @@ for i= 1:n_clusters
     pot_change_peak{i} = temp_; 
 end
 
+
 %%
 %plotting peaks in filtered signal
 fs = sampling_frequency_hz_cray;
@@ -400,13 +406,12 @@ plot(pot_change_peak{2}(:,3), pot_change_peak{2}(:,2),'b.', 'Markersize',15);
 plot(pot_change_peak{3}(:,3), pot_change_peak{3}(:,2),'g.', 'Markersize',15);
 plot(pot_change_peak{4}(:,3), pot_change_peak{4}(:,2),'k.', 'Markersize',15);
 plot(pot_change_peak{5}(:,3), pot_change_peak{5}(:,2),'m.', 'Markersize',15);
-plot(pot_change_peak{6}(:,3), pot_change_peak{6}(:,2),'c.', 'Markersize',15);
 hold off;
 
-ylabel('Potential Difference(mV)');
+ylabel('Potential Change(mV)');
 xlabel('Peak Amplitude(mV)');
-title('Spike peak amplitude vs Muscle potential change, I521\_A0006\_D001');
-legend('neuron1', 'neuron2', 'neuron3', 'neuron4', 'neuron5', 'neuron6')
+title('Spike peak amplitude vs Muscle potential change, manual clusters  I521\_A0006\_D001');
+legend('neuron1', 'neuron2', 'neuron3', 'neuron4', 'neuron5')
 % xlim([0 2.5])
 
 %% 
@@ -418,7 +423,11 @@ legend('neuron1', 'neuron2', 'neuron3', 'neuron4', 'neuron5', 'neuron6')
 % $\textbf{Answer 1.6b} \\$
 
 %%
-% mnl,khjkl
+% In the Spike peak amplitude vs muscle potential change plot, we dont
+% quite see a relation between muscle potential response and spike clusters
+% or spike amplitude. The number of spikes in each cluster is not the same
+% so it it hard to make a conclusion. What we do see is that for neuron
+% with low peak amplitude 
 
 %% 
 % <latex>

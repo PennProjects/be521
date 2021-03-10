@@ -355,10 +355,9 @@ ylabel('Amplitude (mV)');
 ylim([-76, -50]) 
 
 %plotting markers for peaks
-hold on
-for i = 1:size(nerve_ff_peakidx/fs,1)
-        xline(nerve_ff_peakidx(i)/fs);
-end
+% for i = 1:size(nerve_ff_peakidx/fs,1)
+%         xline(nerve_ff_peakidx(i)/fs);
+% end
 
 hold off; 
 
@@ -368,11 +367,15 @@ legend('filtered nerve signal', 'muscle channel')
 xlim([0 2.5])
 
 %%
+% Using manual clustering to sort cell groups for analysing muscle
+% potential responses
+
+%%
 %calculating muscle fiber potential change after neuron spike
 pot_change_peak = {};
 %first we loop through the different sets of neuron clusters
 for i= 1:n_clusters
-    idx = km_n{i};
+    idx = n{i};
     temp_ = zeros(size(idx,1),3);
     for j = 1:size(idx,1)
        %calculating max and min mulscle voltage in 25 ms window after peak
@@ -390,6 +393,7 @@ for i= 1:n_clusters
     pot_change_peak{i} = temp_; 
 end
 
+
 %%
 %plotting peaks in filtered signal
 fs = sampling_frequency_hz_cray;
@@ -402,13 +406,12 @@ plot(pot_change_peak{2}(:,3), pot_change_peak{2}(:,2),'b.', 'Markersize',15);
 plot(pot_change_peak{3}(:,3), pot_change_peak{3}(:,2),'g.', 'Markersize',15);
 plot(pot_change_peak{4}(:,3), pot_change_peak{4}(:,2),'k.', 'Markersize',15);
 plot(pot_change_peak{5}(:,3), pot_change_peak{5}(:,2),'m.', 'Markersize',15);
-plot(pot_change_peak{6}(:,3), pot_change_peak{6}(:,2),'c.', 'Markersize',15);
 hold off;
 
-ylabel('Potential Difference(mV)');
+ylabel('Potential Change(mV)');
 xlabel('Peak Amplitude(mV)');
-title('Spike peak amplitude vs Muscle potential change, I521\_A0006\_D001');
-legend('neuron1', 'neuron2', 'neuron3', 'neuron4', 'neuron5', 'neuron6')
+title('Spike peak amplitude vs Muscle potential change, manual clusters  I521\_A0006\_D001');
+legend('neuron1', 'neuron2', 'neuron3', 'neuron4', 'neuron5')
 % xlim([0 2.5])
 
 %% 
@@ -420,7 +423,17 @@ legend('neuron1', 'neuron2', 'neuron3', 'neuron4', 'neuron5', 'neuron6')
 % $\textbf{Answer 1.6b} \\$
 
 %%
-% mnl,khjkl
+% In the Spike peak amplitude vs muscle potential change plot, we dont
+% quite see a relation between muscle potential response and spike clusters
+% or spike amplitude. The number of spikes in each cluster is not the same
+% so it it hard to make a conclusion. What we do see is that for neuron
+% with lower peak spike amplitude there seems to be higher potential change, 
+% this could be due to the fact that these spikes often appear in sets. For
+% neurons with higher spike amplitude the potential change seems to be
+% smaller. Though no cluster - potential change conclusion can be drawn
+% from this data and due to the low number of data points in clusters. So
+% we cannot support the hypothesis that muscle fiber responses are only due
+% to a subset of the cells from this data and plot.
 
 %% 
 % <latex>
