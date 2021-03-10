@@ -120,17 +120,19 @@ suptitle('Filtering nerve channel data for I521\_A0006\_D001')
 % $\textbf{Answer 1.2b} \\$
 
 %%
-% The unfiltered signal has low frequency components and a 60 hz power line
+% The unfiltered signal has low frequency components and a 60 Hz power line
 % noise that can be seen as a base line fluctuation. In the filtered
 % signals, the lower frequencies have been removed and a stable baseline
 % can be seen. $\\$
 % The $filtfilt$ function processes the signal in the forward and reverse
 % direction to cause a zero phase distortion as compared to the $filter$
-% function which prosses the signal only in the forward direction and can
+% function which processes the signal only in the forward direction and can
 % result in a phase shift. The $filtfilt$ function due to its two direction
 % approach results in doubling of the order of filter as specified by the
-% filter coefficients b(numerator) and a(denomerator). The $filter$  function in
-% contrast maintains the order of the filter.
+% filter coefficients b(numerator) and a(denominator). The $filter$  function in
+% contrast maintains the order of the filter. The
+% $filtfilt$ function does a better job of filtering low frequency signal
+% and removing baseline fluctuations.
 
 %% 
 % <latex>
@@ -146,11 +148,11 @@ suptitle('Filtering nerve channel data for I521\_A0006\_D001')
 % unfiltered input signal to a filtered output signal. This process can
 % result in a phase shift between the filtered and raw signal. This is a
 % causal filter. $\\$
-% In constrast, the $filtfilt$ function is a non-causal filter that that
+% In contrast, the $filtfilt$ function is a non-causal filter that that
 % filters the signal in the forward and reverse direction. This 2 pass
 % method results in negating the phase shift of a single filter pass and
 % hence results in a zero-phase distortion of the original signal. Due to
-% the 2 pass methos, the resultant transfer function is equal to the
+% the 2 pass method, the resultant transfer function is equal to the
 % squared magnitude of the original transfer function. This also
 % results in the doubling of the order of the effective filter as compared
 % to the $filter$ function. $\\$
@@ -212,7 +214,7 @@ nerve_peak_amp = sort(x(nerve_ff_peakidx+1));
 % Based on manual inspection of the spike amplitude and shape, it appears
 % that 5 different neurons are recorded in the nerve channel of the signal.
 % The first band from (30,50), second from (50,85), third from (85,155),
-% fouth from (155,201) and the last neuron nad from >201 mV.
+% fourth from (155,201) and the last neuron from >201 mV.
 
 
 %%
@@ -247,6 +249,7 @@ xlabel('Time (sec)');
 title('Nerves channel manual clustering of neurons for I521\_A0006\_D001');
 legend('filtered signal','neuron1', 'neuron2', 'neuron3', 'neuron4', 'neuron5')
 xlim([0 2.5])
+ylim([-500, 600])
 
 
 %% 
@@ -281,18 +284,18 @@ plot(t/1000, x, 'Linewidth', 1);
 hold on;
 
 %plotting manaul peaks
-plot(nerve_ff_peakidx(n{1})/fs, x(nerve_ff_peakidx(n{1})+1) +10,'r.', 'Markersize',15);
-plot(nerve_ff_peakidx(n{2})/fs, x(nerve_ff_peakidx(n{2})+1)+ 10,'b.', 'Markersize',15);
-plot(nerve_ff_peakidx(n{3})/fs, x(nerve_ff_peakidx(n{3})+1)+ 10,'g.', 'Markersize',15);
-plot(nerve_ff_peakidx(n{4})/fs, x(nerve_ff_peakidx(n{4})+1)+ 10,'k.', 'Markersize',15);
-plot(nerve_ff_peakidx(n{5})/fs, x(nerve_ff_peakidx(n{5})+1)+ 10,'m.', 'Markersize',15);
+plot(nerve_ff_peakidx(n{1})/fs, x(nerve_ff_peakidx(n{1})+1) +10,'r.', 'Markersize',10);
+plot(nerve_ff_peakidx(n{2})/fs, x(nerve_ff_peakidx(n{2})+1)+ 10,'b.', 'Markersize',10);
+plot(nerve_ff_peakidx(n{3})/fs, x(nerve_ff_peakidx(n{3})+1)+ 10,'g.', 'Markersize',10);
+plot(nerve_ff_peakidx(n{4})/fs, x(nerve_ff_peakidx(n{4})+1)+ 10,'k.', 'Markersize',10);
+plot(nerve_ff_peakidx(n{5})/fs, x(nerve_ff_peakidx(n{5})+1)+ 10,'m.', 'Markersize',10);
 
 %plotting kmeans clusters
-plot(nerve_ff_peakidx(km_n{1})/fs, x(nerve_ff_peakidx(km_n{1})+1)+20,'r.', 'Markersize',15);
-plot(nerve_ff_peakidx(km_n{2})/fs, x(nerve_ff_peakidx(km_n{2})+1)+20,'b.', 'Markersize',15);
-plot(nerve_ff_peakidx(km_n{3})/fs, x(nerve_ff_peakidx(km_n{3})+1)+20,'g.', 'Markersize',15);
-plot(nerve_ff_peakidx(km_n{4})/fs, x(nerve_ff_peakidx(km_n{4})+1)+20,'k.', 'Markersize',15);
-plot(nerve_ff_peakidx(km_n{5})/fs, x(nerve_ff_peakidx(km_n{5})+1)+20,'m.', 'Markersize',15);
+plot(nerve_ff_peakidx(km_n{1})/fs, x(nerve_ff_peakidx(km_n{1})+1)+30,'r.', 'Markersize',10);
+plot(nerve_ff_peakidx(km_n{2})/fs, x(nerve_ff_peakidx(km_n{2})+1)+30,'b.', 'Markersize',10);
+plot(nerve_ff_peakidx(km_n{3})/fs, x(nerve_ff_peakidx(km_n{3})+1)+30,'g.', 'Markersize',10);
+plot(nerve_ff_peakidx(km_n{4})/fs, x(nerve_ff_peakidx(km_n{4})+1)+30,'k.', 'Markersize',10);
+plot(nerve_ff_peakidx(km_n{5})/fs, x(nerve_ff_peakidx(km_n{5})+1)+30,'m.', 'Markersize',10);
 
 hold off;
 ylabel('Amplitude (mV)');
@@ -300,6 +303,7 @@ xlabel('Time (sec)');
 title('Nerves channel comparing manual clustering to kmeans clustering for I521\_A0006\_D001');
 legend('filtered signal', 'neuron1', 'neuron2', 'neuron3', 'neuron4', 'neuron5', 'neuron6')
 xlim([0 2.5])
+ylim([-500, 700])
 
 
 %% 
@@ -316,11 +320,11 @@ xlim([0 2.5])
 % pretty good job, for peaks close to each other in time, k-means
 % clustering seems to have clustered them in the same group though while
 % they were in different clusters in my sorting. Also, in manual clustering
-% I am able to see anomalies and set the threshold accordingly while kmeans
-% does not account for that. Given a very large data set, I wouldnt mind
-% using kmeans clustering as the errors average out and it might do better. 
+% I am able to see anomalies and set the threshold accordingly while k-means
+% does not account for that. Given a very large data set, I wouldn't mind
+% using k-means clustering as the errors average out and it might do better. 
 % But for the given data I would prefer the manual
-% clustering method. Another aspect about the kmeans clustering is the
+% clustering method. Another aspect about the k-means clustering is the
 % random nature of clusters when I redo clustering which is unreliable and
 % not preferred.
 
@@ -423,7 +427,7 @@ legend('neuron1', 'neuron2', 'neuron3', 'neuron4', 'neuron5')
 % $\textbf{Answer 1.6b} \\$
 
 %%
-% In the Spike peak amplitude vs muscle potential change plot, we dont
+% In the Spike peak amplitude vs muscle potential change plot, we don't
 % quite see a relation between muscle potential response and spike clusters
 % or spike amplitude. The number of spikes in each cluster is not the same
 % so it it hard to make a conclusion. What we do see is that for neuron
@@ -526,10 +530,10 @@ title('Stacking aligned peaks above threshold for I521\_A0006\_D002');
 
 %%
 % Yes, based on the stacked plots we see that there are at least 2 "groups"
-% of peaks stacked together, one with a peak amplitde alose to 50 uV and
-% another with a peak amplitude of about 100 uV. This means that there are
-% at least 2 types of spikes.There are some peaks/spikes at a highter
-% amplitude around 125 uV which could be another type of spike/peak.
+% of peaks stacked together, one with a peak amplitude close to 50 $\mu$V and
+% another with a peak amplitude of about 100 $\mu$V. This means that there are
+% at least 2 types of spikes.There are some peaks/spikes at a higher
+% amplitude around 125 $\mu$V which could be another type of spike/peak.
 
 %% 
 % <latex>
@@ -663,10 +667,10 @@ title('Stacking aligned peaks showing 2 clusters for I521\_A0006\_D002');
 
 %%
 % The biggest disadvantage of PCA is interpretation of the principle
-% components. We dont know what the principle components actually are and
+% components. We don't know what the principle components actually are and
 % what they represent with respect to the data. If we want to understand
-% the physiological imprtance of features/components, this will not be possible from
-% the principle components as they are methematical constructs.
+% the physiological importance of features/components, this will not be possible from
+% the principle components as they are mathematical constructs.
 
 %% 
 % <latex>
@@ -680,11 +684,11 @@ title('Stacking aligned peaks showing 2 clusters for I521\_A0006\_D002');
 % <latex>
 % Some of the dangers of the clustering techniques are:
 % \begin{enumerate}
-% \item The kmeans clustering relied on the number of clusters fed by me.
+% \item The k-means clustering relied on the number of clusters fed by me.
 % This is a big drawback as I must analyse the data enough to identify the
 % number of clusters, specially difficult if the borders are very close. If I choose
-% the wrong numbers of clusters it will impact the processess down the processing line. 
-% \item Another challenge with the kmeans function in matlab was the random
+% the wrong numbers of clusters it will impact the operations down the processing line. 
+% \item Another challenge with the k-means function in Matlab was the random
 % nature of iterations it computes. Due to the random initialization, I
 % found the clusters to be different at times which leads to non reliable
 % results. Its hard to assess what is the right seed to initialize the
