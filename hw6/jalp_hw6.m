@@ -648,6 +648,24 @@ title('Stacking aligned peaks showing 2 clusters for I521\_A0006\_D002');
 %%
 % $\textbf{Answer 2.6} \\$
 
+%%
+% <latex>
+% Some of the dangers of the clustering techniques are:
+% \begin{enumerate}
+% \item The kmeans clustering relied on the number of clusters fed by me.
+% This is a big drawback as I must analyse the data enough to identy the
+% number of clusters specifically if the borders are very close. If i choose
+% the numbers of clusters it will impact the processess down the procesing line. 
+% \item Another challenge with the kmeans function in matlab was the random
+% nature of iterations it computes. Due to the random initialization, I
+% found the clusters to be different at times which leads to non reliable
+% results. Its hard to assess what is the right seed to initialize the
+% function for optimal clustering.
+% \item The clusters also had hard thresholds which made the sorting of
+% points close to the border a challenge which also gets worse if the
+% algorithm reaches a local minima due to its random initialization.
+% \end{enumerate}
+% </latex>
 
 %% 
 % <latex> 
