@@ -132,12 +132,32 @@ findCol = @(x) floor(find(letter_matrix==x)/6)+1;
 findRow = @(x) (mod(find(letter_matrix==x),6)+6);
 
 %%
-%separating the trail numbers for target and non-target stimuli
+%separating the trial numbers for target and non-target stimuli
 target_stim_index = zeros(85,30);
+nontarget_stim_index = zeros(85,150);
 
 for i = 1:85
-    letter = TargetLetter(i).description;
-    for j  = 1:180
+    target_letter = TargetLetter(i).description;
+    target_row = findRow(target_letter);
+    target_col = findCol(target_letter);
+    temp_  = [];
+    temp1_ = [];
+    for j = 1:180
+        stim_idx = (i-1)*180+j;
+        stm_rowcol = str2double(Stim(stim_idx).description);
+        if(stm_rowcol == target_row || stm_rowcol == target_col)
+            temp_ = [temp_,stim_idx];
+        else
+            temp1_ = [temp1_,stim_idx];
+        end
+    end
+    target_stim_index(i,:) = temp_;
+    nontarget_stim_index(i,:) = temp1_;
+end
+
+
+%%
+%
         
 
 % <latex> 
