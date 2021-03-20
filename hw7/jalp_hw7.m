@@ -219,6 +219,61 @@ legend('Target', 'Non-Target')
 %%
 % $\textbf{Answer 1.2} \\$
 
+%%
+%parsing eeg data fortarget and nontarget trials
+%Here each row represents data for 1 epoch
+
+%each row has 240 points. This is the average of the 30 target trials 
+e42_target_uV = zeros(85,240);
+
+for i = 1:85
+    temp_ = [];
+    temp1_ = [];
+    for j = 1:30
+        stm_idx = target_stim_index(i,j);
+        st_idx = round(((Stim(stm_idx).start)/1e6)*sampling_frequency_hz)+1;
+        sp_idx = round(((Stim(stm_idx).stop)/1e6)*sampling_frequency_hz);
+        temp_ = data_uV(42,st_idx:sp_idx);
+        temp1_ = [temp1_; temp_];
+    end
+    e42_target_uV(i,:) = mean(temp1_);
+end
+
+%each row has 240 points. This is the average of the 150 non-target trials 
+e42_nontarget_uV = zeros(85,240);
+
+for i = 1:85
+    temp_ = [];
+    temp1_ = [];
+    for j = 1:150
+        stm_idx = nontarget_stim_index(i,j);
+        st_idx = round(((Stim(stm_idx).start)/1e6)*sampling_frequency_hz)+1;
+        sp_idx = round(((Stim(stm_idx).stop)/1e6)*sampling_frequency_hz);
+        temp_ = data_uV(42,st_idx:sp_idx);
+        temp1_ = [temp1_; temp_];
+    end
+    e42_nontarget_uV(i,:) = mean(temp1_);
+end
+
+%%
+%Calculating the average voltage 
+e42_target_avg_uV = mean(e42_target_uV);
+e42_nontarger_avg_uV = mean(e42_nontarget_uV);
+
+%%
+%plotting mean signals
+t = 0 : 1/sampling_frequency_hz : 1-1/sampling_frequency_hz;
+t_ms = t*1e3;
+
+figure();
+plot(t_ms, e42_target_avg_uV, 'Linewidth', 2);
+hold on 
+plot(t_ms, e42_nontarger_avg_uV, 'Linewidth', 2);
+xlabel('Time(ms)')
+ylabel('Signal Amplitude(\muV)')
+title('Comparing target vs non-target response for T8 channel(42)')
+legend('Target', 'Non-Target')
+
 %% 
 % <latex> 
 %  \item Which of the two previous channels looks best for distinguishing between target and non-target stimuli? Which time points look best? Explain in a few sentences. (2 pts)
