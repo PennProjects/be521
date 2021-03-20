@@ -99,7 +99,7 @@
 % </latex> 
 
 %%
-% [ANSWER HERE]
+% $\textbf{Answer 1.1} \\$
 
 %% 
 % <latex> 
@@ -107,7 +107,7 @@
 % </latex> 
 
 %%
-% [ANSWER HERE]
+% $\textbf{Answer 1.2} \\$
 
 %% 
 % <latex> 
@@ -115,7 +115,7 @@
 % </latex> 
 
 %%
-% [ANSWER HERE]
+% $\textbf{Answer 1.3} \\$
 
 %% 
 % <latex> 
@@ -123,7 +123,7 @@
 % </latex> 
 
 %%
-% [ANSWER HERE]
+% $\textbf{Answer 1.4} \\$
 
 %% 
 % <latex> 
@@ -131,7 +131,7 @@
 % </latex> 
 
 %%
-% [ANSWER HERE]
+% $\textbf{Answer 1.5} \\$
 
 %% 
 % <latex> 
@@ -143,7 +143,7 @@
 % </latex> 
 
 %%
-% [ANSWER HERE]
+% $\textbf{Answer 2.1} \\$
 
 %% 
 % <latex> 
@@ -151,14 +151,14 @@
 % </latex>
 
 %%
-% [ANSWER HERE]
+% $\textbf{Answer 2.2} \\$
 %% 
 % <latex> 
 %  \item Plot the \emph{p300 scores} for each row/column in epoch 27 at electrode Cz. (3 pts)
 % </latex>
 
 %%
-% [ANSWER HERE]
+% $\textbf{Answer 2.3} \\$
 
 %% 
 % <latex> 
@@ -166,7 +166,7 @@
 % </latex>
 
 %%
-% [ANSWER HERE]
+% $\textbf{Answer 2.4} \\$
 
 %% 
 % <latex> 
@@ -174,7 +174,7 @@
 % </latex>
 
 %%
-% [ANSWER HERE]
+% $\textbf{Answer 2.5} \\$
 
 %% 
 % <latex> 
@@ -186,7 +186,7 @@
 % </latex>
 
 %%
-% [ANSWER HERE]
+% $\textbf{Answer 3.1} \\$
 
 %% 
 % <latex> 
@@ -194,7 +194,7 @@
 % </latex>
 
 %%
-% [ANSWER HERE]
+% $\textbf{Answer 3.2} \\$
 
 %% 
 % <latex> 
