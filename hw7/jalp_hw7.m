@@ -160,8 +160,8 @@ end
 %parsing eeg data fortarget and nontarget trials
 %Here each row represents data for 1 epoch
 
-%each row has 30*240 points. 240 points for each target 
-e11_target_uV = zeros(85,30*240);
+%each row has 240 points. This is the average of the 30 target trials 
+e11_target_uV = zeros(85,240);
 
 for i = 1:85
     temp_ = [];
@@ -171,13 +171,13 @@ for i = 1:85
         st_idx = round(((Stim(stm_idx).start)/1e6)*sampling_frequency_hz)+1;
         sp_idx = round(((Stim(stm_idx).stop)/1e6)*sampling_frequency_hz);
         temp_ = data_uV(11,st_idx:sp_idx);
-        temp1_ = [temp1_, temp_];
+        temp1_ = [temp1_; temp_];
     end
-    e11_target_uV(i,:) = temp1_;
+    e11_target_uV(i,:) = mean(temp1_);
 end
 
-%each row has 150*240 points. 240 points for each nontarget 
-e11_nontarget_uV = zeros(85,150*240);
+%each row has 240 points. This is the average of the 150 non-target trials 
+e11_nontarget_uV = zeros(85,240);
 
 for i = 1:85
     temp_ = [];
@@ -187,14 +187,29 @@ for i = 1:85
         st_idx = round(((Stim(stm_idx).start)/1e6)*sampling_frequency_hz)+1;
         sp_idx = round(((Stim(stm_idx).stop)/1e6)*sampling_frequency_hz);
         temp_ = data_uV(11,st_idx:sp_idx);
-        temp1_ = [temp1_, temp_];
+        temp1_ = [temp1_; temp_];
     end
-    e11_nontarget_uV(i,:) = temp1_;
+    e11_nontarget_uV(i,:) = mean(temp1_);
 end
 
 %%
 %Calculating the average voltage 
-% e11_target_avg_uV = 
+e11_target_avg_uV = mean(e11_target_uV);
+e11_nontarger_avg_uV = mean(e11_nontarget_uV);
+
+%%
+%plotting mean signals
+t = 0 : 1/sampling_frequency_hz : 1-1/sampling_frequency_hz;
+t_ms = t*1e3;
+
+figure();
+plot(t_ms, e11_target_avg_uV, 'Linewidth', 2);
+hold on 
+plot(t_ms, e11_nontarger_avg_uV, 'Linewidth', 2);
+xlabel('Time(ms)')
+ylabel('Signal Amplitude(\muV)')
+title('Comparing target vs non-target response for Cz channel(11)')
+legend('Target', 'Non-Target')
 
 
 % <latex> 
