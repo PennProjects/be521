@@ -157,7 +157,13 @@ end
 
 
 %%
-%
+%parsing eeg data fortarget and nontarget trials
+%Here each row represents data from a trial which is 1s long
+e11_target_uV = zeros(30,240);
+
+for i = 1:30
+    e11_target_uV
+end
         
 
 % <latex> 
