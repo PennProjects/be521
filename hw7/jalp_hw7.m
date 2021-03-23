@@ -477,9 +477,9 @@ end
 %boxplot for all iterations of each row/column 
 figure();
 boxplot(pscore_c11_separated')
-ylabel('pscore (\muV)')
+ylabel('p300 score (\muV)')
 xlabel('Row/Column Number')
-title('pscore value across trials for each row/column at Cz, epoch 27')
+title('p300 score value across trials for each row/column at Cz, epoch 27')
 
 %% 
 % <latex> 
@@ -500,6 +500,60 @@ title('pscore value across trials for each row/column at Cz, epoch 27')
 
 %%
 % $\textbf{Answer 2.5} \\$
+
+%%
+%Calculating the p300 score for all epochs
+pscore_c11_allepoch = zeros(85,12);
+
+for i = 1:85
+    epoch_i_stim_rowcol = zeros(1,180);
+    for j = 1:180
+        epoch_i_stim_rowcol(i) = str2double(Stim((i-1)*180+j).description);
+    end
+
+    %separate the indexes for ech row and col number creating a 12x15 index
+    %table
+    epoch_i_idx_separated = zeros(12,15);
+    pscore_c11_temp_ = zeros(12,15);
+    for j = 1:12
+        epoch_i_idx_separated(j, :) = find(epoch27_stim_rowcol==j);
+        pscore_c11_temp_(j,:) = pscore_c11(i, epoch_i_idx_separated(j, :));
+    end
+    
+    %calculating the average p300 score across all 15 trails for each
+    %row/col
+    temp_ = mean(pscore_c11_temp_,2);
+    pscore_c11_allepoch(i,:)= temp_';
+end
+
+
+%%
+%finding the predicted letter in each epoch
+%We'll find the row/col with the 2 highest p300 scores
+%find the intersection of the row and column to find the predicted letter
+
+c11_p300_accuracy = zeros(1,85);
+for i = 1:85
+    
+    %find index for row and col with 2 highest p300 values
+    [~,temp_idx] = sort(pscore_c11_allepoch(i,:), 'descend');
+    
+    %parsing row and column index
+    %finding highest row index
+    temp1_  = find(temp_idx>6);
+    row_idx = temp_idx(temp1_(1))-6;
+    
+    %finding highest column index
+    temp2_  = find(temp_idx<7);
+    col_idx = temp_idx(temp2_(1));
+ 
+    pred_letter = letter_matrix(row_idx,col_idx); 
+    
+    c11_p300_accuracy(i) = pred_letter==TargetLetter(i).description;
+end
+
+
+
 
 %% 
 % <latex> 
