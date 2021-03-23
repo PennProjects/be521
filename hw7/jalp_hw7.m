@@ -440,9 +440,13 @@ for i = 1:85
     end
 end
 
+%%
+%pscore for epoch 10 and iterarion 11 is 
+pscore_c11(10,11)
 
 %%
-%
+% The $pscore$ for epoch 10 and iteration 11 at electrode Cz is 0.8243
+
 
 %% 
 % <latex> 
