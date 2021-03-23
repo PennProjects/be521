@@ -428,20 +428,25 @@ pscore_c11 = zeros(85,180);
 
 for i = 1:85
     for j = 1:180
+        %separatingindex for each trial in each epoch
         stim_idx = (i-1)*180+j;
         %finding the index fro the datafrom time stamps
-        st_idx = round(((Stim(stm_idx).start)/1e6)*sampling_frequency_hz)+1;
-        sp_idx = round(((Stim(stm_idx).stop)/1e6)*sampling_frequency_hz);
+        st_idx = round(((Stim(stim_idx).start)/1e6)*sampling_frequency_hz)+1;
+        sp_idx = round(((Stim(stim_idx).stop)/1e6)*sampling_frequency_hz);
         temp_ = data_uV(11,st_idx:sp_idx);
         
-        %pscore = val(600to800)-val(250-450)ms
-        pscore_c11(i,j) = temp_(145:192)-temp_(61:108)
+        %pscore = val(250-450)ms-val(600to800)
+        pscore_c11(i,j) = mean(temp_(61:108))-mean(temp_(145:192));
+    end
 end
 
-stm_idx = nontarget_stim_index(i,j);
-        st_idx = round(((Stim(stm_idx).start)/1e6)*sampling_frequency_hz)+1;
-        sp_idx = round(((Stim(stm_idx).stop)/1e6)*sampling_frequency_hz);
-        temp_ = data_uV(11,st_idx:sp_idx);
+%%
+%pscore for epoch 10 and iterarion 11 is 
+pscore_c11(10,11)
+
+%%
+% The $pscore$ for epoch 10 and iteration 11 at electrode Cz is 0.8243
+
 
 %% 
 % <latex> 
@@ -450,6 +455,27 @@ stm_idx = nontarget_stim_index(i,j);
 
 %%
 % $\textbf{Answer 2.3} \\$
+
+%%
+%first we must find the indexes of the 15 trials for each row and column
+
+epoch27_stim_rowcol = zeros(1,180);
+for i = 1:180
+    epoch27_stim_rowcol(i) = str2double(Stim(26*180+i).description);
+end
+
+%separate the indexes for ech row and col number creating a 12x15 index
+%table
+epoch_27_idx_separated = zeros(12,15);
+pscore_c11_separated = zeros(12,15);
+for i = 1:12
+    epoch_27_idx_separated(i, :) = find(epoch27_stim_rowcol==i);
+    pscore_c11_separated(i,:) = pscore_c11(27, epoch_27_idx_separated(i, :));
+end
+
+%%
+%boxplot for all iterations of each row/column 
+boxplot(pscore_c11_separated', 'Linewidth', 2)
 
 %% 
 % <latex> 

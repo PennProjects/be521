@@ -456,6 +456,50 @@ pscore_c11(10,11)
 %%
 % $\textbf{Answer 2.3} \\$
 
+%%
+%first we must find the indexes of the 15 trials for each row and column
+
+epoch27_stim_rowcol = zeros(1,180);
+for i = 1:180
+    epoch27_stim_rowcol(i) = str2double(Stim(26*180+i).description);
+end
+
+%separate the indexes for ech row and col number creating a 12x15 index
+%table
+epoch_27_idx_separated = zeros(12,15);
+pscore_c11_separated = zeros(12,15);
+for i = 1:12
+    epoch_27_idx_separated(i, :) = find(epoch27_stim_rowcol==i);
+    pscore_c11_separated(i,:) = pscore_c11(27, epoch_27_idx_separated(i, :));
+end
+
+%%
+%boxplot for all iterations of each row/column 
+figure();
+boxplot(pscore_c11_separated')
+ylabel('pscore (\muV)')
+xlabel('Row/Column Number')
+title('pscore value across trials for each row/column at Cz')
+
+
+%%
+%testing normalizing pscores
+pscore_c11_n = normalize(pscore_c11(27,:));
+pscore_c11_norm_sep = zeros(12,15);
+for i = 1:12
+    pscore_c11_norm_sep(i,:) = pscore_c11_n(1, epoch_27_idx_separated(i, :));
+end
+
+%boxplot for all iterations of each row/column 
+figure();
+boxplot(pscore_c11_norm_sep')
+ylabel('pscore (\muV)')
+xlabel('Row/Column Number')
+title('pscore value across trials for each row/column at Cz')
+
+pscore_mean  = mean(pscore_c11_norm_sep,2);
+sort(pscore_mean, 'descend')
+
 %% 
 % <latex> 
 %  \item Based on your previous answer for epoch 27, what letter do you predict the person saw? Is this prediction correct? (2 pts)
