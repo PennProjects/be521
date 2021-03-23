@@ -556,6 +556,10 @@ end
 
 prediction_accuracy = sum(c11_p300_accuracy)/85*100
 
+%%
+% The prediction accuracy by using the highest p300 values for rows and
+% columns trials and finding the intersection of the 2 is 27.06%.
+
 %% 
 % <latex> 
 % \end{enumerate}
@@ -567,6 +571,53 @@ prediction_accuracy = sum(c11_p300_accuracy)/85*100
 
 %%
 % $\textbf{Answer 3.1} \\$
+
+
+%%
+%using ratio instead of difference
+%%
+%Calculating pscore for Cz channel
+% 250ms to 450 ms is at index 61 to 108
+% 600 to 800 ms is from index 145-192
+
+new_pscore_c11 = zeros(85,180);
+
+for i = 1:85
+    for j = 1:180
+        %separatingindex for each trial in each epoch
+        stim_idx = (i-1)*180+j;
+        %finding the index fro the datafrom time stamps
+        st_idx = round(((Stim(stim_idx).start)/1e6)*sampling_frequency_hz)+1;
+        sp_idx = round(((Stim(stim_idx).stop)/1e6)*sampling_frequency_hz);
+        temp_ = data_uV(11,st_idx:sp_idx);
+        
+        %pscore = val(250-500)ms/val(600to800)
+        new_pscore_c11(i,j) = abs(mean(temp_(61:120))/mean(temp_(145:240)));
+    end
+end
+
+%%
+epoch27_stim_rowcol = zeros(1,180);
+for i = 1:180
+    epoch27_stim_rowcol(i) = str2double(Stim(26*180+i).description);
+end
+
+%separate the indexes for ech row and col number creating a 12x15 index
+%table
+epoch_27_idx_separated = zeros(12,15);
+pscore_c11_separated = zeros(12,15);
+for i = 1:12
+    epoch_27_idx_separated(i, :) = find(epoch27_stim_rowcol==i);
+    pscore_c11_separated(i,:) = new_pscore_c11(85, epoch_27_idx_separated(i, :));
+end
+
+%%
+%boxplot for all iterations of each row/column 
+figure();
+boxplot(pscore_c11_separated')
+ylabel('p300 score (\muV)')
+xlabel('Row/Column Number')
+title('p300 score value across trials for each row/column at Cz, epoch 27')
 
 %% 
 % <latex> 
