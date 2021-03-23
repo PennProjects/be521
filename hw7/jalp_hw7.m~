@@ -409,7 +409,18 @@ title('Difference in uV between target and non-taregt stimuli at 300 ms')
 % $\textbf{Answer 2.1} \\$
 
 %%
-% By just using one channel 
+% By just using one channel we can simplify the hardware and usability of
+% the whole system as then only 2 electrodes (cz and ground) will be needed for the
+% prediction. This is help with storage, power and computational needs.
+% $\\$
+% One big disadvantage of using 1 electrode is it does not help adapt to
+% people who have disabilities in the brain or have imapairment/damage.
+% We would then now know if the region detected by the Cz electrode is the
+% the right one. For some people due to neuroplasticity their area of high
+% activity might be different than the one detected by Cz. In all of these
+% cases it would make more sense to have the complete skull covered instead
+% of a single or only f f
+
 
 %% 
 % <latex> 
@@ -572,6 +583,50 @@ prediction_accuracy = sum(c11_p300_accuracy)/85*100
 %%
 % $\textbf{Answer 3.1} \\$
 
+
+%%
+%Calculating p300score for Cz channel
+% 250ms to 450 ms is at index 61 to 108
+% 600 to 800 ms is from index 145-192
+
+new_pscore_c11 = zeros(85,180);
+
+for i = 1:85
+    for j = 1:180
+        %separatingindex for each trial in each epoch
+        stim_idx = (i-1)*180+j;
+        %finding the index fro the datafrom time stamps
+        st_idx = round(((Stim(stim_idx).start)/1e6)*sampling_frequency_hz)+1;
+        sp_idx = round(((Stim(stim_idx).stop)/1e6)*sampling_frequency_hz);
+        temp_ = data_uV(11,st_idx:sp_idx);
+        
+        %pscore = val(250-500)ms/val(600to800)
+        new_pscore_c11(i,j) = abs(mean(temp_(61:120))/mean(temp_(145:240)));
+    end
+end
+
+%%
+epoch27_stim_rowcol = zeros(1,180);
+for i = 1:180
+    epoch27_stim_rowcol(i) = str2double(Stim(26*180+i).description);
+end
+
+%separate the indexes for ech row and col number creating a 12x15 index
+%table
+epoch_27_idx_separated = zeros(12,15);
+pscore_c11_separated = zeros(12,15);
+for i = 1:12
+    epoch_27_idx_separated(i, :) = find(epoch27_stim_rowcol==i);
+    pscore_c11_separated(i,:) = new_pscore_c11(85, epoch_27_idx_separated(i, :));
+end
+
+%%
+%boxplot for all iterations of each row/column 
+figure();
+boxplot(pscore_c11_separated')
+ylabel('p300 score (\muV)')
+xlabel('Row/Column Number')
+title('p300 score value across trials for each row/column at Cz, epoch 27')
 
 %% 
 % <latex> 
