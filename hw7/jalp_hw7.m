@@ -432,8 +432,8 @@ title('Difference in uV between target and non-taregt stimuli at 300 ms')
 
 %%
 %Calculating pscore for Cz channel
-% 250ms to 450 ms is at index 61 to 108
-% 600 to 800 ms is from index 145-192
+%250ms to 450 ms is at index 61 to 108
+%600 to 800 ms is from index 145-192
 
 pscore_c11 = zeros(85,180);
 
@@ -585,11 +585,12 @@ prediction_accuracy = sum(c11_p300_accuracy)/85*100
 
 
 %%
+%Extending the timimng for p300 to 250-500ms
 %Calculating p300score for Cz channel
-% 250ms to 450 ms is at index 61 to 108
-% 600 to 800 ms is from index 145-192
+%250ms to 500 ms is at index 61 to 120
+%600 to 800 ms is from index 145-192
 
-new_pscore_c11 = zeros(85,180);
+new_p300score_c11 = zeros(85,180);
 
 for i = 1:85
     for j = 1:180
@@ -600,26 +601,37 @@ for i = 1:85
         sp_idx = round(((Stim(stim_idx).stop)/1e6)*sampling_frequency_hz);
         temp_ = data_uV(11,st_idx:sp_idx);
         
-        %pscore = val(250-500)ms/val(600to800)
-        new_pscore_c11(i,j) = abs(mean(temp_(61:120))/mean(temp_(145:240)));
+        %p300 score = val(250-500)ms-val(600to800)
+        new_p300score_c11(i,j) = mean(temp_(61:120)-mean(temp_(145:192)));
     end
 end
 
 %%
-epoch27_stim_rowcol = zeros(1,180);
-for i = 1:180
-    epoch27_stim_rowcol(i) = str2double(Stim(26*180+i).description);
-end
+%Calculating the mean p30 score for 12 rows and columns
+%Calculating the p300 score for all epochs
+new_p300score_c11_allepoch = zeros(85,12);
 
-%separate the indexes for ech row and col number creating a 12x15 index
-%table
-epoch_27_idx_separated = zeros(12,15);
-pscore_c11_separated = zeros(12,15);
-for i = 1:12
-    epoch_27_idx_separated(i, :) = find(epoch27_stim_rowcol==i);
-    pscore_c11_separated(i,:) = new_pscore_c11(85, epoch_27_idx_separated(i, :));
-end
+for i = 1:85
+    epoch_i_stim_rowcol = zeros(1,180);
+    for j = 1:180
+        epoch_i_stim_rowcol(j) = str2double(Stim((i-1)*180+j).description);
+        
+    end
 
+    %separate the indexes for each row and col number creating a 12x15 index
+    %table
+    epoch_i_idx_separated = zeros(12,15);
+    pscore_c11_temp_ = zeros(12,15);
+    for k = 1:12
+        epoch_i_idx_separated(k, :) = find(epoch_i_stim_rowcol==k);
+        pscore_c11_temp_(k,:) = pscore_c11(i, epoch_i_idx_separated(k, :));
+    end
+    
+    %calculating the average p300 score across all 15 trails for each
+    %row/col
+    temp_ = mean(pscore_c11_temp_,2);
+    new_p300score_c11_allepoch(i,:)= temp_';
+end
 %%
 %boxplot for all iterations of each row/column 
 figure();
