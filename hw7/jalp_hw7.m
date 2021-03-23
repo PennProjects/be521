@@ -157,7 +157,7 @@ end
 
 
 %%
-%parsing eeg data fortarget and nontarget trials
+%parsing eeg data for target and nontarget trials
 %Here each row represents data for 1 epoch
 
 %each row has 240 points. This is the average of the 30 target trials 
@@ -220,7 +220,7 @@ legend('Target', 'Non-Target')
 % $\textbf{Answer 1.2} \\$
 
 %%
-%parsing eeg data fortarget and nontarget trials
+%parsing eeg data for target and nontarget trials
 %Here each row represents data for 1 epoch
 
 %each row has 240 points. This is the average of the 30 target trials 
@@ -309,6 +309,73 @@ snr_ratio_e42 = e42_t_m/e42_nt_m
 %%
 % $\textbf{Answer 1.4} \\$
 
+%%
+%calculating the mean response for each channel for all trials for all
+%letters
+%We'll calculate the mean of the 30 target trials for each letter/epoch.
+%Then we will average the response acress each epoch to get a final 1s
+%average response
+
+all_target_avg_uV = zeros(64,240);
+
+for e = 1:64
+    temp2_ = zeros(85,240);
+    for i = 1:85
+        temp_ = [];
+        temp1_ = [];
+        for j = 1:30
+            stm_idx = target_stim_index(i,j);
+            st_idx = round(((Stim(stm_idx).start)/1e6)*sampling_frequency_hz)+1;
+            sp_idx = round(((Stim(stm_idx).stop)/1e6)*sampling_frequency_hz);
+            temp_ = data_uV(e,st_idx:sp_idx);
+            temp1_ = [temp1_; temp_];
+        end
+        %each row has 240 points. This is the average of the 30 target trials 
+        temp2_(i,:) = mean(temp1_);
+    end
+    %Calculating avg across all 85 letters/epochs
+    all_target_avg_uV(e, :) = mean(temp2_);   
+end
+
+%We'll calculate the mean of the 150 non target trials for each letter/epoch.
+%Then we will average the response acress each epoch to get a final 1s
+%average response
+
+all_nontarget_avg_uV = zeros(64,240);
+
+for e=1:64
+    temp2_ = zeros(85,240);
+    for i = 1:85
+        temp_ = [];
+        temp1_ = [];
+        for j = 1:150
+            stm_idx = nontarget_stim_index(i,j);
+            st_idx = round(((Stim(stm_idx).start)/1e6)*sampling_frequency_hz)+1;
+            sp_idx = round(((Stim(stm_idx).stop)/1e6)*sampling_frequency_hz);
+            temp_ = data_uV(e,st_idx:sp_idx);
+            temp1_ = [temp1_; temp_];
+        end
+        %each row has 240 points. This is the average of the 150 non target trials 
+        temp2_(i,:) = mean(temp1_);
+    end
+    %Calculating avg across all 85 letters/epochs
+    all_nontarget_avg_uV(e, :) = mean(temp2_);   
+end
+
+
+%%
+%Calculating the difference betweeen target and non target signals at
+%300 ms. The 73rd data point contain data from 300-304.167 ms
+diff_at300_uV = (all_target_avg_uV(:,73))-(all_nontarget_avg_uV(:,73));
+
+%%
+%Plotting target-nontarget values at 300ms
+figure();
+cmap = colormap(jet);
+topoplotEEG(diff_at300_uV,'eloc64.txt','gridscale', 150, 'colormap', cmap, 'electrodes', 'labels')
+h = colorbar;
+title('Difference in uV between target and non-taregt stimuli at 300 ms')
+
 %% 
 % <latex> 
 %  \item How do the red and blue parts of this plot correspond to the plots from above? (2 pts)
@@ -316,6 +383,14 @@ snr_ratio_e42 = e42_t_m/e42_nt_m
 
 %%
 % $\textbf{Answer 1.5} \\$
+
+%%
+% In the color bar chosen, red color signifies the largest difference
+% between the target and non-tartet response at those electrode locations.
+% The blue color in the other hand shows areas where the non-target stimuli have
+% a greater response as compared to the target stimuli. Or it could also be
+% locations where the target response as more negative as compared to the
+% non-target response.
 
 %% 
 % <latex> 
