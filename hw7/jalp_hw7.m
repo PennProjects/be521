@@ -508,16 +508,17 @@ pscore_c11_allepoch = zeros(85,12);
 for i = 1:85
     epoch_i_stim_rowcol = zeros(1,180);
     for j = 1:180
-        epoch_i_stim_rowcol(i) = str2double(Stim((i-1)*180+j).description);
+        epoch_i_stim_rowcol(j) = str2double(Stim((i-1)*180+j).description);
+        
     end
 
-    %separate the indexes for ech row and col number creating a 12x15 index
+    %separate the indexes for each row and col number creating a 12x15 index
     %table
     epoch_i_idx_separated = zeros(12,15);
     pscore_c11_temp_ = zeros(12,15);
-    for j = 1:12
-        epoch_i_idx_separated(j, :) = find(epoch27_stim_rowcol==j);
-        pscore_c11_temp_(j,:) = pscore_c11(i, epoch_i_idx_separated(j, :));
+    for k = 1:12
+        epoch_i_idx_separated(k, :) = find(epoch_i_stim_rowcol==k);
+        pscore_c11_temp_(k,:) = pscore_c11(i, epoch_i_idx_separated(k, :));
     end
     
     %calculating the average p300 score across all 15 trails for each
@@ -553,7 +554,7 @@ for i = 1:85
 end
 
 
-
+prediction_accuracy = sum(c11_p300_accuracy)/85*100
 
 %% 
 % <latex> 
