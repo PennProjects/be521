@@ -366,7 +366,7 @@ end
 %%
 %Calculating the difference betweeen target and non target signals at
 %300 ms. The 73rd data point contain data from 300-304.167 ms
-diff_at300_uV = all_target_avg_uV(:,73)-all_nontarget_avg_uV(:,73);
+diff_at300_uV = (all_target_avg_uV(:,73))-(all_nontarget_avg_uV(:,73));
 
 %%
 %Plotting target-nontarget values at 300ms
@@ -374,10 +374,6 @@ figure();
 cmap = colormap(jet);
 topoplotEEG(diff_at300_uV,'eloc64.txt','gridscale', 150, 'colormap', cmap, 'electrodes', 'labels')
 h = colorbar;
-ylabel = get(h,'YTickLabel');
-uV = cellstr(repmat(' uV',size(ylabel,1),1));
-ylabel_ = strjoin(ylabel, 'uV');
-set(h,'YTickLabel', );
 title('Difference in uV between target and non-taregt stimuli at 300 ms')
 
 %% 
@@ -387,6 +383,15 @@ title('Difference in uV between target and non-taregt stimuli at 300 ms')
 
 %%
 % $\textbf{Answer 1.5} \\$
+
+%%
+% In the color bar chosen, red color signifies the largest difference
+% between the target and non-tartet response at those electrode locations.
+% The blue color in the other hand shows areas where the non-target stimuli have
+% a greater response as compared to the target stimuli. Or it could also be
+% locations where the target response as more negative as compared to the
+% non-target response. $\\$
+% 
 
 %% 
 % <latex> 

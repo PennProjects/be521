@@ -390,8 +390,12 @@ title('Difference in uV between target and non-taregt stimuli at 300 ms')
 % The blue color in the other hand shows areas where the non-target stimuli have
 % a greater response as compared to the target stimuli. Or it could also be
 % locations where the target response as more negative as compared to the
-% non-target response.
-
+% non-target response. $\\$
+% Here we see that the Cz electrode has the highest difference while the T8
+% electrode has a very small difference between the target and non-target respose
+% at 300ms. This is consistent with the plots in 1.1and 1.2 where we
+% observed a might higher ratio and difference in Cz as compared to T8
+% electrode.
 %% 
 % <latex> 
 % \end{enumerate}
