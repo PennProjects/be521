@@ -281,6 +281,25 @@ legend('Target', 'Non-Target')
 
 %%
 % $\textbf{Answer 1.3} \\$
+%%
+e11_t_m = mean(e11_target_avg_uV);
+e11_nt_m = mean(e11_nontarger_avg_uV);
+snr_ratio_e11 = e11_t_m/e11_nt_m
+
+e42_t_m = mean(e42_target_avg_uV);
+e42_nt_m = mean(e42_nontarger_avg_uV);
+snr_ratio_e42 = e42_t_m/e42_nt_m
+
+%%
+% Of the channels, it looks like channel 11, Cz has a much higher ratio of
+% Target/Non-Terget mean value as compared to the channel 42, T8. This
+% would make it easier to detect a peak from a target stimulation in the Cz
+% channel data. $\\$
+% From the graphs, in the Cz channel, we havethe highest peak at abour 450
+% ms which could be the best point to detect the target. While on the graph
+% for T8 channel the peak is at about 480 ms which would be the best point
+% to gete the target signal.
+
 
 %% 
 % <latex> 
