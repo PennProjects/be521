@@ -372,7 +372,7 @@ diff_at300_uV = (all_target_avg_uV(:,73))-(all_nontarget_avg_uV(:,73));
 %Plotting target-nontarget values at 300ms
 figure();
 cmap = colormap(jet);
-topoplotEEG(diff_at300_uV,'eloc64.txt','gridscale', 150, 'colormap', cmap, 'electrodes', 'labels')
+topoplotEEG(diff_at300_uV,'eloc64.txt','gridscale', 150, 'colormap', cmap, 'electrodes', 'numbers')
 h = colorbar;
 title('Difference in uV between target and non-taregt stimuli at 300 ms')
 
@@ -586,30 +586,47 @@ prediction_accuracy = sum(c11_p300_accuracy)/85*100
 
 %%
 %Extending the timimng for p300 to 250-500ms
-%Calculating p300score for Cz channel
+%Calculating average p300score for 9 channels 
 %250ms to 500 ms is at index 61 to 120
 %600 to 800 ms is from index 145-192
 
-new_p300score_c11 = zeros(85,180);
+%channels 3,4,5,10,11,12,17,18,19
+%the choosen channels are the 8 channels around channel 11,Cz
+electrode_arr = [3,4,5,10,11,12,17,18,19];
+
+
+%we'll now caculate the average p300 score for the 9 electrodes
+
+p300score_nineavg = zeros(85,180);
 
 for i = 1:85
     for j = 1:180
+        
         %separatingindex for each trial in each epoch
         stim_idx = (i-1)*180+j;
         %finding the index fro the datafrom time stamps
         st_idx = round(((Stim(stim_idx).start)/1e6)*sampling_frequency_hz)+1;
         sp_idx = round(((Stim(stim_idx).stop)/1e6)*sampling_frequency_hz);
-        temp_ = data_uV(11,st_idx:sp_idx);
+        
+        temp_ = zeros(9,240);
+        for e = 1:9
+            temp_(e,:) = data_uV(electrode_arr(e),st_idx:sp_idx);
+        end
+        
+        %calculating mean
+        mean_temp_ = mean(temp_);
         
         %p300 score = val(250-500)ms-val(600to800)
-        new_p300score_c11(i,j) = mean(temp_(61:120)-mean(temp_(145:192)));
+        new_p300score_avg_all(i,j) = mean(mean_temp_(61:120)-mean(mean_temp_(145:192)));
     end
 end
+
+
 
 %%
 %Calculating the mean p30 score for 12 rows and columns
 %Calculating the p300 score for all epochs
-new_p300score_c11_allepoch = zeros(85,12);
+new_p300score_all_allepoch = zeros(85,12);
 
 for i = 1:85
     epoch_i_stim_rowcol = zeros(1,180);
@@ -624,22 +641,42 @@ for i = 1:85
     pscore_c11_temp_ = zeros(12,15);
     for k = 1:12
         epoch_i_idx_separated(k, :) = find(epoch_i_stim_rowcol==k);
-        pscore_c11_temp_(k,:) = pscore_c11(i, epoch_i_idx_separated(k, :));
+        pscore_c11_temp_(k,:) = new_p300score_avg_all(i, epoch_i_idx_separated(k, :));
     end
     
     %calculating the average p300 score across all 15 trails for each
     %row/col
     temp_ = mean(pscore_c11_temp_,2);
-    new_p300score_c11_allepoch(i,:)= temp_';
+    new_p300score_all_allepoch(i,:)= temp_';
 end
-%%
-%boxplot for all iterations of each row/column 
-figure();
-boxplot(pscore_c11_separated')
-ylabel('p300 score (\muV)')
-xlabel('Row/Column Number')
-title('p300 score value across trials for each row/column at Cz, epoch 27')
 
+%%
+%finding the predicted letter in each epoch
+%We'll find the row/col with the 2 highest p300 scores
+%find the intersection of the row and column to find the predicted letter
+
+nelec_p300_accuracy = zeros(1,85);
+for i = 1:85
+    
+    %find index for row and col with 2 highest p300 values
+    [~,temp_idx] = sort(new_p300score_all_allepoch(i,:), 'descend');
+    
+    %parsing row and column index
+    %finding highest row index
+    temp1_  = find(temp_idx>6);
+    row_idx = temp_idx(temp1_(1))-6;
+    
+    %finding highest column index
+    temp2_  = find(temp_idx<7);
+    col_idx = temp_idx(temp2_(1));
+ 
+    pred_letter = letter_matrix(row_idx,col_idx); 
+    
+    nelec_p300_accuracy(i) = pred_letter==TargetLetter(i).description;
+end
+
+
+prediction_accuracy_nelec = sum(nelec_p300_accuracy)/85*100
 %% 
 % <latex> 
 %  \item Describe your algorithm in detail. Also describe what you tried that didn't work. (6 pts)
@@ -647,6 +684,16 @@ title('p300 score value across trials for each row/column at Cz, epoch 27')
 
 %%
 % $\textbf{Answer 3.2} \\$
+
+%%
+% Other methods tried : 
+% \begin{enumerate}
+% \item To increase the difference between the values around 300 ms to
+% those outside, I calculated the p300 scrore using the ratio of values
+% from 250-500 ms to those from 600-800 ms. The ratio was the
+% \item Extending only for Cz
+% \item averaging before p300
+% \end{enumerate}
 
 %% 
 % <latex> 
