@@ -479,26 +479,7 @@ figure();
 boxplot(pscore_c11_separated')
 ylabel('pscore (\muV)')
 xlabel('Row/Column Number')
-title('pscore value across trials for each row/column at Cz')
-
-
-%%
-%testing normalizing pscores
-pscore_c11_n = normalize(pscore_c11(27,:));
-pscore_c11_norm_sep = zeros(12,15);
-for i = 1:12
-    pscore_c11_norm_sep(i,:) = pscore_c11_n(1, epoch_27_idx_separated(i, :));
-end
-
-%boxplot for all iterations of each row/column 
-figure();
-boxplot(pscore_c11_norm_sep')
-ylabel('pscore (\muV)')
-xlabel('Row/Column Number')
-title('pscore value across trials for each row/column at Cz')
-
-pscore_mean  = mean(pscore_c11_norm_sep,2);
-sort(pscore_mean, 'descend')
+title('pscore value across trials for each row/column at Cz, epoch 27')
 
 %% 
 % <latex> 
@@ -508,6 +489,10 @@ sort(pscore_mean, 'descend')
 %%
 % $\textbf{Answer 2.4} \\$
 
+%%
+% Based the values from 2.3, we see that the Column #2 and Row #7 have the
+% highest mean. When we see the intersection of the 2 values, the letter is
+% B. This matches the epoch 27 in the TargetLetter annotation.
 %% 
 % <latex> 
 %  \item Using this \emph{p300 score}, predict (and print out) the letter viewed at every epoch. What was you prediction accuracy? (2 pts)

@@ -475,7 +475,11 @@ end
 
 %%
 %boxplot for all iterations of each row/column 
-boxplot(pscore_c11_separated', 'Linewidth', 2)
+figure();
+boxplot(pscore_c11_separated')
+ylabel('pscore (\muV)')
+xlabel('Row/Column Number')
+title('pscore value across trials for each row/column at Cz, epoch 27')
 
 %% 
 % <latex> 
@@ -485,6 +489,8 @@ boxplot(pscore_c11_separated', 'Linewidth', 2)
 %%
 % $\textbf{Answer 2.4} \\$
 
+%%
+% Based the values from 2.3, we see that the 
 %% 
 % <latex> 
 %  \item Using this \emph{p300 score}, predict (and print out) the letter viewed at every epoch. What was you prediction accuracy? (2 pts)
