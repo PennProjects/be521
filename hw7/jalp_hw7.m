@@ -408,6 +408,9 @@ title('Difference in uV between target and non-taregt stimuli at 300 ms')
 %%
 % $\textbf{Answer 2.1} \\$
 
+%%
+% By just using one channel 
+
 %% 
 % <latex> 
 %  \item One simple way of identifying a P300 in a single trial (which we'll call the \emph{p300 score}) is to take the mean EEG from 250 to 450 ms and then subtract from it the mean EEG from 600 to 800 ms. What is the 	\emph{p300 score} for epoch (letter) 10, iteration 11 at electrode Cz? (3 pts)
@@ -415,6 +418,32 @@ title('Difference in uV between target and non-taregt stimuli at 300 ms')
 
 %%
 % $\textbf{Answer 2.2} \\$
+
+%%
+%Calculating pscore for Cz channel
+% 250ms to 450 ms is at index 61 to 108
+% 600 to 800 ms is from index 145-192
+
+pscore_c11 = zeros(85,180);
+
+for i = 1:85
+    for j = 1:180
+        %separatingindex for each trial in each epoch
+        stim_idx = (i-1)*180+j;
+        %finding the index fro the datafrom time stamps
+        st_idx = round(((Stim(stim_idx).start)/1e6)*sampling_frequency_hz)+1;
+        sp_idx = round(((Stim(stim_idx).stop)/1e6)*sampling_frequency_hz);
+        temp_ = data_uV(11,st_idx:sp_idx);
+        
+        %pscore = val(250-450)ms-val(600to800)
+        pscore_c11(i,j) = mean(temp_(61:108))-mean(temp_(145:192));
+    end
+end
+
+
+%%
+%
+
 %% 
 % <latex> 
 %  \item Plot the \emph{p300 scores} for each row/column in epoch 27 at electrode Cz. (3 pts)

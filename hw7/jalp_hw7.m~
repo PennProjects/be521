@@ -391,8 +391,11 @@ title('Difference in uV between target and non-taregt stimuli at 300 ms')
 % a greater response as compared to the target stimuli. Or it could also be
 % locations where the target response as more negative as compared to the
 % non-target response. $\\$
-% 
-
+% Here we see that the Cz electrode has the highest difference while the T8
+% electrode has a very small difference between the target and non-target respose
+% at 300ms. This is consistent with the plots in 1.1and 1.2 where we
+% observed a might higher ratio and difference in Cz as compared to T8
+% electrode.
 %% 
 % <latex> 
 % \end{enumerate}
@@ -405,6 +408,9 @@ title('Difference in uV between target and non-taregt stimuli at 300 ms')
 %%
 % $\textbf{Answer 2.1} \\$
 
+%%
+% By just using one channel 
+
 %% 
 % <latex> 
 %  \item One simple way of identifying a P300 in a single trial (which we'll call the \emph{p300 score}) is to take the mean EEG from 250 to 450 ms and then subtract from it the mean EEG from 600 to 800 ms. What is the 	\emph{p300 score} for epoch (letter) 10, iteration 11 at electrode Cz? (3 pts)
@@ -412,6 +418,31 @@ title('Difference in uV between target and non-taregt stimuli at 300 ms')
 
 %%
 % $\textbf{Answer 2.2} \\$
+
+%%
+%Calculating pscore for Cz channel
+% 250ms to 450 ms is at index 61 to 108
+% 600 to 800 ms is from index 145-192
+
+pscore_c11 = zeros(85,180);
+
+for i = 1:85
+    for j = 1:180
+        stim_idx = (i-1)*180+j;
+        %finding the index fro the datafrom time stamps
+        st_idx = round(((Stim(stm_idx).start)/1e6)*sampling_frequency_hz)+1;
+        sp_idx = round(((Stim(stm_idx).stop)/1e6)*sampling_frequency_hz);
+        temp_ = data_uV(11,st_idx:sp_idx);
+        
+        %pscore = val(600to800)-val(250-450)ms
+        pscore_c11(i,j) = temp_(145:192)-temp_(61:108)
+end
+
+stm_idx = nontarget_stim_index(i,j);
+        st_idx = round(((Stim(stm_idx).start)/1e6)*sampling_frequency_hz)+1;
+        sp_idx = round(((Stim(stm_idx).stop)/1e6)*sampling_frequency_hz);
+        temp_ = data_uV(11,st_idx:sp_idx);
+
 %% 
 % <latex> 
 %  \item Plot the \emph{p300 scores} for each row/column in epoch 27 at electrode Cz. (3 pts)
