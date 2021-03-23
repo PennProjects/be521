@@ -583,7 +583,11 @@ prediction_accuracy = sum(c11_p300_accuracy)/85*100
 %%
 % $\textbf{Answer 3.1} \\$
 
-
+%%
+% To improve the prediction from section 2, we will include 9 electrodes in
+% the analysis. Cz and the 8 electrodes surrounding it.  We will then
+% calculate a average p300 score fro the 9 electrodes. We will also extend
+% the timing range for p300 calculation to 250-500 ms.
 %%
 %Extending the timimng for p300 to 250-500ms
 %Calculating average p300score for 9 channels 
@@ -654,9 +658,12 @@ for i = 1:85
 end
 
 %%
-%Now we have the average p300 for each of the 12 stim row/cols for each
-%epoch
+% Now we have the average p300 for each of the 12 stim row/cols for each
+% epoch. We will train a classirfier for thr rows and column index
+% separately
 
+%%
+%
 %% 
 % <latex> 
 %  \item Describe your algorithm in detail. Also describe what you tried that didn't work. (6 pts)
