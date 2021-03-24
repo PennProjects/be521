@@ -8,8 +8,7 @@
 
 %% 
 % <latex> 
-% \begin{center} \author{NAME HERE \\
-%   \normalsize Collaborators: COLLABORATORS HERE \\}
+% \begin{center} \author{Jal Mahendra Panchal}
 % \end{center} 
 % </latex>
 
@@ -211,7 +210,7 @@ ylabel('Signal Amplitude(\muV)')
 title('Comparing target vs non-target response for Cz channel(11)')
 legend('Target', 'Non-Target')
 
-
+%%
 % <latex> 
 %  \item Repeat the previous questions for channel 42 (T8). (1 pts)
 % </latex> 
@@ -291,14 +290,14 @@ e42_nt_m = mean(e42_nontarger_avg_uV);
 snr_ratio_e42 = e42_t_m/e42_nt_m
 
 %%
-% Of the channels, it looks like channel 11, Cz has a much higher ratio of
-% Target/Non-Terget mean value as compared to the channel 42, T8. This
+% Of the two channels, it looks like channel 11, Cz has a much higher ratio of
+% Target/Non-Target mean value as compared to the channel 42, T8. This
 % would make it easier to detect a peak from a target stimulation in the Cz
 % channel data. $\\$
 % From the graphs, in the Cz channel, we havethe highest peak at abour 450
 % ms which could be the best point to detect the target. While on the graph
 % for T8 channel the peak is at about 480 ms which would be the best point
-% to gete the target signal.
+% to detect the target signal.
 
 
 %% 
@@ -386,7 +385,7 @@ title('Difference in uV between target and non-taregt stimuli at 300 ms')
 
 %%
 % In the color bar chosen, red color signifies the largest difference
-% between the target and non-tartet response at those electrode locations.
+% between the target and non-target response at those electrode locations.
 % The blue color in the other hand shows areas where the non-target stimuli have
 % a greater response as compared to the target stimuli. Or it could also be
 % locations where the target response as more negative as compared to the
@@ -559,7 +558,8 @@ for i = 1:85
     temp2_  = find(temp_idx<7);
     col_idx = temp_idx(temp2_(1));
  
-    pred_letter = letter_matrix(row_idx,col_idx); 
+    pred_letter = letter_matrix(row_idx,col_idx)
+    target_letter = TargetLetter(i).description
     
     c11_p300_accuracy(i) = pred_letter==TargetLetter(i).description;
 end
@@ -586,7 +586,7 @@ prediction_accuracy = sum(c11_p300_accuracy)/85*100
 %%
 % To improve the prediction from section 2, we will include 9 electrodes in
 % the analysis. Cz and the 8 electrodes surrounding it.  We will then
-% calculate a average p300 score fro the 9 electrodes. We will also extend
+% calculate a average p300 score from the 9 electrodes. We will also extend
 % the timing range for p300 calculation to 250-500 ms.
 %%
 %Extending the timimng for p300 to 250-500ms
@@ -773,6 +773,10 @@ end
 
 testing_accuracy = sum(testing_accuracy_svm)/35*100
 
+%%
+% I tried tuning the model quite a bit but could not make the algorithm
+% predict the letters well.
+
 %% 
 % <latex> 
 %  \item Describe your algorithm in detail. Also describe what you tried that didn't work. (6 pts)
@@ -782,13 +786,48 @@ testing_accuracy = sum(testing_accuracy_svm)/35*100
 % $\textbf{Answer 3.2} \\$
 
 %%
+% The steps followed in the algorithm above :
+% \begin{enumerate}
+% \item To begin with, to improve the prediction from section 2, I included 9 electrodes in
+% the analysis. Cz and the 8 electrodes surrounding it. I then
+% calculate a average p300 score from the 9 electrodes. I also extended
+% the timing range for p300 calculation to 250-500 ms.
+% \item For each trial I calculate the p300 value for all 9 electrodes and
+% then calculate a mean value of the p300 from the 9 electrodes
+% \item I then calaculate the average p300 for he 15 trials of each of the
+% 12 rows/columns giving a 85x12 matrix of mean p300 values
+% \item I then normalize the p300 values for each epoch
+% \item the I separate the p300 values for the row and column triggers.
+% \item The 85x6 matrices for the rows and columns are then split into the
+% 50 training ans the the 35 testing set. 
+% \item The training set for rows and columsn is convereted from a 50x6
+% matrix to a 300x1 column vector so that each row/column can be classified
+% as a valid p300 or not
+% \item this 300x1 vector of p300 values for rows is used to train a SVM
+% model with gaussian kernal. The same is dont for a model using the column
+% values of p300. the classification on both cases is binary with a 1 given
+% to the right row/column and a 0 to a non-target row/column.
+% \item The model is then used to predict data from a new epock by predicting a
+% row or column value. 
+% \item If the model classisifies more than one row/column as a valied p300
+% them the one with the higher p300 is chooson. If the model does not
+% classify any row/column as a valid p300 then the value with the highest
+% p300 for the epock is choosen. For testing I followed the same averaging
+% process as training using the 9 electrodes and averaging the 15 trials
+% for each row/column.
+% \end{enumerate}
+%%
 % Other methods tried : 
 % \begin{enumerate}
-% \item To increase the difference between the values around 300 ms to
-% those outside, I calculated the p300 scrore using the ratio of values
-% from 250-500 ms to those from 600-800 ms. The ratio was the
-% \item Extending only for Cz
-% \item averaging before p300
+% \item I calculated the p300 scrore using the ratio of values
+% from 250-500 ms to those from 600-800 ms. The ratio was created a lot of
+% anomolies due to the decimal and negetive values in teh data
+% \item I tried the model using only cZ and using more electrodes to give
+% the same result
+% \item I also tried averaging the siganl across the electrodes and then
+% calculating the p300 values
+% \item I also tried using fitcecoc to train a multiclass classifier to
+% classify the p300 values for rows and columns in 6 classes
 % \end{enumerate}
 
 %% 
