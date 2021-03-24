@@ -410,13 +410,14 @@ title('Difference in uV between target and non-taregt stimuli at 300 ms')
 %%
 % By just using one channel we can simplify the hardware and usability of
 % the whole system as then only 2 electrodes (cz and ground) will be needed for the
-% prediction. This is help with storage, power and computational needs.
+% prediction. This is help with data storage, power and computational needs.
 % $\\$
 % One big disadvantage of using 1 electrode is it does not help adapt to
 % people who have disabilities in the brain or have imapairment/damage.
-% We would then now know if the region detected by the Cz electrode is the
-% the right one. For some people due to neuroplasticity their area of high
-% activity might be different than the one detected by Cz. In all of these
+% We would then not know if the region detected by the Cz electrode is the
+% the appropriate one for best p300 signal.
+% For some people due to neuroplasticity, their area of high
+% activity might be different than the one detected by Cz. In such
 % cases it would make more sense to have the complete skull covered instead
 % of a single or only a few electrodes.
 
