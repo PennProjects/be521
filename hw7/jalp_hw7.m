@@ -670,8 +670,8 @@ end
 p300score_stimavg_norm = normalize(p300score_stimavg')';
 
 %separating row and columns data
-p300_rows = p300score_stimavg_norm(:,1:6);
-p300_cols = p300score_stimavg_norm(:,7:12);
+p300_rows = p300score_stimavg_norm(:,7:12);
+p300_cols = p300score_stimavg_norm(:,1:6);
 
 %separating training and testing data
 p300_rows_train = p300_rows(1:50,:);
@@ -689,6 +689,46 @@ p300_cols_test_vec = reshape(p300_cols_test, [],1);
 
 %%
 %creating the labels for training and validation
+all_labels = zeros(85,12);
+
+for i = 1:85
+    target_letter = TargetLetter(i).description;
+    tar_row = findRow(target_letter); 
+    tar_col = findCol(target_letter);
+    all_labels(i,tar_col) = 1;
+    all_labels(i,tar_row) = 1;
+end
+
+row_labels_train = reshape(all_labels(1:50,7:12), [],1);
+col_labels_train = reshape(all_labels(1:50,1:6), [],1);
+
+%%
+%using a SVM classifier
+%for rows
+X = p300_rows_train_vec;
+Y = row_labels_train; 
+
+svmodel_rows = fitcsvm(X,Y, 'KernelFunction','rbf')
+
+%Calculating training error by predicting the training set
+row_pred_train_svm = predict(svmodel_rows, X);
+
+train_error_svm_rows = size(find(row_pred_train_svm~=Y),1)/size(Y,1)
+
+%%
+%SVM classifier for columns
+X = p300_cols_train_vec;
+Y = col_labels_train; 
+
+svmodel_cols = fitcsvm(X,Y, 'KernelFunction','rbf')
+
+%Calculating training error by predicting the training set
+cols_pred_train_svm = predict(svmodel_cols, X);
+
+train_error_svm_cols = size(find(cols_pred_train_svm~=Y),1)/size(Y,1)
+
+
+
 
 %% 
 % <latex> 

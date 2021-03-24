@@ -675,10 +675,9 @@ p300_cols = p300score_stimavg_norm(:,7:12);
 
 %separating training and testing data
 p300_rows_train = p300_rows(1:50,:);
+p300_rows_test = p300_rows(51:85,:);
 
-
-
-p300_cols_train = p300_cols(1:5,:);
+p300_cols_train = p300_cols(1:50,:);
 p300_cols_test = p300_cols(51:85,:);
 
 %converting into a column matrix
@@ -689,7 +688,16 @@ p300_cols_train_vec = reshape(p300_cols_train, [],1);
 p300_cols_test_vec = reshape(p300_cols_test, [],1);
 
 %%
-%creating the 
+%creating the labels for training and validation
+all_labels = zeros(85,12);
+
+for i = 1:85
+    target_letter = TargetLetter(i).description;
+    tar_row = findRow(target_letter); 
+    tar_col = findCol(target_letter);
+    all_labels
+end
+
 %% 
 % <latex> 
 %  \item Describe your algorithm in detail. Also describe what you tried that didn't work. (6 pts)
