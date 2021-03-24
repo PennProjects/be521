@@ -84,7 +84,7 @@ You can make topographic plots using the provided \verb|topoplotEEG| function. T
 where \verb|data| is the value to plot for each channel. This function plots the electrodes according to the map in Figure 3.
 \begin{figure}
  \centering
- \includegraphics[width=\textwidth]{scalpEEGChans}
+ \includegraphics[width=\textwidth]{scalpEEGChans.png}
  \caption{The scalp EEG 64-channel layout.}
 \end{figure}
 
@@ -219,15 +219,13 @@ xlabel('Time(ms)')
 ylabel('Signal Amplitude(\muV)')
 title('Comparing target vs non-target response for Cz channel(11)')
 legend('Target', 'Non-Target')
-
-
-% <latex>
-%  \item Repeat the previous questions for channel 42 (T8). (1 pts)
-% </latex>
 \end{lstlisting}
 
 
 \includegraphics [width=5in]{jalp_hw7_01.png}
+
+ \item Repeat the previous questions for channel 42 (T8). (1 pts)
+
 $\textbf{Answer 1.2} \\$
 \begin{lstlisting}
 %parsing eeg data for target and nontarget trials
@@ -312,7 +310,7 @@ snr_ratio_e42 =
    -0.5591
 
 \end{lstlisting} \color{black}
-Of the channels, it looks like channel 11, Cz has a much higher ratio of Target/Non-Terget mean value as compared to the channel 42, T8. This would make it easier to detect a peak from a target stimulation in the Cz channel data. $\\$ From the graphs, in the Cz channel, we havethe highest peak at abour 450 ms which could be the best point to detect the target. While on the graph for T8 channel the peak is at about 480 ms which would be the best point to gete the target signal.
+Of the two channels, it looks like channel 11, Cz has a much higher ratio of Target/Non-Target mean value as compared to the channel 42, T8. This would make it easier to detect a peak from a target stimulation in the Cz channel data. $\\$ From the graphs, in the Cz channel, we havethe highest peak at abour 450 ms which could be the best point to detect the target. While on the graph for T8 channel the peak is at about 480 ms which would be the best point to detect the target signal.
 
  \item Compute the mean difference between the target and non-target stimuli for each channel at timepoint 300 ms averaged across all row/column flashes. Visualize these values using the \verb|topoplotEEG| function. Include a colorbar. (3 pts)
 
@@ -397,7 +395,7 @@ title('Difference in uV between target and non-taregt stimuli at 300 ms')
  \item How do the red and blue parts of this plot correspond to the plots from above? (2 pts)
 
 $\textbf{Answer 1.5} \\$
-In the color bar chosen, red color signifies the largest difference between the target and non-tartet response at those electrode locations. The blue color in the other hand shows areas where the non-target stimuli have a greater response as compared to the target stimuli. Or it could also be locations where the target response as more negative as compared to the non-target response. $\\$ Here we see that the Cz electrode has the highest difference while the T8 electrode has a very small difference between the target and non-target respose at 300ms. This is consistent with the plots in 1.1and 1.2 where we observed a might higher ratio and difference in Cz as compared to T8 electrode.
+In the color bar chosen, red color signifies the largest difference between the target and non-target response at those electrode locations. The blue color in the other hand shows areas where the non-target stimuli have a greater response as compared to the target stimuli. Or it could also be locations where the target response as more negative as compared to the non-target response. $\\$ Here we see that the Cz electrode has the highest difference while the T8 electrode has a very small difference between the target and non-target respose at 300ms. This is consistent with the plots in 1.1and 1.2 where we observed a much higher ratio  and difference between target and non-target siganl in Cz as compared to T8 electrode.
 
 \end{enumerate}
 \section{Using Individual P300s in Prediction}
@@ -406,7 +404,7 @@ Hopefully the Question 1.4 convinced you that the Cz channel is a reasonably goo
  \item Explain a potential advantage to using just one channel other than the obvious speed of calculation advantage. Explain one disadvantage. (3 pts)
 
 $\textbf{Answer 2.1} \\$
-By just using one channel we can simplify the hardware and usability of the whole system as then only 2 electrodes (cz and ground) will be needed for the prediction. This is help with storage, power and computational needs. $\\$ One big disadvantage of using 1 electrode is it does not help adapt to people who have disabilities in the brain or have imapairment/damage. We would then now know if the region detected by the Cz electrode is the the right one. For some people due to neuroplasticity their area of high activity might be different than the one detected by Cz. In all of these cases it would make more sense to have the complete skull covered instead of a single or only a few electrodes.
+By just using one channel we can simplify the hardware and usability of the whole system as then only 2 electrodes (cz and ground) will be needed for the prediction. This is help with data storage, power and computational needs. $\\$ One big disadvantage of using 1 electrode is it does not help adapt to people who have disabilities in the brain or have imapairment/damage. We would then not know if the region detected by the Cz electrode is the the appropriate one for best p300 signal. For some people due to neuroplasticity, their area of high activity might be different than the one detected by Cz. In such cases it would make more sense to have the complete skull covered instead of a single or only a few electrodes.
 
  \item One simple way of identifying a P300 in a single trial (which we'll call the \emph{p300 score}) is to take the mean EEG from 250 to 450 ms and then subtract from it the mean EEG from 600 to 800 ms. What is the 	\emph{p300 score} for epoch (letter) 10, iteration 11 at electrode Cz? (3 pts)
 
@@ -456,7 +454,7 @@ for i = 1:180
     epoch27_stim_rowcol(i) = str2double(Stim(26*180+i).description);
 end
 
-%separate the indexes for ech row and col number creating a 12x15 index
+%separate the indexes for each row and col number creating a 12x15 index
 %table
 epoch_27_idx_separated = zeros(12,15);
 pscore_c11_separated = zeros(12,15);
@@ -522,6 +520,7 @@ for i = 1:85
     %find index for row and col with 2 highest p300 values
     [~,temp_idx] = sort(pscore_c11_allepoch(i,:), 'descend');
 
+    pscore_c11_allepoch(i,:);
     %parsing row and column index
     %finding highest row index
     temp1_  = find(temp_idx>6);
@@ -531,870 +530,118 @@ for i = 1:85
     temp2_  = find(temp_idx<7);
     col_idx = temp_idx(temp2_(1));
 
-    pred_letter = letter_matrix(row_idx,col_idx)
-    target_letter = TargetLetter(i).description
+    pred_letter_c11 = letter_matrix(row_idx,col_idx);
+    target_letter= TargetLetter(i).description;
 
-    c11_p300_accuracy(i) = pred_letter==TargetLetter(i).description;
+    disp(['Predicted Letter : ', pred_letter_c11, '   Target Letter :', target_letter])
+   % disp(['Predicted Letter : ', pred_letter_c11, '   Target Letter :', target_letter, '    R : ', num2str(row_idx), '    C : ', num2str(col_idx) ])
+
+    c11_p300_accuracy(i) = pred_letter_c11==TargetLetter(i).description;
 end
 
 
 prediction_accuracy = sum(c11_p300_accuracy)/85*100
 \end{lstlisting}
 
-\color{lightgray} \begin{lstlisting}
-pred_letter =
-
-    '4'
-
-
-target_letter =
-
-    'E'
-
-
-pred_letter =
-
-    'A'
-
-
-target_letter =
-
-    'A'
-
-
-pred_letter =
-
-    '8'
-
-
-target_letter =
-
-    'E'
-
-
-pred_letter =
-
-    'V'
-
-
-target_letter =
-
-    'V'
-
-
-pred_letter =
-
-    'E'
-
-
-target_letter =
-
-    'Q'
-
-
-pred_letter =
-
-    'U'
-
-
-target_letter =
-
-    'T'
-
-
-pred_letter =
-
-    'F'
-
-
-target_letter =
-
-    'D'
-
-
-pred_letter =
-
-    'O'
-
-
-target_letter =
-
-    'O'
-
-
-pred_letter =
-
-    '8'
-
-
-target_letter =
-
-    'J'
-
-
-pred_letter =
-
-    'I'
-
-
-target_letter =
-
-    'G'
-
-
-pred_letter =
-
-    'O'
-
-
-target_letter =
-
-    '8'
-
-
-pred_letter =
-
-    'W'
-
-
-target_letter =
-
-    'R'
-
-
-pred_letter =
-
-    'B'
-
-
-target_letter =
-
-    'B'
-
-
-pred_letter =
-
-    'M'
-
-
-target_letter =
-
-    'R'
-
-
-pred_letter =
-
-    'J'
-
-
-target_letter =
-
-    'G'
-
-
-pred_letter =
-
-    'O'
-
-
-target_letter =
-
-    'O'
-
-
-pred_letter =
-
-    'F'
-
-
-target_letter =
-
-    'N'
-
-
-pred_letter =
-
-    'C'
-
-
-target_letter =
-
-    'C'
-
-
-pred_letter =
-
-    'F'
-
-
-target_letter =
-
-    'E'
-
-
-pred_letter =
-
-    'D'
-
-
-target_letter =
-
-    'D'
-
-
-pred_letter =
-
-    '9'
-
-
-target_letter =
-
-    'H'
-
-
-pred_letter =
-
-    'C'
-
-
-target_letter =
-
-    'C'
-
-
-pred_letter =
-
-    'T'
-
-
-target_letter =
-
-    'T'
-
-
-pred_letter =
-
-    'X'
-
-
-target_letter =
-
-    'U'
-
-
-pred_letter =
-
-    'I'
-
-
-target_letter =
-
-    'I'
-
-
-pred_letter =
-
-    'D'
-
-
-target_letter =
-
-    'D'
-
-
-pred_letter =
-
-    'B'
-
-
-target_letter =
-
-    'B'
-
-
-pred_letter =
-
-    '6'
-
-
-target_letter =
-
-    'P'
-
-
-pred_letter =
-
-    'U'
-
-
-target_letter =
-
-    'U'
-
-
-pred_letter =
-
-    '1'
-
-
-target_letter =
-
-    'H'
-
-
-pred_letter =
-
-    'A'
-
-
-target_letter =
-
-    'M'
-
-
-pred_letter =
-
-    'W'
-
-
-target_letter =
-
-    'E'
-
-
-pred_letter =
-
-    'R'
-
-
-target_letter =
-
-    'M'
-
-
-pred_letter =
-
-    '5'
-
-
-target_letter =
-
-    '6'
-
-
-pred_letter =
-
-    'I'
-
-
-target_letter =
-
-    'O'
-
-
-pred_letter =
-
-    'O'
-
-
-target_letter =
-
-    'U'
-
-
-pred_letter =
-
-    'K'
-
-
-target_letter =
-
-    'X'
-
-
-pred_letter =
-
-    'O'
-
-
-target_letter =
-
-    'O'
-
-
-pred_letter =
-
-    'I'
-
-
-target_letter =
-
-    'C'
-
-
-pred_letter =
-
-    'Q'
-
-
-target_letter =
-
-    'F'
-
-
-pred_letter =
-
-    'O'
-
-
-target_letter =
-
-    'O'
-
-
-pred_letter =
-
-    'O'
-
-
-target_letter =
-
-    'U'
-
-
-pred_letter =
-
-    'C'
-
-
-target_letter =
-
-    'K'
-
-
-pred_letter =
-
-    'X'
-
-
-target_letter =
-
-    'W'
-
-
-pred_letter =
-
-    'E'
-
-
-target_letter =
-
-    'A'
-
-
-pred_letter =
-
-    '_'
-
-
-target_letter =
-
-    '4'
-
-
-pred_letter =
-
-    'T'
-
-
-target_letter =
-
-    'V'
-
-
-pred_letter =
-
-    'G'
-
-
-target_letter =
-
-    'J'
-
-
-pred_letter =
-
-    'K'
-
-
-target_letter =
-
-    'E'
-
-
-pred_letter =
-
-    '4'
-
-
-target_letter =
-
-    'F'
-
-
-pred_letter =
-
-    'R'
-
-
-target_letter =
-
-    'R'
-
-
-pred_letter =
-
-    '2'
-
-
-target_letter =
-
-    'Z'
-
-
-pred_letter =
-
-    '3'
-
-
-target_letter =
-
-    'R'
-
-
-pred_letter =
-
-    'G'
-
-
-target_letter =
-
-    'O'
-
-
-pred_letter =
-
-    'L'
-
-
-target_letter =
-
-    'L'
-
-
-pred_letter =
-
-    'H'
-
-
-target_letter =
-
-    'H'
-
-
-pred_letter =
-
-    'Y'
-
-
-target_letter =
-
-    'Y'
-
-
-pred_letter =
-
-    '6'
-
-
-target_letter =
-
-    'N'
-
-
-pred_letter =
-
-    'Q'
-
-
-target_letter =
-
-    'Q'
-
-
-pred_letter =
-
-    '_'
-
-
-target_letter =
-
-    'D'
-
-
-pred_letter =
-
-    'K'
-
-
-target_letter =
-
-    'W'
-
-
-pred_letter =
-
-    'X'
-
-
-target_letter =
-
-    '_'
-
-
-pred_letter =
-
-    'E'
-
-
-target_letter =
-
-    'E'
-
-
-pred_letter =
-
-    '9'
-
-
-target_letter =
-
-    'K'
-
-
-pred_letter =
-
-    'V'
-
-
-target_letter =
-
-    'T'
-
-
-pred_letter =
-
-    'L'
-
-
-target_letter =
-
-    'L'
-
-
-pred_letter =
-
-    'R'
-
-
-target_letter =
-
-    'B'
-
-
-pred_letter =
-
-    'X'
-
-
-target_letter =
-
-    'W'
-
-
-pred_letter =
-
-    'T'
-
-
-target_letter =
-
-    'X'
-
-
-pred_letter =
-
-    'K'
-
-
-target_letter =
-
-    'E'
-
-
-pred_letter =
-
-    'K'
-
-
-target_letter =
-
-    'P'
-
-
-pred_letter =
-
-    'P'
-
-
-target_letter =
-
-    'O'
-
-
-pred_letter =
-
-    'I'
-
-
-target_letter =
-
-    'U'
-
-
-pred_letter =
-
-    'H'
-
-
-target_letter =
-
-    'I'
-
-
-pred_letter =
-
-    'N'
-
-
-target_letter =
-
-    'K'
-
-
-pred_letter =
-
-    'G'
-
-
-target_letter =
-
-    'Z'
-
-
-pred_letter =
-
-    'F'
-
-
-target_letter =
-
-    'E'
-
-
-pred_letter =
-
-    '4'
-
-
-target_letter =
-
-    'R'
-
-
-pred_letter =
-
-    'L'
-
-
-target_letter =
-
-    'Y'
-
-
-pred_letter =
-
-    'L'
-
-
-target_letter =
-
-    'O'
-
-
-pred_letter =
-
-    'U'
-
-
-target_letter =
-
-    'O'
-
-
-pred_letter =
-
-    '5'
-
-
-target_letter =
-
-    'T'
-
-
-pred_letter =
-
-    'B'
-
-
-target_letter =
-
-    'H'
-
-
-pred_letter =
-
-    'Q'
-
-
-target_letter =
-
-    'Q'
-
-
-pred_letter =
-
-    'R'
-
-
-target_letter =
-
-    'I'
-
+\color{lightgray} \begin{lstlisting}Predicted Letter : 4   Target Letter :E
+Predicted Letter : A   Target Letter :A
+Predicted Letter : 8   Target Letter :E
+Predicted Letter : V   Target Letter :V
+Predicted Letter : E   Target Letter :Q
+Predicted Letter : U   Target Letter :T
+Predicted Letter : F   Target Letter :D
+Predicted Letter : O   Target Letter :O
+Predicted Letter : 8   Target Letter :J
+Predicted Letter : I   Target Letter :G
+Predicted Letter : O   Target Letter :8
+Predicted Letter : W   Target Letter :R
+Predicted Letter : B   Target Letter :B
+Predicted Letter : M   Target Letter :R
+Predicted Letter : J   Target Letter :G
+Predicted Letter : O   Target Letter :O
+Predicted Letter : F   Target Letter :N
+Predicted Letter : C   Target Letter :C
+Predicted Letter : F   Target Letter :E
+Predicted Letter : D   Target Letter :D
+Predicted Letter : 9   Target Letter :H
+Predicted Letter : C   Target Letter :C
+Predicted Letter : T   Target Letter :T
+Predicted Letter : X   Target Letter :U
+Predicted Letter : I   Target Letter :I
+Predicted Letter : D   Target Letter :D
+Predicted Letter : B   Target Letter :B
+Predicted Letter : 6   Target Letter :P
+Predicted Letter : U   Target Letter :U
+Predicted Letter : 1   Target Letter :H
+Predicted Letter : A   Target Letter :M
+Predicted Letter : W   Target Letter :E
+Predicted Letter : R   Target Letter :M
+Predicted Letter : 5   Target Letter :6
+Predicted Letter : I   Target Letter :O
+Predicted Letter : O   Target Letter :U
+Predicted Letter : K   Target Letter :X
+Predicted Letter : O   Target Letter :O
+Predicted Letter : I   Target Letter :C
+Predicted Letter : Q   Target Letter :F
+Predicted Letter : O   Target Letter :O
+Predicted Letter : O   Target Letter :U
+Predicted Letter : C   Target Letter :K
+Predicted Letter : X   Target Letter :W
+Predicted Letter : E   Target Letter :A
+Predicted Letter : _   Target Letter :4
+Predicted Letter : T   Target Letter :V
+Predicted Letter : G   Target Letter :J
+Predicted Letter : K   Target Letter :E
+Predicted Letter : 4   Target Letter :F
+Predicted Letter : R   Target Letter :R
+Predicted Letter : 2   Target Letter :Z
+Predicted Letter : 3   Target Letter :R
+Predicted Letter : G   Target Letter :O
+Predicted Letter : L   Target Letter :L
+Predicted Letter : H   Target Letter :H
+Predicted Letter : Y   Target Letter :Y
+Predicted Letter : 6   Target Letter :N
+Predicted Letter : Q   Target Letter :Q
+Predicted Letter : _   Target Letter :D
+Predicted Letter : K   Target Letter :W
+Predicted Letter : X   Target Letter :_
+Predicted Letter : E   Target Letter :E
+Predicted Letter : 9   Target Letter :K
+Predicted Letter : V   Target Letter :T
+Predicted Letter : L   Target Letter :L
+Predicted Letter : R   Target Letter :B
+Predicted Letter : X   Target Letter :W
+Predicted Letter : T   Target Letter :X
+Predicted Letter : K   Target Letter :E
+Predicted Letter : K   Target Letter :P
+Predicted Letter : P   Target Letter :O
+Predicted Letter : I   Target Letter :U
+Predicted Letter : H   Target Letter :I
+Predicted Letter : N   Target Letter :K
+Predicted Letter : G   Target Letter :Z
+Predicted Letter : F   Target Letter :E
+Predicted Letter : 4   Target Letter :R
+Predicted Letter : L   Target Letter :Y
+Predicted Letter : L   Target Letter :O
+Predicted Letter : U   Target Letter :O
+Predicted Letter : 5   Target Letter :T
+Predicted Letter : B   Target Letter :H
+Predicted Letter : Q   Target Letter :Q
+Predicted Letter : R   Target Letter :I
 
 prediction_accuracy =
 
    27.0588
+
+\end{lstlisting} \color{black}
+\begin{lstlisting}
+test_acc = sum(c11_p300_accuracy(51:85))/35*100
+\end{lstlisting}
+
+\color{lightgray} \begin{lstlisting}
+test_acc =
+
+   22.8571
 
 \end{lstlisting} \color{black}
 The prediction accuracy by using the highest p300 values for rows and columns trials and finding the intersection of the 2 is 27.06\%.
@@ -1416,8 +663,6 @@ To improve the prediction from section 2, we will include 9 electrodes in the an
 %channels 3,4,5,10,11,12,17,18,19
 %the choosen channels are the 8 channels around channel 11,Cz
 electrode_arr = [3,4,5,10,11,12,17,18,19];
-
-
 %we'll now caculate the average p300 score for the 9 electrodes
 
 p300score_nineavg = zeros(85,180);
@@ -1474,14 +719,11 @@ for i = 1:85
     p300score_stimavg(i,:)= temp_';
 end
 \end{lstlisting}
-Now we have the average p300 for each of the 12 stim row/cols for each epoch. We will train a classifier for the rows and column index separately. To do this, for each epoch, we will create a 2 sets of features, the p300 score for a row and a p300 score for a column. We will then create separate SVM models to predict the correct row and column. for each epoch we will have 6 data points for each feature.
+Now we have the average p300 for each of the 12 stim row/cols for each epoch. We will train a classifier for the rows and column index separately. To do this, for each epoch, we will create a 2 sets of features, the p300 score for a row and a p300 score for a column. We will then create separate SVM models to predict the row and column with valid p300 scores. For each epoch we will have 6 data points from each row/column.
 \begin{lstlisting}
-%we will first normalize across each epoch
-p300score_stimavg_norm = normalize(p300score_stimavg')';
-
 %separating row and columns data
-p300_rows = p300score_stimavg_norm(:,7:12);
-p300_cols = p300score_stimavg_norm(:,1:6);
+p300_rows = p300score_stimavg(:,7:12);
+p300_cols = p300score_stimavg(:,1:6);
 
 %separating training and testing data
 p300_rows_train = p300_rows(1:50,:);
@@ -1496,6 +738,11 @@ p300_rows_test_vec = reshape(p300_rows_test, [],1);
 
 p300_cols_train_vec = reshape(p300_cols_train, [],1);
 p300_cols_test_vec = reshape(p300_cols_test, [],1);
+
+%%normalizing the data
+p300_rows_train_norm = normalize(p300_rows_train_vec);
+
+p300_cols_train_norm = normalize(p300_cols_train_vec);
 \end{lstlisting}
 \begin{lstlisting}
 %creating the labels for training and validation
@@ -1515,10 +762,9 @@ col_labels_train = reshape(all_labels(1:50,1:6), [],1);
 \begin{lstlisting}
 %using a SVM classifier
 %for rows
-X = p300_rows_train_vec;
+X = p300_rows_train_norm;
 Y = row_labels_train;
-
-svmodel_rows = fitcsvm(X,Y, 'KernelFunction','rbf')
+svmodel_rows = fitcsvm(X,Y,  'KernelFunction','rbf')
 
 %Calculating training error by predicting the training set
 row_pred_train_svm = predict(svmodel_rows, X);
@@ -1536,7 +782,7 @@ svmodel_rows =
            ScoreTransform: 'none'
           NumObservations: 300
                     Alpha: [89×1 double]
-                     Bias: -0.6493
+                     Bias: -0.6804
          KernelParameters: [1×1 struct]
            BoxConstraints: [300×1 double]
           ConvergenceInfo: [1×1 struct]
@@ -1547,15 +793,15 @@ svmodel_rows =
 
 train_error_svm_rows =
 
-    0.1233
+    0.1200
 
 \end{lstlisting} \color{black}
 \begin{lstlisting}
 %SVM classifier for columns
-X = p300_cols_train_vec;
+X = p300_cols_train_norm;
 Y = col_labels_train;
 
-svmodel_cols = fitcsvm(X,Y, 'KernelFunction','rbf')
+svmodel_cols = fitcsvm(X,Y,  'KernelFunction','rbf')
 
 %Calculating training error by predicting the training set
 cols_pred_train_svm = predict(svmodel_cols, X);
@@ -1572,8 +818,8 @@ svmodel_cols =
                ClassNames: [0 1]
            ScoreTransform: 'none'
           NumObservations: 300
-                    Alpha: [98×1 double]
-                     Bias: -0.5212
+                    Alpha: [104×1 double]
+                     Bias: -0.6728
          KernelParameters: [1×1 struct]
            BoxConstraints: [300×1 double]
           ConvergenceInfo: [1×1 struct]
@@ -1584,229 +830,104 @@ svmodel_cols =
 
 train_error_svm_cols =
 
-    0.1367
+    0.1500
 
 \end{lstlisting} \color{black}
-To complete the prediction, we will check the classification of the model for the set of 6 rows and cols. If the model returns a 1, then that row/col is selected. If No row/col is classified at valid, we'll choose the one with the highest p300 value. If more than one row/cal are classified, we'll choose the one with the highest p300 value.
+To complete the prediction, we will check the classification of the model for the set of 6 rows and cols. If the model returns a 1, then that row/col is selected. If No row/col is classified as valid, we'll choose the one with the highest p300 value. If more than one row/cal are classified as valid, we'll choose the one with the highest p300 value.
 \begin{lstlisting}
 %testing/validating the models
 
 testing_accuracy_svm = zeros(1,35);
+
+%Finding the predicted letter for each of the 35 testing epochs
 for i = 1:35
 
     %predicting row_index
-    test_pred_row_val = predict(svmodel_rows, p300_rows_test(i,:)');
+    %pre-processing test data
+    rows_norm = normalize(p300_rows_test(i,:));
+    test_pred_row_val = predict(svmodel_rows,rows_norm');
 
+    %if no valid p300 score, select highest
     if sum(test_pred_row_val) ==0
-        [~,pred_row] = max(p300_rows_test(i,:));
+        [~,pred_row] = max(rows_norm);
+
+    %if multiple valid p300 score, select highest
     elseif sum(test_pred_row_val) > 1
-        temp_ = max(p300_rows_test(i,test_pred_row_val==1));
-        pred_row  = find(p300_rows_test(i,:)==temp_);
+        temp_ = max(rows_norm(test_pred_row_val==1));
+        pred_row  = find(rows_norm==temp_);
     else
         [pred_row] = find(test_pred_row_val==1);
     end
 
 
     %Predicting column index
-    test_pred_col_val = predict(svmodel_cols, p300_cols_test(i,:)');
+    %preprocessing test data
+    cols_norm = normalize(p300_cols_test(i,:));
+    test_pred_col_val = predict(svmodel_cols, cols_norm');
 
+    %if no valid p300 score, select highest
     if sum(test_pred_col_val) ==0
-        [~,pred_col] = max(p300_cols_test(i,:));
+        [~,pred_col] = max(cols_norm);
+
+    %if multiple valid p300 score, select highest
     elseif sum(test_pred_col_val) > 1
-        temp_ = max(p300_cols_test(i,test_pred_col_val==1));
-        pred_col  = find(p300_cols_test(i,:)==temp_);
+        temp_ = max(cols_norm(test_pred_col_val==1));
+        pred_col  = find(cols_norm==temp_);
     else
         pred_col = find(test_pred_col_val==1);
     end
 
-    pred_letter = letter_matrix(pred_row,pred_col)
 
-    testing_accuracy_svm(i) = pred_letter ==TargetLetter(i).description;
+    pred_letter_all = letter_matrix(pred_row,pred_col);
+    target_letter = TargetLetter(50+i).description;
+    disp(['Predicted Letter : ', pred_letter_all, '   Target Letter :', target_letter])
+
+    testing_accuracy_svm(i) = pred_letter_all ==TargetLetter(50+i).description;
 
 end
 
 testing_accuracy = sum(testing_accuracy_svm)/35*100
 \end{lstlisting}
 
-\color{lightgray} \begin{lstlisting}
-pred_letter =
-
-    'R'
-
-
-pred_letter =
-
-    '2'
-
-
-pred_letter =
-
-    '3'
-
-
-pred_letter =
-
-    'G'
-
-
-pred_letter =
-
-    'L'
-
-
-pred_letter =
-
-    'H'
-
-
-pred_letter =
-
-    '1'
-
-
-pred_letter =
-
-    '6'
-
-
-pred_letter =
-
-    'O'
-
-
-pred_letter =
-
-    'F'
-
-
-pred_letter =
-
-    'W'
-
-
-pred_letter =
-
-    'W'
-
-
-pred_letter =
-
-    'A'
-
-
-pred_letter =
-
-    '9'
-
-
-pred_letter =
-
-    'V'
-
-
-pred_letter =
-
-    'L'
-
-
-pred_letter =
-
-    'P'
-
-
-pred_letter =
-
-    'X'
-
-
-pred_letter =
-
-    'T'
-
-
-pred_letter =
-
-    'E'
-
-
-pred_letter =
-
-    'K'
-
-
-pred_letter =
-
-    '2'
-
-
-pred_letter =
-
-    '7'
-
-
-pred_letter =
-
-    'H'
-
-
-pred_letter =
-
-    'N'
-
-
-pred_letter =
-
-    'Z'
-
-
-pred_letter =
-
-    'F'
-
-
-pred_letter =
-
-    'X'
-
-
-pred_letter =
-
-    'L'
-
-
-pred_letter =
-
-    'L'
-
-
-pred_letter =
-
-    'U'
-
-
-pred_letter =
-
-    'T'
-
-
-pred_letter =
-
-    'B'
-
-
-pred_letter =
-
-    'Q'
-
-
-pred_letter =
-
-    'L'
-
+\color{lightgray} \begin{lstlisting}Predicted Letter : R   Target Letter :R
+Predicted Letter : 2   Target Letter :Z
+Predicted Letter : 3   Target Letter :R
+Predicted Letter : G   Target Letter :O
+Predicted Letter : L   Target Letter :L
+Predicted Letter : H   Target Letter :H
+Predicted Letter : 1   Target Letter :Y
+Predicted Letter : 6   Target Letter :N
+Predicted Letter : O   Target Letter :Q
+Predicted Letter : F   Target Letter :D
+Predicted Letter : W   Target Letter :W
+Predicted Letter : W   Target Letter :_
+Predicted Letter : A   Target Letter :E
+Predicted Letter : 9   Target Letter :K
+Predicted Letter : V   Target Letter :T
+Predicted Letter : L   Target Letter :L
+Predicted Letter : P   Target Letter :B
+Predicted Letter : X   Target Letter :W
+Predicted Letter : T   Target Letter :X
+Predicted Letter : E   Target Letter :E
+Predicted Letter : K   Target Letter :P
+Predicted Letter : 2   Target Letter :O
+Predicted Letter : 7   Target Letter :U
+Predicted Letter : H   Target Letter :I
+Predicted Letter : N   Target Letter :K
+Predicted Letter : Z   Target Letter :Z
+Predicted Letter : F   Target Letter :E
+Predicted Letter : X   Target Letter :R
+Predicted Letter : L   Target Letter :Y
+Predicted Letter : L   Target Letter :O
+Predicted Letter : U   Target Letter :O
+Predicted Letter : T   Target Letter :T
+Predicted Letter : B   Target Letter :H
+Predicted Letter : Q   Target Letter :Q
+Predicted Letter : L   Target Letter :I
 
 testing_accuracy =
 
-     0
+   25.7143
 
 \end{lstlisting} \color{black}
 I tried tuning the model quite a bit but could not make the algorithm predict the letters well.
@@ -1814,8 +935,51 @@ I tried tuning the model quite a bit but could not make the algorithm predict th
  \item Describe your algorithm in detail. Also describe what you tried that didn't work. (6 pts)
 
 $\textbf{Answer 3.2} \\$
-The steps followed in the algorithm above : \ensuremath{\backslash}begin\{enumerate\} \ensuremath{\backslash}item To begin with, to improve the prediction from section 2, I included 9 electrodes in the analysis. Cz and the 8 electrodes surrounding it. I then calculate a average p300 score from the 9 electrodes. I also extended the timing range for p300 calculation to 250-500 ms. \ensuremath{\backslash}item For each trial I calculate the p300 value for all 9 electrodes and then calculate a mean value of the p300 from the 9 electrodes \ensuremath{\backslash}item I then calaculate the average p300 for he 15 trials of each of the 12 rows/columns giving a 85x12 matrix of mean p300 values \ensuremath{\backslash}item I then normalize the p300 values for each epoch \ensuremath{\backslash}item the I separate the p300 values for the row and column triggers. \ensuremath{\backslash}item The 85x6 matrices for the rows and columns are then split into the 50 training ans the the 35 testing set. \ensuremath{\backslash}item The training set for rows and columsn is convereted from a 50x6 matrix to a 300x1 column vector so that each row/column can be classified as a valied p300 or not \ensuremath{\backslash}item this 300x1 vector of p300 values for rows is used to train a SVM model with gaussian kernal. The same is dont for a model using the column values of p300. the calssification on both cases is binary with a 1 given to the right row/column and a 0 to a non-target row/column. \ensuremath{\backslash}item The model is then used to predict data from a new epock by predicting a row or column value. \ensuremath{\backslash}item If the model classisifies more than one row/column as a valied p300 them the one with the higher p300 is chooson. If the model does not classify any row/column as a valid p300 then the value with the hihghest p300 for the epock is choosen. For testing I followed the same averaging process as training using the 9 electrodes and averaging the 15 trials for each row/column. \ensuremath{\backslash}end\{enumerate\}
-Other methods tried : \ensuremath{\backslash}begin\{enumerate\} \ensuremath{\backslash}item I calculated the p300 scrore using the ratio of values from 250-500 ms to those from 600-800 ms. The ratio was created a lot of anomolies due to the decimal and negetive values in teh data \ensuremath{\backslash}item I tried the model using only cZ and using more electrodes to give the same result \ensuremath{\backslash}item I also tried averaging the siganl across the electrodes and then calculating the p300 values \ensuremath{\backslash}item I also tried using fitcecoc to train a multiclass classifier to classify the p300 values for rows and columns in 6 classes \ensuremath{\backslash}end\{enumerate\}
+
+The steps followed in the algorithm above :
+\begin{enumerate}
+\item To begin with, to improve the prediction from section 2, I included 9 electrodes in
+the analysis. Cz and the 8 electrodes surrounding it. I then
+calculate a average p300 score from the 9 electrodes. I also extended
+the timing range for p300 calculation to 250-500 ms.
+\item For each trial I calculate the p300 value for all 9 electrodes and
+then calculate a mean value of the p300 from the 9 electrodes
+\item I then calaculate the average p300 for he 15 trials of each of the
+12 rows/columns giving a 85x12 matrix of mean p300 values
+\item I then normalize the p300 values for each epoch
+\item the I separate the p300 values for the row and column triggers.
+\item The 85x6 matrices for the rows and columns are then split into the
+50 training ans the the 35 testing set.
+\item The training set for rows and columsn is convereted from a 50x6
+matrix to a 300x1 column vector so that each row/column can be classified
+as a valid p300 or not
+\item this 300x1 vector of p300 values for rows is used to train a SVM
+model with gaussian kernal. The same is dont for a model using the column
+values of p300. the classification on both cases is binary with a 1 given
+to the right row/column and a 0 to a non-target row/column.
+\item The model is then used to predict data from a new epock by predicting a
+row or column value.
+\item If the model classisifies more than one row/column as a valied p300
+them the one with the higher p300 is chooson. If the model does not
+classify any row/column as a valid p300 then the value with the highest
+p300 for the epock is choosen. For testing I followed the same averaging
+process as training using the 9 electrodes and averaging the 15 trials
+for each row/column.
+\end{enumerate}
+\\ \\
+Other methods tried :
+\begin{enumerate}
+\item I calculated the p300 scrore using the ratio of values
+from 250-500 ms to those from 600-800 ms. The ratio was created a lot of
+anomolies due to the decimal and negetive values in teh data
+\item I tried the model using only cZ and using more electrodes to give
+the same result
+\item I also tried averaging the siganl across the electrodes and then
+calculating the p300 values
+\item I also tried using fitcecoc to train a multiclass classifier to
+classify the p300 values for rows and columns in 6 classes
+\end{enumerate}
+
 
 \end{enumerate}
 \end{document}

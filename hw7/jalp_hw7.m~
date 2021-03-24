@@ -75,7 +75,7 @@
 % where \verb|data| is the value to plot for each channel. This function plots the electrodes according to the map in Figure 3.
 % \begin{figure}
 %  \centering
-%  \includegraphics[width=\textwidth]{scalpEEGChans}
+%  \includegraphics[width=\textwidth]{scalpEEGChans.png}
 %  \caption{The scalp EEG 64-channel layout.}
 % \end{figure}
 % </latex> 
@@ -156,7 +156,7 @@ end
 
 
 %%
-%parsing eeg data for target and nontarget trials
+%parsing eeg data for target and non-target trials
 %Here each row represents data for 1 epoch
 
 %each row has 240 points. This is the average of the 30 target trials 
@@ -294,8 +294,8 @@ snr_ratio_e42 = e42_t_m/e42_nt_m
 % Target/Non-Target mean value as compared to the channel 42, T8. This
 % would make it easier to detect a peak from a target stimulation in the Cz
 % channel data. $\\$
-% From the graphs, in the Cz channel, we havethe highest peak at abour 450
-% ms which could be the best point to detect the target. While on the graph
+% From the graphs, in the Cz channel, we see the highest peak is at about 450ms
+% which could be the best point to detect the target. While on the graph
 % for T8 channel the peak is at about 480 ms which would be the best point
 % to detect the target signal.
 
@@ -408,16 +408,17 @@ title('Difference in uV between target and non-taregt stimuli at 300 ms')
 % $\textbf{Answer 2.1} \\$
 
 %%
-% By just using one channel we can simplify the hardware and usability of
+% By using only one channel we can simplify the hardware and usability of
 % the whole system as then only 2 electrodes (cz and ground) will be needed for the
-% prediction. This is help with data storage, power and computational needs.
+% prediction. This is help optimize data storage, power and computational needs.
 % $\\$
-% One big disadvantage of using 1 electrode is it does not help adapt to
-% people who have disabilities in the brain or have imapairment/damage.
+% One big disadvantage of using only one electrode is it does not help adapt to
+% people who have disabilities in the brain or have imapairments/damage.
 % We would then not know if the region detected by the Cz electrode is the
-% the appropriate one for best p300 signal.
+% the appropriate one for best p300 signal. If a person has brain damage in
+% that region, the device will not be usable.
 % For some people due to neuroplasticity, their area of high
-% activity might be different than the one detected by Cz. In such
+% activity might be different than the one detected by Cz. In both such
 % cases it would make more sense to have the complete skull covered instead
 % of a single or only a few electrodes.
 
@@ -457,6 +458,7 @@ pscore_c11(10,11)
 
 %%
 % The $pscore$ for epoch 10 and iteration 11 at electrode Cz is 0.8243
+% $\muV$
 
 
 %% 
@@ -466,6 +468,10 @@ pscore_c11(10,11)
 
 %%
 % $\textbf{Answer 2.3} \\$
+
+%%
+% The spread of the p300 scores for each row/column can be shown as
+% individual boxplots. 
 
 %%
 %first we must find the indexes of the 15 trials for each row and column
@@ -550,7 +556,7 @@ for i = 1:85
     %find index for row and col with 2 highest p300 values
     [~,temp_idx] = sort(pscore_c11_allepoch(i,:), 'descend');
     
-    pscore_c11_allepoch(i,:)
+    pscore_c11_allepoch(i,:);
     %parsing row and column index
     %finding highest row index
     temp1_  = find(temp_idx>6);
@@ -571,9 +577,6 @@ end
 
 
 prediction_accuracy = sum(c11_p300_accuracy)/85*100
-
-%%
-test_acc = sum(c11_p300_accuracy(51:85))/35*100
 
 %%
 % The prediction accuracy by using the highest p300 values for rows and
@@ -668,8 +671,9 @@ end
 % epoch. We will train a classifier for the rows and column index
 % separately. To do this, for each epoch, we will create a 2 sets of
 % features, the p300 score for a row and a p300 score for a column. We will
-% then create separate SVM models to predict the correct row and column. For
-% each epoch we will have 6 data points from each row/column.
+% then create separate SVM models to predict the row and column with valid p300 scores. 
+% For each epoch we will have 6 data points from each row/column to train
+% the model.
 
 %%
 %separating row and columns data
@@ -737,9 +741,10 @@ train_error_svm_cols = size(find(cols_pred_train_svm~=Y),1)/size(Y,1)
 
 %%
 % To complete the prediction, we will check the classification of the model
-% for the set of 6 rows and cols. If the model returns a 1, then that
-% row/col is selected. If No row/col is classified at valid, we'll choose the
-% one with the highest p300 value. If more than one row/cal are classified,
+% for the set of 6 rows and cols. If the model returns a 1 for a givenrow/column, 
+% it means that is identified as a valid p300 score and that
+% row/col is selected. If No row/col is classified as valid, we'll choose the
+% one with the highest p300 value. If more than one row/cal are classified as valid,
 % we'll choose the one with the highest p300 value.
 
 %%
@@ -797,8 +802,7 @@ end
 testing_accuracy = sum(testing_accuracy_svm)/35*100
 
 %%
-% I tried tuning the model quite a bit but could not make the algorithm
-% predict the letters well.
+% The optimal accuracy I was able to obtain was 25.7 % for the training set
 
 %% 
 % <latex> 
@@ -809,6 +813,7 @@ testing_accuracy = sum(testing_accuracy_svm)/35*100
 % $\textbf{Answer 3.2} \\$
 
 %%
+% <latex>
 % The steps followed in the algorithm above :
 % \begin{enumerate}
 % \item To begin with, to improve the prediction from section 2, I included 9 electrodes in
@@ -839,7 +844,7 @@ testing_accuracy = sum(testing_accuracy_svm)/35*100
 % process as training using the 9 electrodes and averaging the 15 trials
 % for each row/column.
 % \end{enumerate}
-%%
+% \\ \\
 % Other methods tried : 
 % \begin{enumerate}
 % \item I calculated the p300 scrore using the ratio of values
@@ -852,6 +857,7 @@ testing_accuracy = sum(testing_accuracy_svm)/35*100
 % \item I also tried using fitcecoc to train a multiclass classifier to
 % classify the p300 values for rows and columns in 6 classes
 % \end{enumerate}
+% </latex>
 
 %% 
 % <latex> 
