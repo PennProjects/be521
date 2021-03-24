@@ -662,7 +662,7 @@ end
 % epoch. We will train a classifier for the rows and column index
 % separately. To do this, for each epoch, we will create a 2 sets of
 % features, the p300 score for a row and a p300 score for a column. We will
-% then create separate models to predict thee correct row and column. for
+% then create separate SVM models to predict the correct row and column. for
 % each epoch we will have 6 data points for each feature.
 
 %%
@@ -696,12 +696,11 @@ for i = 1:85
     tar_row = findRow(target_letter); 
     tar_col = findCol(target_letter);
     all_labels(i,tar_col) = 1;
-    all_labels(i,tar_row) = 1;
+    all_labels(i,tar_row) = 1;    
 end
 
 row_labels_train = reshape(all_labels(1:50,7:12), [],1);
 col_labels_train = reshape(all_labels(1:50,1:6), [],1);
-
 %%
 %using a SVM classifier
 %for rows
@@ -728,7 +727,51 @@ cols_pred_train_svm = predict(svmodel_cols, X);
 train_error_svm_cols = size(find(cols_pred_train_svm~=Y),1)/size(Y,1)
 
 
+%%
+% To complete the prediction, we will check the classification of the model
+% for the set of 6 rows and cols. If the model returns a 1, then that
+% row/col is selected. If No row/col is classified at valid, we'll choose the
+% one with the highest p300 value. If more than one row/cal are classified,
+% we'll choose the one with the highest p300 value.
 
+%%
+%testing/validating the models
+
+testing_accuracy_svm = zeros(1,35); 
+for i = 1:35
+    
+    %predicting row_index
+    test_pred_row_val = predict(svmodel_rows, p300_rows_test(i,:)');
+    
+    if sum(test_pred_row_val) ==0
+        [~,pred_row] = max(p300_rows_test(i,:));
+    elseif sum(test_pred_row_val) > 1
+        temp_ = max(p300_rows_test(i,test_pred_row_val==1));
+        pred_row  = find(p300_rows_test(i,:)==temp_);
+    else
+        [pred_row] = find(test_pred_row_val==1);
+    end
+    
+    
+    %Predicting column index
+    test_pred_col_val = predict(svmodel_cols, p300_cols_test(i,:)');
+    
+    if sum(test_pred_col_val) ==0
+        [~,pred_col] = max(p300_cols_test(i,:));
+    elseif sum(test_pred_col_val) > 1
+        temp_ = max(p300_cols_test(i,test_pred_col_val==1));
+        pred_col  = find(p300_cols_test(i,:)==temp_);
+    else
+        pred_col = find(test_pred_col_val==1);
+    end
+    
+    pred_letter = letter_matrix(pred_row,pred_col)
+    
+    testing_accuracy_svm(i) = pred_letter ==TargetLetter(i).description;
+     
+end
+
+testing_accuracy = sum(testing_accuracy_svm)/35*100
 
 %% 
 % <latex> 
