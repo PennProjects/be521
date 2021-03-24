@@ -689,25 +689,25 @@ p300_cols_test_vec = reshape(p300_cols_test, [],1);
 
 %%
 %creating the labels for training and validation
-all_labels = zeros(85,12);
+all_labels = zeros(85,2);
 
 for i = 1:85
     target_letter = TargetLetter(i).description;
     tar_row = findRow(target_letter); 
     tar_col = findCol(target_letter);
-    all_labels(i,tar_col) = 1;
-    all_labels(i,tar_row) = 1;    
+    all_labels(i,1) = tar_col;
+    all_labels(i,2) = tar_row-6;    
 end
 
-row_labels_train = reshape(all_labels(1:50,7:12), [],1);
-col_labels_train = reshape(all_labels(1:50,1:6), [],1);
+row_labels_train = all_labels(1:50,2);
+col_labels_train = all_labels(1:50,1);
+
 %%
 %using a SVM classifier
 %for rows
-X = p300_rows_train_vec;
+X = p300_rows_train;
 Y = row_labels_train; 
-
-svmodel_rows = fitcsvm(X,Y, 'KernelFunction','rbf')
+svmodel_rows = fitcecoc(X,Y)
 
 %Calculating training error by predicting the training set
 row_pred_train_svm = predict(svmodel_rows, X);
@@ -716,10 +716,10 @@ train_error_svm_rows = size(find(row_pred_train_svm~=Y),1)/size(Y,1)
 
 %%
 %SVM classifier for columns
-X = p300_cols_train_vec;
+X = p300_cols_train;
 Y = col_labels_train; 
 
-svmodel_cols = fitcsvm(X,Y, 'KernelFunction','rbf')
+svmodel_cols = fitcecoc(X,Y)
 
 %Calculating training error by predicting the training set
 cols_pred_train_svm = predict(svmodel_cols, X);
@@ -741,31 +741,28 @@ testing_accuracy_svm = zeros(1,35);
 for i = 1:35
     
     %predicting row_index
-    test_pred_row_val = predict(svmodel_rows, p300_rows_test(i,:)');
+    test_pred_row_val = predict(svmodel_rows, p300_rows_test(i,:))
     
-    if sum(test_pred_row_val) ==0
-        [~,pred_row] = max(p300_rows_test(i,:));
-    elseif sum(test_pred_row_val) > 1
-        temp_ = max(p300_rows_test(i,test_pred_row_val==1));
-        pred_row  = find(p300_rows_test(i,:)==temp_);
-    else
-        [pred_row] = find(test_pred_row_val==1);
-    end
+    if (test_pred_row_val)==0 ||
+
+%     else
+%         [pred_row] = find(test_pred_row_val==1);
+%     end
     
     
     %Predicting column index
-    test_pred_col_val = predict(svmodel_cols, p300_cols_test(i,:)');
+    test_pred_col_val = predict(svmodel_cols, p300_cols_test(i,:))
     
-    if sum(test_pred_col_val) ==0
-        [~,pred_col] = max(p300_cols_test(i,:));
-    elseif sum(test_pred_col_val) > 1
-        temp_ = max(p300_cols_test(i,test_pred_col_val==1));
-        pred_col  = find(p300_cols_test(i,:)==temp_);
-    else
-        pred_col = find(test_pred_col_val==1);
-    end
+%     if sum(test_pred_col_val) ==0
+%         [~,pred_col] = max(p300_cols_test(i,:));
+%     elseif sum(test_pred_col_val) > 1
+%         temp_ = max(p300_cols_test(i,test_pred_col_val==1));
+%         pred_col  = find(p300_cols_test(i,:)==temp_);
+%     else
+%         pred_col = find(test_pred_col_val==1);
+%     end
     
-    pred_letter = letter_matrix(pred_row,pred_col)
+    pred_letter = letter_matrix(test_pred_row_val,test_pred_col_val)
     
     testing_accuracy_svm(i) = pred_letter ==TargetLetter(i).description;
      
