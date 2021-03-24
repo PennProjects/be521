@@ -802,7 +802,9 @@ end
 testing_accuracy = sum(testing_accuracy_svm)/35*100
 
 %%
-% The optimal accuracy I was able to obtain was 25.7 % for the training set
+% The optimal accuracy I was able to obtain was 25.7 % for the training
+% set. This was done using separate SVM models to classify a row/columnn as one with
+% a valid p300 score and hence being choosen to predict the letter.
 
 %% 
 % <latex> 
@@ -815,48 +817,58 @@ testing_accuracy = sum(testing_accuracy_svm)/35*100
 %%
 % <latex>
 % The steps followed in the algorithm above :
-% \begin{enumerate}
+% \begin{itemize}
 % \item To begin with, to improve the prediction from section 2, I included 9 electrodes in
-% the analysis. Cz and the 8 electrodes surrounding it. I then
-% calculate a average p300 score from the 9 electrodes. I also extended
-% the timing range for p300 calculation to 250-500 ms.
-% \item For each trial I calculate the p300 value for all 9 electrodes and
+% the analysis. Cz and the 8 electrodes surrounding it.
+% \item I begin by parsing the signals from the 9 electrodes into
+% individual trails.
+% \item For each trial, I calculate the p300 value for all 9 electrodes 
+% using mean(250-500ms)-mean(600-800ms) and
 % then calculate a mean value of the p300 from the 9 electrodes
-% \item I then calaculate the average p300 for he 15 trials of each of the
-% 12 rows/columns giving a 85x12 matrix of mean p300 values
-% \item I then normalize the p300 values for each epoch
-% \item the I separate the p300 values for the row and column triggers.
+% \item I then calaculate the average p300 for the 15 trials of each of the
+% 12 rows/columns giving a 85x12 matrix of mean p300 values.
+% \item Then I separate the p300 values for the row and column triggers.
 % \item The 85x6 matrices for the rows and columns are then split into the
-% 50 training ans the the 35 testing set. 
+% 50 training and the the 35 testing set. 
 % \item The training set for rows and columsn is convereted from a 50x6
 % matrix to a 300x1 column vector so that each row/column can be classified
-% as a valid p300 or not
-% \item this 300x1 vector of p300 values for rows is used to train a SVM
-% model with gaussian kernal. The same is dont for a model using the column
+% as a valid p300 or not.
+% \item I then normalize the 300x1 training vector for rows and columns
+% separately to prepare it for classification.
+% \item This 300x1 vector of p300 values for rows is used to train a SVM
+% model with gaussian kernal. The same is done for a model using the column
 % values of p300. the classification on both cases is binary with a 1 given
-% to the right row/column and a 0 to a non-target row/column.
-% \item The model is then used to predict data from a new epock by predicting a
+% to the valid p300 row/column and a 0 to a an invalid p300 score for a row/column.
+% \item The model is then used to predict data from a new trial set by predicting a
 % row or column value. 
+% \item For testing I followed the same averaging
+% process as training using the 9 electrodes, finding the averaging p300 value and
+% averaging the 15 trials for each row/column.
+% \item the data is then split into rows and columns, giving 6 inputs
+% values to each model to predict a valid p300 score.
 % \item If the model classisifies more than one row/column as a valied p300
-% them the one with the higher p300 is chooson. If the model does not
-% classify any row/column as a valid p300 then the value with the highest
-% p300 for the epock is choosen. For testing I followed the same averaging
-% process as training using the 9 electrodes and averaging the 15 trials
-% for each row/column.
-% \end{enumerate}
+% then the one with the higher p300 is choosen. If the model does not
+% classify any row/column as a valid p300 then the row/column value with the highest
+% p300 for the trial is choosen. 
+% \item We then finally get a choosen row and column value. The
+% intersection of these two is  the predicted letter. This is then compared
+% to the Target letter to verify the model accuracy.
+
+% \end{itemize}
 % \\ \\
 % Other methods tried : 
-% \begin{enumerate}
+% \begin{itemize}
 % \item I calculated the p300 scrore using the ratio of values
 % from 250-500 ms to those from 600-800 ms. The ratio was created a lot of
-% anomolies due to the decimal and negetive values in teh data
+% anomolies due to the decimal and negetive values in teh data and so was
+% discarded.
 % \item I tried the model using only cZ and using more electrodes to give
 % the same result
 % \item I also tried averaging the siganl across the electrodes and then
 % calculating the p300 values
 % \item I also tried using fitcecoc to train a multiclass classifier to
 % classify the p300 values for rows and columns in 6 classes
-% \end{enumerate}
+% \end{itemize}
 % </latex>
 
 %% 
