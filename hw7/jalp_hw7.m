@@ -659,11 +659,37 @@ end
 
 %%
 % Now we have the average p300 for each of the 12 stim row/cols for each
-% epoch. We will train a classirfier for thr rows and column index
-% separately
+% epoch. We will train a classifier for the rows and column index
+% separately. To do this, for each epoch, we will create a 2 sets of
+% features, the p300 score for a row and a p300 score for a column. We will
+% then create separate models to predict thee correct row and column. for
+% each epoch we will have 6 data points for each feature.
 
 %%
-%
+%we will first normalize across each epoch
+p300score_stimavg_norm = normalize(p300score_stimavg')';
+
+%separating row and columns data
+p300_rows = p300score_stimavg_norm(:,1:6);
+p300_cols = p300score_stimavg_norm(:,7:12);
+
+%separating training and testing data
+p300_rows_train = p300_rows(1:50,:);
+p300_rows_test = p300_rows(51:85,:);
+
+p300_cols_train = p300_cols(1:50,:);
+p300_cols_test = p300_cols(51:85,:);
+
+%converting into a column matrix
+p300_rows_train_vec = reshape(p300_rows_train,[],1);
+p300_rows_test_vec = reshape(p300_rows_test, [],1);
+
+p300_cols_train_vec = reshape(p300_cols_train, [],1);
+p300_cols_test_vec = reshape(p300_cols_test, [],1);
+
+%%
+%creating the labels for training and validation
+
 %% 
 % <latex> 
 %  \item Describe your algorithm in detail. Also describe what you tried that didn't work. (6 pts)
