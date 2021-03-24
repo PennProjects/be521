@@ -550,6 +550,7 @@ for i = 1:85
     %find index for row and col with 2 highest p300 values
     [~,temp_idx] = sort(pscore_c11_allepoch(i,:), 'descend');
     
+    
     %parsing row and column index
     %finding highest row index
     temp1_  = find(temp_idx>6);
@@ -559,8 +560,10 @@ for i = 1:85
     temp2_  = find(temp_idx<7);
     col_idx = temp_idx(temp2_(1));
  
-    pred_letter = letter_matrix(row_idx,col_idx)
-    target_letter = TargetLetter(i).description
+    pred_letter = letter_matrix(row_idx,col_idx);
+    target_letter = TargetLetter(i).description;
+    
+    disp(['Predicted Letter : ', pred_letter, '   Target Letter :', target_letter])
     
     c11_p300_accuracy(i) = pred_letter==TargetLetter(i).description;
 end

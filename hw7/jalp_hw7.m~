@@ -393,8 +393,8 @@ title('Difference in uV between target and non-taregt stimuli at 300 ms')
 % Here we see that the Cz electrode has the highest difference while the T8
 % electrode has a very small difference between the target and non-target respose
 % at 300ms. This is consistent with the plots in 1.1and 1.2 where we
-% observed a might higher ratio and difference in Cz as compared to T8
-% electrode.
+% observed a much higher ratio  and difference between target and non-target siganl
+% in Cz as compared to T8 electrode.
 %% 
 % <latex> 
 % \end{enumerate}
@@ -410,13 +410,14 @@ title('Difference in uV between target and non-taregt stimuli at 300 ms')
 %%
 % By just using one channel we can simplify the hardware and usability of
 % the whole system as then only 2 electrodes (cz and ground) will be needed for the
-% prediction. This is help with storage, power and computational needs.
+% prediction. This is help with data storage, power and computational needs.
 % $\\$
 % One big disadvantage of using 1 electrode is it does not help adapt to
 % people who have disabilities in the brain or have imapairment/damage.
-% We would then now know if the region detected by the Cz electrode is the
-% the right one. For some people due to neuroplasticity their area of high
-% activity might be different than the one detected by Cz. In all of these
+% We would then not know if the region detected by the Cz electrode is the
+% the appropriate one for best p300 signal.
+% For some people due to neuroplasticity, their area of high
+% activity might be different than the one detected by Cz. In such
 % cases it would make more sense to have the complete skull covered instead
 % of a single or only a few electrodes.
 
@@ -549,6 +550,7 @@ for i = 1:85
     %find index for row and col with 2 highest p300 values
     [~,temp_idx] = sort(pscore_c11_allepoch(i,:), 'descend');
     
+    
     %parsing row and column index
     %finding highest row index
     temp1_  = find(temp_idx>6);
@@ -558,8 +560,10 @@ for i = 1:85
     temp2_  = find(temp_idx<7);
     col_idx = temp_idx(temp2_(1));
  
-    pred_letter = letter_matrix(row_idx,col_idx)
-    target_letter = TargetLetter(i).description
+    pred_letter = letter_matrix(row_idx,col_idx);
+    target_letter = TargetLetter(i).description;
+    
+    disp(['Predicted Letter : ', pred_letter, '   Target Letter :', target_letter])
     
     c11_p300_accuracy(i) = pred_letter==TargetLetter(i).description;
 end
@@ -743,11 +747,11 @@ for i = 1:35
     %predicting row_index
     test_pred_row_val = predict(svmodel_rows, p300_rows_test(i,:))
     
-    if (test_pred_row_val)==0 ||
-
-%     else
-%         [pred_row] = find(test_pred_row_val==1);
-%     end
+    if (test_pred_row_val)==0 || test_pred_row_val >6
+        [~,pred_row] = max(p300_rows_test(i,:));
+    else
+        pred_row = test_pred_row_val;
+    end
     
     
     %Predicting column index
@@ -762,7 +766,7 @@ for i = 1:35
 %         pred_col = find(test_pred_col_val==1);
 %     end
     
-    pred_letter = letter_matrix(test_pred_row_val,test_pred_col_val)
+    pred_letter = letter_matrix(pred_row,test_pred_col_val)
     
     testing_accuracy_svm(i) = pred_letter ==TargetLetter(i).description;
      
