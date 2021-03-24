@@ -604,11 +604,7 @@ test_acc = sum(c11_p300_accuracy(51:85))/35*100
 
 %channels 3,4,5,10,11,12,17,18,19
 %the choosen channels are the 8 channels around channel 11,Cz
-% electrode_arr = [3,4,5,10,11,12,17,18,19];
-
-
-
-
+electrode_arr = [3,4,5,10,11,12,17,18,19];
 %we'll now caculate the average p300 score for the 9 electrodes
 
 p300score_nineavg = zeros(85,180);
@@ -622,22 +618,16 @@ for i = 1:85
         st_idx = round(((Stim(stim_idx).start)/1e6)*sampling_frequency_hz)+1;
         sp_idx = round(((Stim(stim_idx).stop)/1e6)*sampling_frequency_hz);
         
-%         p300_temp_ = zeros(9,1);
-%         for e = 1:9
-%             temp_ = data_uV(electrode_arr(e),st_idx:sp_idx);
-%             
-%             %p300 score = val(250-500)ms-val(600to800)
-%             p300_temp_(e) = mean(temp_(61:120)-mean(temp_(145:192)));
-%         end
-        %%%
-        temp_ = data_uV(11,st_idx:sp_idx);
-        p300_temp_ = mean(temp_(61:108)-mean(temp_(145:192)));
-        
-        
-        %%%
+        p300_temp_ = zeros(9,1);
+        for e = 1:9
+            temp_ = data_uV(electrode_arr(e),st_idx:sp_idx);
+            
+            %p300 score = val(250-500)ms-val(600to800)
+            p300_temp_(e) = mean(temp_(61:120)-mean(temp_(145:192)));
+        end
+       
         %calculating mean p300 value
-%         mean_temp_ = mean(p300_temp_);
-        mean_temp_ = p300_temp_;
+        mean_temp_ = mean(p300_temp_);
         
         %p300 score = val(250-500)ms-val(600to800)
         p300score_nineavg(i,j) = mean_temp_;
