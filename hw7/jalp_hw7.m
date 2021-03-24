@@ -563,8 +563,8 @@ for i = 1:85
     pred_letter_c11 = letter_matrix(row_idx,col_idx);
     target_letter= TargetLetter(i).description;
     
-%     disp(['Predicted Letter : ', pred_letter_c11, '   Target Letter :', target_letter])
-    disp(['Predicted Letter : ', pred_letter_c11, '   Target Letter :', target_letter, '    R : ', num2str(row_idx), '    C : ', num2str(col_idx) ])
+    disp(['Predicted Letter : ', pred_letter_c11, '   Target Letter :', target_letter])
+   % disp(['Predicted Letter : ', pred_letter_c11, '   Target Letter :', target_letter, '    R : ', num2str(row_idx), '    C : ', num2str(col_idx) ])
     
     c11_p300_accuracy(i) = pred_letter_c11==TargetLetter(i).description;
 end
@@ -715,7 +715,7 @@ col_labels_train = reshape(all_labels(1:50,1:6), [],1);
 %for rows
 X = p300_rows_train_norm;
 Y = row_labels_train; 
-svmodel_rows = fitcsvm(X,Y)
+svmodel_rows = fitcsvm(X,Y,  'KernelFunction','rbf')
 
 %Calculating training error by predicting the training set
 row_pred_train_svm = predict(svmodel_rows, X);
@@ -727,7 +727,7 @@ train_error_svm_rows = size(find(row_pred_train_svm~=Y),1)/size(Y,1)
 X = p300_cols_train_norm;
 Y = col_labels_train; 
 
-svmodel_cols = fitcsvm(X,Y)
+svmodel_cols = fitcsvm(X,Y,  'KernelFunction','rbf')
 
 %Calculating training error by predicting the training set
 cols_pred_train_svm = predict(svmodel_cols, X);
@@ -750,12 +750,14 @@ for i = 1:35
     
     %predicting row_index
     %pre-processing test data
-    p300_rows_test(i,:);
     rows_norm = normalize(p300_rows_test(i,:));
     test_pred_row_val = predict(svmodel_rows,rows_norm');
     
+    %if no valid p300 score, select highest
     if sum(test_pred_row_val) ==0
         [~,pred_row] = max(rows_norm);
+    
+    %if multiple valid p300 score, select highest
     elseif sum(test_pred_row_val) > 1
         temp_ = max(rows_norm(test_pred_row_val==1));
         pred_row  = find(rows_norm==temp_);
@@ -766,25 +768,25 @@ for i = 1:35
     
     %Predicting column index
     %preprocessing test data
-    p300_cols_test(i,:);
     cols_norm = normalize(p300_cols_test(i,:));
     test_pred_col_val = predict(svmodel_cols, cols_norm');
     
+    %if no valid p300 score, select highest
     if sum(test_pred_col_val) ==0
         [~,pred_col] = max(cols_norm);
+    
+    %if multiple valid p300 score, select highest
     elseif sum(test_pred_col_val) > 1
         temp_ = max(cols_norm(test_pred_col_val==1));
         pred_col  = find(cols_norm==temp_);
     else
         pred_col = find(test_pred_col_val==1);
     end
+
     
-    i
-    pred_row;
-    pred_col;
-    
-    pred_letter_all = letter_matrix(pred_row,pred_col)
-    target_letter = TargetLetter(50+i).description
+    pred_letter_all = letter_matrix(pred_row,pred_col);
+    target_letter = TargetLetter(50+i).description;
+    disp(['Predicted Letter : ', pred_letter_all, '   Target Letter :', target_letter])
     
     testing_accuracy_svm(i) = pred_letter_all ==TargetLetter(50+i).description;
      
