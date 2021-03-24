@@ -668,8 +668,8 @@ end
 % epoch. We will train a classifier for the rows and column index
 % separately. To do this, for each epoch, we will create a 2 sets of
 % features, the p300 score for a row and a p300 score for a column. We will
-% then create separate SVM models to predict the correct row and column. for
-% each epoch we will have 6 data points for each feature.
+% then create separate SVM models to predict the row and column with valid p300 scores. 
+% For each epoch we will have 6 data points from each row/column.
 
 %%
 %separating row and columns data
@@ -738,14 +738,16 @@ train_error_svm_cols = size(find(cols_pred_train_svm~=Y),1)/size(Y,1)
 %%
 % To complete the prediction, we will check the classification of the model
 % for the set of 6 rows and cols. If the model returns a 1, then that
-% row/col is selected. If No row/col is classified at valid, we'll choose the
-% one with the highest p300 value. If more than one row/cal are classified,
+% row/col is selected. If No row/col is classified as valid, we'll choose the
+% one with the highest p300 value. If more than one row/cal are classified as valid,
 % we'll choose the one with the highest p300 value.
 
 %%
 %testing/validating the models
 
 testing_accuracy_svm = zeros(1,35); 
+
+%Finding the predicted letter for each of the 35 testing epochs
 for i = 1:35
     
     %predicting row_index
