@@ -475,7 +475,7 @@ for i = 1:180
     epoch27_stim_rowcol(i) = str2double(Stim(26*180+i).description);
 end
 
-%separate the indexes for ech row and col number creating a 12x15 index
+%separate the indexes for each row and col number creating a 12x15 index
 %table
 epoch_27_idx_separated = zeros(12,15);
 pscore_c11_separated = zeros(12,15);
@@ -550,7 +550,7 @@ for i = 1:85
     %find index for row and col with 2 highest p300 values
     [~,temp_idx] = sort(pscore_c11_allepoch(i,:), 'descend');
     
-    
+    pscore_c11_allepoch(i,:)
     %parsing row and column index
     %finding highest row index
     temp1_  = find(temp_idx>6);
@@ -559,17 +559,21 @@ for i = 1:85
     %finding highest column index
     temp2_  = find(temp_idx<7);
     col_idx = temp_idx(temp2_(1));
- 
-    pred_letter = letter_matrix(row_idx,col_idx);
-    target_letter = TargetLetter(i).description;
+   
+    pred_letter_c11 = letter_matrix(row_idx,col_idx);
+    target_letter= TargetLetter(i).description;
     
-    disp(['Predicted Letter : ', pred_letter, '   Target Letter :', target_letter])
+%     disp(['Predicted Letter : ', pred_letter_c11, '   Target Letter :', target_letter])
+    disp(['Predicted Letter : ', pred_letter_c11, '   Target Letter :', target_letter, '    R : ', num2str(row_idx), '    C : ', num2str(col_idx) ])
     
-    c11_p300_accuracy(i) = pred_letter==TargetLetter(i).description;
+    c11_p300_accuracy(i) = pred_letter_c11==TargetLetter(i).description;
 end
 
 
 prediction_accuracy = sum(c11_p300_accuracy)/85*100
+
+%%
+test_acc = sum(c11_p300_accuracy(51:85))/35*100
 
 %%
 % The prediction accuracy by using the highest p300 values for rows and
@@ -600,7 +604,9 @@ prediction_accuracy = sum(c11_p300_accuracy)/85*100
 
 %channels 3,4,5,10,11,12,17,18,19
 %the choosen channels are the 8 channels around channel 11,Cz
-electrode_arr = [3,4,5,10,11,12,17,18,19];
+% electrode_arr = [3,4,5,10,11,12,17,18,19];
+
+
 
 
 %we'll now caculate the average p300 score for the 9 electrodes
@@ -616,16 +622,22 @@ for i = 1:85
         st_idx = round(((Stim(stim_idx).start)/1e6)*sampling_frequency_hz)+1;
         sp_idx = round(((Stim(stim_idx).stop)/1e6)*sampling_frequency_hz);
         
-        p300_temp_ = zeros(9,1);
-        for e = 1:9
-            temp_ = data_uV(electrode_arr(e),st_idx:sp_idx);
-            
-            %p300 score = val(250-500)ms-val(600to800)
-            p300_temp_(e) = mean(temp_(61:120)-mean(temp_(145:192)));
-        end
+%         p300_temp_ = zeros(9,1);
+%         for e = 1:9
+%             temp_ = data_uV(electrode_arr(e),st_idx:sp_idx);
+%             
+%             %p300 score = val(250-500)ms-val(600to800)
+%             p300_temp_(e) = mean(temp_(61:120)-mean(temp_(145:192)));
+%         end
+        %%%
+        temp_ = data_uV(11,st_idx:sp_idx);
+        p300_temp_ = mean(temp_(61:108)-mean(temp_(145:192)));
         
+        
+        %%%
         %calculating mean p300 value
-        mean_temp_ = mean(p300_temp_);
+%         mean_temp_ = mean(p300_temp_);
+        mean_temp_ = p300_temp_;
         
         %p300 score = val(250-500)ms-val(600to800)
         p300score_nineavg(i,j) = mean_temp_;
@@ -670,12 +682,9 @@ end
 % each epoch we will have 6 data points for each feature.
 
 %%
-%we will first normalize across each epoch
-p300score_stimavg_norm = normalize(p300score_stimavg')';
-
 %separating row and columns data
-p300_rows = p300score_stimavg_norm(:,7:12);
-p300_cols = p300score_stimavg_norm(:,1:6);
+p300_rows = p300score_stimavg(:,7:12);
+p300_cols = p300score_stimavg(:,1:6);
 
 %separating training and testing data
 p300_rows_train = p300_rows(1:50,:);
@@ -691,27 +700,32 @@ p300_rows_test_vec = reshape(p300_rows_test, [],1);
 p300_cols_train_vec = reshape(p300_cols_train, [],1);
 p300_cols_test_vec = reshape(p300_cols_test, [],1);
 
+%%normalizing the data
+p300_rows_train_norm = normalize(p300_rows_train_vec);
+
+p300_cols_train_norm = normalize(p300_cols_train_vec);
+
 %%
 %creating the labels for training and validation
-all_labels = zeros(85,2);
+all_labels = zeros(85,12);
 
 for i = 1:85
     target_letter = TargetLetter(i).description;
-    tar_row = findRow(target_letter); 
+    tar_row = findRow(target_letter);
     tar_col = findCol(target_letter);
-    all_labels(i,1) = tar_col;
-    all_labels(i,2) = tar_row-6;    
+    all_labels(i,tar_col) = 1;
+    all_labels(i,tar_row) = 1;
 end
 
-row_labels_train = all_labels(1:50,2);
-col_labels_train = all_labels(1:50,1);
+row_labels_train = reshape(all_labels(1:50,7:12), [],1);
+col_labels_train = reshape(all_labels(1:50,1:6), [],1);
 
 %%
 %using a SVM classifier
 %for rows
-X = p300_rows_train;
+X = p300_rows_train_norm;
 Y = row_labels_train; 
-svmodel_rows = fitcecoc(X,Y)
+svmodel_rows = fitcsvm(X,Y)
 
 %Calculating training error by predicting the training set
 row_pred_train_svm = predict(svmodel_rows, X);
@@ -720,10 +734,10 @@ train_error_svm_rows = size(find(row_pred_train_svm~=Y),1)/size(Y,1)
 
 %%
 %SVM classifier for columns
-X = p300_cols_train;
+X = p300_cols_train_norm;
 Y = col_labels_train; 
 
-svmodel_cols = fitcecoc(X,Y)
+svmodel_cols = fitcsvm(X,Y)
 
 %Calculating training error by predicting the training set
 cols_pred_train_svm = predict(svmodel_cols, X);
@@ -745,30 +759,44 @@ testing_accuracy_svm = zeros(1,35);
 for i = 1:35
     
     %predicting row_index
-    test_pred_row_val = predict(svmodel_rows, p300_rows_test(i,:))
+    %pre-processing test data
+    p300_rows_test(i,:);
+    rows_norm = normalize(p300_rows_test(i,:));
+    test_pred_row_val = predict(svmodel_rows,rows_norm');
     
-    if (test_pred_row_val)==0 || test_pred_row_val >6
-        [~,pred_row] = max(p300_rows_test(i,:));
+    if sum(test_pred_row_val) ==0
+        [~,pred_row] = max(rows_norm);
+    elseif sum(test_pred_row_val) > 1
+        temp_ = max(rows_norm(test_pred_row_val==1));
+        pred_row  = find(rows_norm==temp_);
     else
-        pred_row = test_pred_row_val;
+        [pred_row] = find(test_pred_row_val==1);
     end
     
     
     %Predicting column index
-    test_pred_col_val = predict(svmodel_cols, p300_cols_test(i,:))
+    %preprocessing test data
+    p300_cols_test(i,:);
+    cols_norm = normalize(p300_cols_test(i,:));
+    test_pred_col_val = predict(svmodel_cols, cols_norm');
     
-%     if sum(test_pred_col_val) ==0
-%         [~,pred_col] = max(p300_cols_test(i,:));
-%     elseif sum(test_pred_col_val) > 1
-%         temp_ = max(p300_cols_test(i,test_pred_col_val==1));
-%         pred_col  = find(p300_cols_test(i,:)==temp_);
-%     else
-%         pred_col = find(test_pred_col_val==1);
-%     end
+    if sum(test_pred_col_val) ==0
+        [~,pred_col] = max(cols_norm);
+    elseif sum(test_pred_col_val) > 1
+        temp_ = max(cols_norm(test_pred_col_val==1));
+        pred_col  = find(cols_norm==temp_);
+    else
+        pred_col = find(test_pred_col_val==1);
+    end
     
-    pred_letter = letter_matrix(pred_row,test_pred_col_val)
+    i
+    pred_row;
+    pred_col;
     
-    testing_accuracy_svm(i) = pred_letter ==TargetLetter(i).description;
+    pred_letter_all = letter_matrix(pred_row,pred_col)
+    target_letter = TargetLetter(50+i).description
+    
+    testing_accuracy_svm(i) = pred_letter_all ==TargetLetter(50+i).description;
      
 end
 
