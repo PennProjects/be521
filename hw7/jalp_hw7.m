@@ -391,9 +391,10 @@ title('Difference in uV between target and non-taregt stimuli at 300 ms')
 % locations where the target response as more negative as compared to the
 % non-target response. $\\$
 % Here we see that the Cz electrode has the highest difference while the T8
-% electrode has a very small difference between the target and non-target respose
+% electrode has a very small difference between the target and non-target response
 % at 300ms. This is consistent with the plots in 1.1and 1.2 where we
-% observed a much higher ratio  and difference between target and non-target siganl
+% observed a much higher ratio  and difference between target and
+% non-target signal
 % in Cz as compared to T8 electrode.
 %% 
 % <latex> 
@@ -409,11 +410,11 @@ title('Difference in uV between target and non-taregt stimuli at 300 ms')
 
 %%
 % By using only one channel we can simplify the hardware and usability of
-% the whole system as then only 2 electrodes (cz and ground) will be needed for the
+% the whole system as then only 2 electrodes (Cz and ground) will be needed for the
 % prediction. This is help optimize data storage, power and computational needs.
 % $\\$
 % One big disadvantage of using only one electrode is it does not help adapt to
-% people who have disabilities in the brain or have imapairments/damage.
+% people who have disabilities in the brain or have impairments/damage.
 % We would then not know if the region detected by the Cz electrode is the
 % the appropriate one for best p300 signal. If a person has brain damage in
 % that region, the device will not be usable.
@@ -453,7 +454,7 @@ for i = 1:85
 end
 
 %%
-%pscore for epoch 10 and iterarion 11 is 
+%p300\ score for epoch 10 and iterarion 11 is 
 pscore_c11(10,11)
 
 %%
@@ -600,13 +601,13 @@ prediction_accuracy = sum(c11_p300_accuracy)/85*100
 % calculate a average p300 score from the 9 electrodes. We will also extend
 % the timing range for p300 calculation to 250-500 ms.
 %%
-%Extending the timimng for p300 to 250-500ms
+%Extending the timimg for p300 to 250-500ms
 %Calculating average p300score for 9 channels 
 %250ms to 500 ms is at index 61 to 120
 %600 to 800 ms is from index 145-192
 
 %channels 3,4,5,10,11,12,17,18,19
-%the choosen channels are the 8 channels around channel 11,Cz
+%the chosen channels are the 8 channels around channel 11,Cz
 electrode_arr = [3,4,5,10,11,12,17,18,19];
 %we'll now caculate the average p300 score for the 9 electrodes
 
@@ -741,7 +742,7 @@ train_error_svm_cols = size(find(cols_pred_train_svm~=Y),1)/size(Y,1)
 
 %%
 % To complete the prediction, we will check the classification of the model
-% for the set of 6 rows and cols. If the model returns a 1 for a givenrow/column, 
+% for the set of 6 rows and cols. If the model returns a 1 for a given row/column, 
 % it means that is identified as a valid p300 score and that
 % row/col is selected. If No row/col is classified as valid, we'll choose the
 % one with the highest p300 value. If more than one row/cal are classified as valid,
@@ -803,8 +804,8 @@ testing_accuracy = sum(testing_accuracy_svm)/35*100
 
 %%
 % The optimal accuracy I was able to obtain was 25.7 % for the training
-% set. This was done using separate SVM models to classify a row/columnn as one with
-% a valid p300 score and hence being choosen to predict the letter.
+% set. This was done using separate SVM models to classify a row/column as one with
+% a valid p300 score and hence being chosen to predict the letter.
 
 %% 
 % <latex> 
@@ -817,7 +818,7 @@ testing_accuracy = sum(testing_accuracy_svm)/35*100
 %%
 % <latex>
 % The steps followed in the algorithm above :
-% \begin{itemize}
+% \begin{enumerate}
 % \item To begin with, to improve the prediction from section 2, I included 9 electrodes in
 % the analysis. Cz and the 8 electrodes surrounding it.
 % \item I begin by parsing the signals from the 9 electrodes into
@@ -825,18 +826,18 @@ testing_accuracy = sum(testing_accuracy_svm)/35*100
 % \item For each trial, I calculate the p300 value for all 9 electrodes 
 % using mean(250-500ms)-mean(600-800ms) and
 % then calculate a mean value of the p300 from the 9 electrodes
-% \item I then calaculate the average p300 for the 15 trials of each of the
+% \item I then calculate the average p300 for the 15 trials of each of the
 % 12 rows/columns giving a 85x12 matrix of mean p300 values.
 % \item Then I separate the p300 values for the row and column triggers.
 % \item The 85x6 matrices for the rows and columns are then split into the
 % 50 training and the the 35 testing set. 
-% \item The training set for rows and columsn is convereted from a 50x6
+% \item The training set for rows and column is converted from a 50x6
 % matrix to a 300x1 column vector so that each row/column can be classified
 % as a valid p300 or not.
 % \item I then normalize the 300x1 training vector for rows and columns
 % separately to prepare it for classification.
 % \item This 300x1 vector of p300 values for rows is used to train a SVM
-% model with gaussian kernal. The same is done for a model using the column
+% model with Gaussian kernel. The same is done for a model using the column
 % values of p300. the classification on both cases is binary with a 1 given
 % to the valid p300 row/column and a 0 to a an invalid p300 score for a row/column.
 % \item The model is then used to predict data from a new trial set by predicting a
@@ -846,32 +847,31 @@ testing_accuracy = sum(testing_accuracy_svm)/35*100
 % averaging the 15 trials for each row/column.
 % \item the data is then split into rows and columns, giving 6 inputs
 % values to each model to predict a valid p300 score.
-% \item If the model classisifies more than one row/column as a valied p300
+% \item If the model classiifies more than one row/column as a valid p300
 % then the one with the higher p300 is choosen. If the model does not
 % classify any row/column as a valid p300 then the row/column value with the highest
-% p300 for the trial is choosen. 
-% \item We then finally get a choosen row and column value. The
+% p300 for the trial is chosen. 
+% \item We then finally get a chosen row and column value. The
 % intersection of these two is  the predicted letter. This is then compared
 % to the Target letter to verify the model accuracy.
-
-% \end{itemize}
+% \end{enumerate}
 % \\ \\
 % Other methods tried : 
-% \begin{itemize}
-% \item I calculated the p300 scrore using the ratio of values
+% \begin{enumerate}
+% \item I calculated the p300 score using the ratio of values
 % from 250-500 ms to those from 600-800 ms. The ratio was created a lot of
-% anomolies due to the decimal and negetive values in teh data and so was
+% anomalies due to the decimal and negative values in the data and so was
 % discarded.
-% \item I tried the model using only cZ and using more electrodes. Having
+% \item I tried the model using only Cz and using more electrodes. Having
 % the 9 electrodes gave the most stable results for accuracy
-% \item I also tried averaging the siganl across the electrodes and then
+% \item I also tried averaging the signal across the electrodes and then
 % calculating the p300 values. As compared to calculating p300 and then
 % averaging the value for the 9 electrodes.
-% \item I also tried using fitcecoc to train a multiclass classifier to
+% \item I also tried using fitcecoc to train a multi-class classifier to
 % classify the p300 values for rows and columns in 6 classes. This gave
 % worse results than the current algorithm. Possibly due to a small sample
 % size for 6 class classifier.
-% \end{itemize}
+% \end{enumerate}
 % </latex>
 
 %% 

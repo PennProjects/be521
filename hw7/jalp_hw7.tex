@@ -166,7 +166,7 @@ for i = 1:85
 end
 \end{lstlisting}
 \begin{lstlisting}
-%parsing eeg data for target and nontarget trials
+%parsing eeg data for target and non-target trials
 %Here each row represents data for 1 epoch
 
 %each row has 240 points. This is the average of the 30 target trials
@@ -310,7 +310,7 @@ snr_ratio_e42 =
    -0.5591
 
 \end{lstlisting} \color{black}
-Of the two channels, it looks like channel 11, Cz has a much higher ratio of Target/Non-Target mean value as compared to the channel 42, T8. This would make it easier to detect a peak from a target stimulation in the Cz channel data. $\\$ From the graphs, in the Cz channel, we havethe highest peak at abour 450 ms which could be the best point to detect the target. While on the graph for T8 channel the peak is at about 480 ms which would be the best point to detect the target signal.
+Of the two channels, it looks like channel 11, Cz has a much higher ratio of Target/Non-Target mean value as compared to the channel 42, T8. This would make it easier to detect a peak from a target stimulation in the Cz channel data. $\\$ From the graphs, in the Cz channel, we see the highest peak is at about 450ms which could be the best point to detect the target. While on the graph for T8 channel the peak is at about 480 ms which would be the best point to detect the target signal.
 
  \item Compute the mean difference between the target and non-target stimuli for each channel at timepoint 300 ms averaged across all row/column flashes. Visualize these values using the \verb|topoplotEEG| function. Include a colorbar. (3 pts)
 
@@ -404,7 +404,7 @@ Hopefully the Question 1.4 convinced you that the Cz channel is a reasonably goo
  \item Explain a potential advantage to using just one channel other than the obvious speed of calculation advantage. Explain one disadvantage. (3 pts)
 
 $\textbf{Answer 2.1} \\$
-By just using one channel we can simplify the hardware and usability of the whole system as then only 2 electrodes (cz and ground) will be needed for the prediction. This is help with data storage, power and computational needs. $\\$ One big disadvantage of using 1 electrode is it does not help adapt to people who have disabilities in the brain or have imapairment/damage. We would then not know if the region detected by the Cz electrode is the the appropriate one for best p300 signal. For some people due to neuroplasticity, their area of high activity might be different than the one detected by Cz. In such cases it would make more sense to have the complete skull covered instead of a single or only a few electrodes.
+By using only one channel we can simplify the hardware and usability of the whole system as then only 2 electrodes (cz and ground) will be needed for the prediction. This is help optimize data storage, power and computational needs. $\\$ One big disadvantage of using only one electrode is it does not help adapt to people who have disabilities in the brain or have imapairments/damage. We would then not know if the region detected by the Cz electrode is the the appropriate one for best p300 signal. If a person has brain damage in that region, the device will not be usable. For some people due to neuroplasticity, their area of high activity might be different than the one detected by Cz. In both such cases it would make more sense to have the complete skull covered instead of a single or only a few electrodes.
 
  \item One simple way of identifying a P300 in a single trial (which we'll call the \emph{p300 score}) is to take the mean EEG from 250 to 450 ms and then subtract from it the mean EEG from 600 to 800 ms. What is the 	\emph{p300 score} for epoch (letter) 10, iteration 11 at electrode Cz? (3 pts)
 
@@ -441,11 +441,12 @@ ans =
     0.8243
 
 \end{lstlisting} \color{black}
-The $pscore$ for epoch 10 and iteration 11 at electrode Cz is 0.8243
+The $pscore$ for epoch 10 and iteration 11 at electrode Cz is 0.8243 $\muV$
 
  \item Plot the \emph{p300 scores} for each row/column in epoch 27 at electrode Cz. (3 pts)
 
 $\textbf{Answer 2.3} \\$
+The spread of the p300 scores for each row/column can be shown as individual boxplots.
 \begin{lstlisting}
 %first we must find the indexes of the 15 trials for each row and column
 
@@ -634,16 +635,6 @@ prediction_accuracy =
    27.0588
 
 \end{lstlisting} \color{black}
-\begin{lstlisting}
-test_acc = sum(c11_p300_accuracy(51:85))/35*100
-\end{lstlisting}
-
-\color{lightgray} \begin{lstlisting}
-test_acc =
-
-   22.8571
-
-\end{lstlisting} \color{black}
 The prediction accuracy by using the highest p300 values for rows and columns trials and finding the intersection of the 2 is 27.06\%.
 
 \end{enumerate}
@@ -719,7 +710,7 @@ for i = 1:85
     p300score_stimavg(i,:)= temp_';
 end
 \end{lstlisting}
-Now we have the average p300 for each of the 12 stim row/cols for each epoch. We will train a classifier for the rows and column index separately. To do this, for each epoch, we will create a 2 sets of features, the p300 score for a row and a p300 score for a column. We will then create separate SVM models to predict the row and column with valid p300 scores. For each epoch we will have 6 data points from each row/column.
+Now we have the average p300 for each of the 12 stim row/cols for each epoch. We will train a classifier for the rows and column index separately. To do this, for each epoch, we will create a 2 sets of features, the p300 score for a row and a p300 score for a column. We will then create separate SVM models to predict the row and column with valid p300 scores. For each epoch we will have 6 data points from each row/column to train the model.
 \begin{lstlisting}
 %separating row and columns data
 p300_rows = p300score_stimavg(:,7:12);
@@ -833,7 +824,7 @@ train_error_svm_cols =
     0.1500
 
 \end{lstlisting} \color{black}
-To complete the prediction, we will check the classification of the model for the set of 6 rows and cols. If the model returns a 1, then that row/col is selected. If No row/col is classified as valid, we'll choose the one with the highest p300 value. If more than one row/cal are classified as valid, we'll choose the one with the highest p300 value.
+To complete the prediction, we will check the classification of the model for the set of 6 rows and cols. If the model returns a 1 for a givenrow/column, it means that is identified as a valid p300 score and that row/col is selected. If No row/col is classified as valid, we'll choose the one with the highest p300 value. If more than one row/cal are classified as valid, we'll choose the one with the highest p300 value.
 \begin{lstlisting}
 %testing/validating the models
 
@@ -930,55 +921,67 @@ testing_accuracy =
    25.7143
 
 \end{lstlisting} \color{black}
-I tried tuning the model quite a bit but could not make the algorithm predict the letters well.
+The optimal accuracy I was able to obtain was 25.7 \% for the training set. This was done using separate SVM models to classify a row/columnn as one with a valid p300 score and hence being choosen to predict the letter.
 
  \item Describe your algorithm in detail. Also describe what you tried that didn't work. (6 pts)
 
 $\textbf{Answer 3.2} \\$
 
 The steps followed in the algorithm above :
-\begin{enumerate}
+\begin{itemize}
 \item To begin with, to improve the prediction from section 2, I included 9 electrodes in
-the analysis. Cz and the 8 electrodes surrounding it. I then
-calculate a average p300 score from the 9 electrodes. I also extended
-the timing range for p300 calculation to 250-500 ms.
-\item For each trial I calculate the p300 value for all 9 electrodes and
+the analysis. Cz and the 8 electrodes surrounding it.
+\item I begin by parsing the signals from the 9 electrodes into
+individual trails.
+\item For each trial, I calculate the p300 value for all 9 electrodes
+using mean(250-500ms)-mean(600-800ms) and
 then calculate a mean value of the p300 from the 9 electrodes
-\item I then calaculate the average p300 for he 15 trials of each of the
-12 rows/columns giving a 85x12 matrix of mean p300 values
-\item I then normalize the p300 values for each epoch
-\item the I separate the p300 values for the row and column triggers.
+\item I then calaculate the average p300 for the 15 trials of each of the
+12 rows/columns giving a 85x12 matrix of mean p300 values.
+\item Then I separate the p300 values for the row and column triggers.
 \item The 85x6 matrices for the rows and columns are then split into the
-50 training ans the the 35 testing set.
+50 training and the the 35 testing set.
 \item The training set for rows and columsn is convereted from a 50x6
 matrix to a 300x1 column vector so that each row/column can be classified
-as a valid p300 or not
-\item this 300x1 vector of p300 values for rows is used to train a SVM
-model with gaussian kernal. The same is dont for a model using the column
+as a valid p300 or not.
+\item I then normalize the 300x1 training vector for rows and columns
+separately to prepare it for classification.
+\item This 300x1 vector of p300 values for rows is used to train a SVM
+model with gaussian kernal. The same is done for a model using the column
 values of p300. the classification on both cases is binary with a 1 given
-to the right row/column and a 0 to a non-target row/column.
-\item The model is then used to predict data from a new epock by predicting a
+to the valid p300 row/column and a 0 to a an invalid p300 score for a row/column.
+\item The model is then used to predict data from a new trial set by predicting a
 row or column value.
+\item For testing I followed the same averaging
+process as training using the 9 electrodes, finding the averaging p300 value and
+averaging the 15 trials for each row/column.
+\item the data is then split into rows and columns, giving 6 inputs
+values to each model to predict a valid p300 score.
 \item If the model classisifies more than one row/column as a valied p300
-them the one with the higher p300 is chooson. If the model does not
-classify any row/column as a valid p300 then the value with the highest
-p300 for the epock is choosen. For testing I followed the same averaging
-process as training using the 9 electrodes and averaging the 15 trials
-for each row/column.
-\end{enumerate}
+then the one with the higher p300 is choosen. If the model does not
+classify any row/column as a valid p300 then the row/column value with the highest
+p300 for the trial is choosen.
+\item We then finally get a choosen row and column value. The
+intersection of these two is  the predicted letter. This is then compared
+to the Target letter to verify the model accuracy.
+\end{itemize}
 \\ \\
 Other methods tried :
-\begin{enumerate}
+\begin{itemize}
 \item I calculated the p300 scrore using the ratio of values
 from 250-500 ms to those from 600-800 ms. The ratio was created a lot of
-anomolies due to the decimal and negetive values in teh data
-\item I tried the model using only cZ and using more electrodes to give
-the same result
+anomolies due to the decimal and negetive values in teh data and so was
+discarded.
+\item I tried the model using only cZ and using more electrodes. Having
+the 9 electrodes gave the most stable results for accuracy
 \item I also tried averaging the siganl across the electrodes and then
-calculating the p300 values
+calculating the p300 values. As compared to calculating p300 and then
+averaging the value for the 9 electrodes.
 \item I also tried using fitcecoc to train a multiclass classifier to
-classify the p300 values for rows and columns in 6 classes
-\end{enumerate}
+classify the p300 values for rows and columns in 6 classes. This gave
+worse results than the current algorithm. Possibly due to a small sample
+size for 6 class classifier.
+\end{itemize}
 
 
 \end{enumerate}

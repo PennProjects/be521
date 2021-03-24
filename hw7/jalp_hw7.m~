@@ -391,9 +391,10 @@ title('Difference in uV between target and non-taregt stimuli at 300 ms')
 % locations where the target response as more negative as compared to the
 % non-target response. $\\$
 % Here we see that the Cz electrode has the highest difference while the T8
-% electrode has a very small difference between the target and non-target respose
+% electrode has a very small difference between the target and non-target response
 % at 300ms. This is consistent with the plots in 1.1and 1.2 where we
-% observed a much higher ratio  and difference between target and non-target siganl
+% observed a much higher ratio  and difference between target and
+% non-target signal
 % in Cz as compared to T8 electrode.
 %% 
 % <latex> 
@@ -409,11 +410,11 @@ title('Difference in uV between target and non-taregt stimuli at 300 ms')
 
 %%
 % By using only one channel we can simplify the hardware and usability of
-% the whole system as then only 2 electrodes (cz and ground) will be needed for the
+% the whole system as then only 2 electrodes (Cz and ground) will be needed for the
 % prediction. This is help optimize data storage, power and computational needs.
 % $\\$
 % One big disadvantage of using only one electrode is it does not help adapt to
-% people who have disabilities in the brain or have imapairments/damage.
+% people who have disabilities in the brain or have impairments/damage.
 % We would then not know if the region detected by the Cz electrode is the
 % the appropriate one for best p300 signal. If a person has brain damage in
 % that region, the device will not be usable.
@@ -453,7 +454,7 @@ for i = 1:85
 end
 
 %%
-%pscore for epoch 10 and iterarion 11 is 
+%p300 score for epoch 10 and iterarion 11 is 
 pscore_c11(10,11)
 
 %%
@@ -817,7 +818,7 @@ testing_accuracy = sum(testing_accuracy_svm)/35*100
 %%
 % <latex>
 % The steps followed in the algorithm above :
-% \begin{itemize}
+% \begin{enumerate}
 % \item To begin with, to improve the prediction from section 2, I included 9 electrodes in
 % the analysis. Cz and the 8 electrodes surrounding it.
 % \item I begin by parsing the signals from the 9 electrodes into
@@ -853,22 +854,24 @@ testing_accuracy = sum(testing_accuracy_svm)/35*100
 % \item We then finally get a choosen row and column value. The
 % intersection of these two is  the predicted letter. This is then compared
 % to the Target letter to verify the model accuracy.
-
-% \end{itemize}
+% \end{enumerate}
 % \\ \\
 % Other methods tried : 
-% \begin{itemize}
+% \begin{enumerate}
 % \item I calculated the p300 scrore using the ratio of values
 % from 250-500 ms to those from 600-800 ms. The ratio was created a lot of
 % anomolies due to the decimal and negetive values in teh data and so was
 % discarded.
-% \item I tried the model using only cZ and using more electrodes to give
-% the same result
+% \item I tried the model using only cZ and using more electrodes. Having
+% the 9 electrodes gave the most stable results for accuracy
 % \item I also tried averaging the siganl across the electrodes and then
-% calculating the p300 values
+% calculating the p300 values. As compared to calculating p300 and then
+% averaging the value for the 9 electrodes.
 % \item I also tried using fitcecoc to train a multiclass classifier to
-% classify the p300 values for rows and columns in 6 classes
-% \end{itemize}
+% classify the p300 values for rows and columns in 6 classes. This gave
+% worse results than the current algorithm. Possibly due to a small sample
+% size for 6 class classifier.
+% \end{enumerate}
 % </latex>
 
 %% 
