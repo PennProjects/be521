@@ -20,5 +20,7 @@ function [features] = get_features(clean_data,fs)
 %% Your code here (8 points)
 
 
+
+
 end
 

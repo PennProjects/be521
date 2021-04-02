@@ -39,16 +39,21 @@ norm_data = normalize(raw_data);
 %filter data
 filtered_data = filter_data(norm_data);
 
+%common normal reference montage
+%at everytime point, subtracting mean of othe channels from value of a given
+%channel
+reref_data = filtered_data - mean(filtered_data,2);
+
 %separation data into sliding windows
 %each window will have (samples_in_window x channels) amount of data
-xLen = size(filtered_data,1);
+xLen = size(reref_data,1);
 NumWins =floor((xLen-(window_overlap))/(window_length - window_overlap));
 
 window_disp = window_length-window_overlap;
 
 for i = 1:5
-    win_start_indx = round(1 + ((i-1)*window_disp))
-    win_end_indx = round(win_start_indx +window_length-1)
+    win_start_indx = round(1 + ((i-1)*window_disp));
+    win_end_indx = round(win_start_indx +window_length-1);
     
     %extractiong data for one window as (samples_in_window x channels) amount of data
     window_data = filtered_data(win_start_indx : win_end_indx, :);
