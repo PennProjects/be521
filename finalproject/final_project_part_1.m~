@@ -203,22 +203,14 @@ s2_train_pred_y = s2_R_train*s2_f;
 s3_train_pred_y = s3_R_train*s3_f;
 
 %upsampling training pred y to 1000 hz signal
-s1_train_pred_y_upsamp = zeros(size(s1_train_dg));
-s2_train_pred_y_upsamp = zeros(size(s2_train_dg));
-s3_train_pred_y_upsamp = zeros(size(s3_train_dg));
-for i = 1:NumWins
-    %calcualte start and end index of each window
-    win_start_indx = round(1 + ((i-1)*window_disp));
-    win_end_indx = round(i*window_disp);
-    
-    %extracting data for one window as mean(samples_in_window xfingers) 
-    s1_train_pred_y_upsamp(win_start_indx:win_end_indx,:) = s1_train_pred_y(i,:).*ones(50,1);
-    s2_train_pred_y_upsamp(win_start_indx:win_end_indx,:) = s2_train_pred_y(i,:).*ones(50,1);
-    s3_train_pred_y_upsamp(win_start_indx:win_end_indx,:) = s3_train_pred_y(i,:).*ones(50,1);
-end 
+s1_train_pred_y_upsamp = zoh_upsample(s1_train_pred_y,50);
+s2_train_pred_y_upsamp = zoh_upsample(s2_train_pred_y,50);
+s3_train_pred_y_upsamp = zoh_upsample(s3_train_pred_y,50);
 
 %calculating training correlation coeff
-% s1_train_rho = corr(
+s1_train_rho = corr(s1_train_pred_y_upsamp, s1_train_dg)
+s1_train_rho = di
+
 
 % Try at least 1 other type of machine learning algorithm, you may choose
 % to loop through the fingers and train a separate classifier for angles 
@@ -243,11 +235,7 @@ end
 [r,d] = corr(s1_pred_y_up(:,1),s1_train_dg(:,1))
 
 %%
-a = [1 2 3;4 5 6];
-
-b = zoh_upsample(a,5)
 function [x_upsampled] = zoh_upsample(x,factor)
-
     x_sz = size(x,1);
     x_up_sz = (x_sz)*factor;
     
@@ -260,7 +248,7 @@ function [x_upsampled] = zoh_upsample(x,factor)
         x_upsampled(win_start_indx:win_end_indx,:) = x(i,:).*ones(factor,1);
     end
     
-    x_upsampled = [x_upsampled;x_upsampled(end-
+    x_upsampled = [x_upsampled;x_upsampled(end-factor+1 : end,:)];
     
 end
 

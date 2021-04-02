@@ -208,7 +208,14 @@ s2_train_pred_y_upsamp = zoh_upsample(s2_train_pred_y,50);
 s3_train_pred_y_upsamp = zoh_upsample(s3_train_pred_y,50);
 
 %calculating training correlation coeff
-% s1_train_rho = corr(
+s1_train_rho = corr(s1_train_pred_y_upsamp, s1_train_dg);
+s1_train_rho = diag(s1_train_rho)';
+
+s2_train_rho = corr(s2_train_pred_y_upsamp, s2_train_dg);
+s2_train_rho = diag(s2_train_rho)';
+
+s3_train_rho = corr(s3_train_pred_y_upsamp, s3_train_dg);
+s3_train_rho = diag(s3_train_rho)';
 
 % Try at least 1 other type of machine learning algorithm, you may choose
 % to loop through the fingers and train a separate classifier for angles 
@@ -246,7 +253,7 @@ function [x_upsampled] = zoh_upsample(x,factor)
         x_upsampled(win_start_indx:win_end_indx,:) = x(i,:).*ones(factor,1);
     end
     
-    x_upsampled = [x_upsampled;x_upsampled(end-factor+1 : end,:)]
+    x_upsampled = [x_upsampled;x_upsampled(end-factor+1 : end,:)];
     
 end
 
