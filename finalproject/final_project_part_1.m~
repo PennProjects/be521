@@ -88,8 +88,6 @@ s3_test_dg = train_dg{3}(225001:300000,:);
 % The number of samples in the ECoG recording for each of the 3 subjects is
 % 300,000. This consists of 300s of data sampled at 1000 Hz. Yes, it is the
 % same for all three subjects.
-
-%%
 % \textbf{Answer 1.2} \\
 % I used a bandpass filter, with a passband between 0.15 and 200 Hz.
 
@@ -106,23 +104,50 @@ s1_number_win = NumWins(s1_length_ms, winLen_ms,winOverlap_ms)
 
 %%
 % \textbf{Answer 2.1} \\
-% For a Window length of 100ms and a 50ms over lap we will have 5999
+% For a Window length of 100ms and a 50ms overlap we will have 5999
 % windows in the 300s data for each subject. The 75% taken for training has
 % 4499 windows and the 25 % test set has 1499 windows.
-% \textbf{Answer 2.1} \\
-% Implemented in get_features.m. The features calculated are : Line length,
+% \textbf{Answer 2.2} \\
+% Implemented in get\_features.m. The features calculated are : Line length,
 % Area, Energy, Mean Voltage (LMP)
 % \textbf{Answer 2.3} \\
-% Implemented in get_windowedFeats.m
+% Implemented in get\_windowedFeats.m
 % \textbf{Answer 3.1} \\
-% The dimension of R matri for subject 1 would be 5999 x 1117. Number of columns  = 1+N*6*62
-% = 1117. Number of rows = numbre of time windows = 5999.
+% The dimension of R matrix for subject 1 would be 5999 x 1117 when we include the 1's columns.
+% Else it would be 5999 x 1116. Number of columns  = 1+N*6*62
+% = 1117. Number of rows = number of time windows = 5999.
 
 
 %% Create R matrix
-% run create_R_matrix
+
+% \textbf{Answer 3.2} \\
+% Teasting create_r_matrix with testRFunction.mat gives a value of 25.4
+load('testRfunction.mat')
+R = create_R_matrix(testR_features,N_wind);
+test_R = mean(mean(R))
+
+
+%Getting R matrix for each subject
+fs_hz = 1000;
+win_length_ms  = 100;
+win_overlap_ms = 50;
+n_wind = 3;
+
+%subject 1
+s1_window_feats = getWindowedFeats(s1_train_ecog_cleaned, fs_hz, win_length_ms, win_overlap_ms);
+s1_R = create_R_matrix(s1_window_feats, n_wind);
+
+%subject 2
+s2_window_feats = getWindowedFeats(s2_train_ecog_cleaned, fs_hz, win_length_ms, win_overlap_ms);
+s2_R = create_R_matrix(s2_window_feats, n_wind);
+
+%subject 3
+s3_window_feats = getWindowedFeats(s3_train_ecog_cleaned, fs_hz, win_length_ms, win_overlap_ms);
+s3_R = create_R_matrix(s3_window_feats, n_wind);
+
 
 %% Train classifiers (8 points)
+
 
 
 % Classifier 1: Get angle predictions using optimal linear decoding. That is, 
