@@ -114,6 +114,10 @@ s1_number_win = NumWins(s1_length_ms, winLen_ms,winOverlap_ms)
 % Area, Energy, Mean Voltage (LMP)
 % \textbf{Answer 2.3} \\
 % Implemented in get_windowedFeats.m
+% \textbf{Answer 3.1} \\
+% The dimension of R matrix for subject 1 would be 5999 x 1117 when we include the 1's columns.
+% Else it would be 5999 x 1116. Number of columns  = 1+N*6*62
+% = 1117. Number of rows = numbre of time windows = 5999.
 
 
 %% Create R matrix
