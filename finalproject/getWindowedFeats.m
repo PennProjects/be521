@@ -51,7 +51,7 @@ NumWins =floor((xLen-(window_overlap))/(window_length - window_overlap));
 
 window_disp = window_length-window_overlap;
 
-for i = 1:5
+for i = 1:1
     win_start_indx = round(1 + ((i-1)*window_disp));
     win_end_indx = round(win_start_indx +window_length-1);
     
