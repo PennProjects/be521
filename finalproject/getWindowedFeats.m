@@ -98,6 +98,6 @@ for i = 1:num_win
         R_matrix(i,:) = reshape(features_append(i:i+N_wind-1,:),1,[]);
 end
 
-
+R = R_matrix;
 
 % end

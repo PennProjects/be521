@@ -122,6 +122,9 @@ s1_number_win = NumWins(s1_length_ms, winLen_ms,winOverlap_ms)
 
 %% Create R matrix
 % run create_R_matrix
+load('testRfunction.mat')
+R = create_R_matrix(testR_features,N_wind);
+test_R = mean(mean(R))
 
 %% Train classifiers (8 points)
 
