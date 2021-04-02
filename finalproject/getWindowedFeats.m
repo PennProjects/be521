@@ -51,7 +51,7 @@ NumWins =floor((xLen-(window_overlap))/(window_length - window_overlap));
 
 window_disp = window_length-window_overlap;
 
-numnChan = size(reref_data,2),
+numnChan = size(reref_data,2);
 features_window = zeros(NumWins,numnChan*4);
 
 for i = 1:NumWins
@@ -74,5 +74,30 @@ end
 
 %Finally, return feature matrix
 all_feats = features_window;
+
+
+%% rmatrix
+features = all_feats;
+N_wind = 3;
+
+num_win = size(features,1);
+num_features = size(features,2);
+
+%duplicationg the first 2 time window rows to calculate N-1 window feature
+%values for the first 2 time windows
+features_append = [features(1:N_wind-1, :);features];
+
+
+R_matrix = zeros(num_win, num_features*N_wind);
+%Compiling features from N, N-1 and N-2 rows gining a R matrix of #channles
+%*#features *#N_wind columns
+%Here First N_wind column correcspond to 1 feature, seconds N_wind columnc
+%correspond to 2nd feature of same channel, similarly, first
+%n_wind*num_features columns correspont to channel 1 
+for i = 1:num_win
+        R_matrix(i,:) = reshape(features_append(i:i+N_wind-1,:),1,[]);
+end
+
+
 
 % end
