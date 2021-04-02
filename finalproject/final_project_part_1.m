@@ -135,15 +135,15 @@ n_wind = 3;
 
 %subject 1
 s1_window_feats = getWindowedFeats(s1_train_ecog_cleaned, fs_hz, win_length_ms, win_overlap_ms);
-s1_R = create_R_matrix(s1_window_feats, n_wind);
+s1_R_train = create_R_matrix(s1_window_feats, n_wind);
 
 %subject 2
 s2_window_feats = getWindowedFeats(s2_train_ecog_cleaned, fs_hz, win_length_ms, win_overlap_ms);
-s2_R = create_R_matrix(s2_window_feats, n_wind);
+s2_R_train = create_R_matrix(s2_window_feats, n_wind);
 
 %subject 3
 s3_window_feats = getWindowedFeats(s3_train_ecog_cleaned, fs_hz, win_length_ms, win_overlap_ms);
-s3_R = create_R_matrix(s3_window_feats, n_wind);
+s3_R_train = create_R_matrix(s3_window_feats, n_wind);
 
 
 %% Train classifiers (8 points)
@@ -160,12 +160,12 @@ s3_R = create_R_matrix(s3_window_feats, n_wind);
 %first we will create the target matrix y for each subject
 %downsampling dg data to math windows in R matrix
 %selecting a point every 50ms
-s1_y = downsample(s1_train_dg,50);
-s1_y = s1_y(1:end-1);
-s2_y = downsample(s2_train_dg,50);
-s2_y = s2_y(1:end-1);
-s3_y = downsample(s3_train_dg,50);
-s3_y = s3_y(1:end-1);
+s1_y_train = downsample(s1_train_dg,50);
+s1_y_train = s1_y_train(1:end-1,:);
+s2_y_train = downsample(s2_train_dg,50);
+s2_y_train = s2_y_train(1:end-1,:);
+s3_y_train = downsample(s3_train_dg,50);
+s3_y_train = s3_y_train(1:end-1,:);
 
 % xLen = size(s1_train_dg,1);
 % window_length = 100; %in ms
@@ -192,15 +192,23 @@ s3_y = s3_y(1:end-1);
 %%
 %calculating f matrix
 
-s1_f = mldivide((s1_R'*s1_R),(s1_R'*s1_y));
-s2_f = mldivide((s2_R'*s2_R),(s2_R'*s2_y));
-s3_f = mldivide((s3_R'*s3_R),(s3_R'*s3_y));
+s1_f = mldivide((s1_R_train'*s1_R_train),(s1_R_train'*s1_y_train));
+s2_f = mldivide((s2_R_train'*s2_R_train),(s2_R_train'*s2_y_train));
+s3_f = mldivide((s3_R_train'*s3_R_train),(s3_R_train'*s3_y_train));
 
 %%
-%calculating predicted y
-s1_pred_y = s1_R*s1_f;
-s2_pred_y = s2_R*s2_f;
-s3_pred_y = s3_R*s3_f;
+%calculating training error
+s1_train_pred_y = s1_R_train*s1_f;
+s2_train_pred_y = s2_R_train*s2_f;
+s3_train_pred_y = s3_R_train*s3_f;
+
+%upsampling training pred y to 1000 hz signal
+s1_train_pred_y_upsamp = zoh_upsample(s1_train_pred_y,50);
+s2_train_pred_y_upsamp = zoh_upsample(s2_train_pred_y,50);
+s3_train_pred_y_upsamp = zoh_upsample(s3_train_pred_y,50);
+
+%calculating training correlation coeff
+% s1_train_rho = corr(
 
 % Try at least 1 other type of machine learning algorithm, you may choose
 % to loop through the fingers and train a separate classifier for angles 
@@ -219,17 +227,26 @@ s3_pred_y = s3_R*s3_f;
 % finger separately. Hint: You will want to use zohinterp to ensure both 
 % vectors are the same length.
 
-%upsampling pred y to 1000 hz signal
 
-s1_pred_y_up = zeros(size(s1_train_dg));
-for i = 1:NumWins
-    %calcualte start and end index of each window
-    win_start_indx = round(1 + ((i-1)*window_disp));
-    win_end_indx = round(i*window_disp);
+
+%%
+[r,d] = corr(s1_pred_y_up(:,1),s1_train_dg(:,1))
+
+%%
+function [x_upsampled] = zoh_upsample(x,factor)
+    x_sz = size(x,1);
+    x_up_sz = (x_sz)*factor;
     
-    %extractiong data for one window as mean(samples_in_window xfingers) 
-    s1_y(i,:) = mean(s1_train_dg(win_start_indx : win_end_indx, :));
-    s2_y(i,:) = mean(s2_train_dg(win_start_indx : win_end_indx, :));
-    s3_y(i,:) = mean(s3_train_dg(win_start_indx : win_end_indx, :));
-end 
+    x_upsampled = zeros(x_up_sz, size(x,2));
+    
+    for i  = 1:x_sz
+        win_start_indx = round(1 + ((i-1)*factor));
+        win_end_indx = round(i*factor);
+        
+        x_upsampled(win_start_indx:win_end_indx,:) = x(i,:).*ones(factor,1);
+    end
+    
+    x_upsampled = [x_upsampled;x_upsampled(end-factor+1 : end,:)]
+    
+end
 
