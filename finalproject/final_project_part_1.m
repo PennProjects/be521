@@ -97,12 +97,12 @@ s3_test_dg = train_dg{3}(225001:300000,:);
 %% Get Features
 % run getWindowedFeats_release function
 
-NumWins = @(xLen, winLen, winDisp) floor((xLen-(winLen-winDisp))/(winDisp));
+NumWins = @(xLen, winLen, winOverlap) floor((xLen-(winOverlap))/(winLen-winOverlap));
 
-winLen_ms = 100
-winDisp_ms = 50;
+winLen_ms = 100;
+winOverlap_ms = 50;
 s1_length_ms = 300000;
-s1_number_win = NumWins(s1_length_ms, winLen_ms,winDisp_ms)
+s1_number_win = NumWins(s1_length_ms, winLen_ms,winOverlap_ms)
 
 %%
 % \textbf{Answer 1.3} \\

@@ -29,7 +29,6 @@
 %Here we will work on one subject at a time 
 s1_train_ecog_cleaned = train_ecog{1}(1:225000,:);
 raw_data = s1_train_ecog_cleaned;
-fs = 1000;
 window_length = 100;
 window_overlap = 50;
 
@@ -51,10 +50,7 @@ for i = 1:5
     win_end_indx = round(win_start_indx +window_length-1)
     
     %extractiong data for one window as (samples_in_window x channels) amount of data
-    window_data = filtered_data(win_start_indx : win_end_indx, :);
-    
-    %extracting features for each window by calling get_features
-    wind_features = get_features(window_data, fs);
+    window_data = filter
 end    
 
 
