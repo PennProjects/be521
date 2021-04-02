@@ -19,7 +19,23 @@ function [features] = get_features(clean_data,fs)
     % 
 %% Your code here (8 points)
 
+%feature functions
+%line length
+LLFn = @(x) sum(abs(diff(x)));
+%Area
+AreaFn = @(x) sum(abs(x));
+%energy
+EnergyFn = @(x) sum(x.^2);
+%running average called lmp in kubanek2009
+lmpFn = @(x) mean(x);
 
+num_chan = size(clean_data,2);
+num_feats = 4;
+
+feature_matix = zeros(num_chan,num_feats)
+for i = 1:num_chan
+    line_length
+end
 
 
 end
