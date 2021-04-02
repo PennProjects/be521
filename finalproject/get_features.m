@@ -1,6 +1,6 @@
-function [features] = get_features_release(clean_data,fs)
+function [features] = get_features(clean_data,fs)
     %
-    % get_features_release.m
+    % get_features.m
     %
     % Instructions: Write a function to calculate features.
     %               Please create 4 OR MORE different features for each channel.

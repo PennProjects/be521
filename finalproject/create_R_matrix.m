@@ -1,6 +1,6 @@
-function [R]=create_R_matrix_release(features, N_wind)
+function [R]=create_R_matrix(features, N_wind)
     %
-    % get_features_release.m
+    % get_features.m
     %
     % Instructions: Write a function to calculate R matrix.             
     %

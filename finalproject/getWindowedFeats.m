@@ -1,6 +1,6 @@
-function [all_feats]=getWindowedFeats_release(raw_data, fs, window_length, window_overlap)
+function [all_feats]=getWindowedFeats(raw_data, fs, window_length, window_overlap)
     %
-    % getWindowedFeats_release.m
+    % getWindowedFeats.m
     %
     % Instructions: Write a function which processes data through the steps
     %               of filtering, feature calculation, creation of R matrix

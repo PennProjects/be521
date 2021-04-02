@@ -31,45 +31,37 @@ s1_train_dg_session = IEEGSession('I521_Sub1_Training_dg', username, passPath);
 s2_train_dg_session = IEEGSession('I521_Sub2_Training_dg', username, passPath);
 s3_train_dg_session = IEEGSession('I521_Sub3_Training_dg', username, passPath);
 
-%%
+%% Extract dataglove and ECoG data 
+% Dataglove should be (samples x 5) array 
+% ECoG should be (samples x channels) array
+
+% Split data into a train and test set (use at least 50% for training)
+
 %load data from mat file
 load('final_proj_part1_data.mat')
 %This data has 61 ch for s1,46 ch for s2 and 64 ch for s3
 %training set contain 75% of 300s data
 %ecog data
-s1_train_ecog_cleaned = train_ecog{1}(1:225000,:)';
-s2_train_ecog_cleaned = train_ecog{2}(1:225000,:)';
-s3_train_ecog_cleaned = train_ecog{3}(1:225000,:)';
+s1_train_ecog_cleaned = train_ecog{1}(1:225000,:);
+s2_train_ecog_cleaned = train_ecog{2}(1:225000,:);
+s3_train_ecog_cleaned = train_ecog{3}(1:225000,:);
 %finger data
-s1_train_dg = train_dg{1}(1:225000,:)';
-s2_train_dg = train_dg{2}(1:225000,:)';
-s3_train_dg = train_dg{3}(1:225000,:)';
+s1_train_dg = train_dg{1}(1:225000,:);
+s2_train_dg = train_dg{2}(1:225000,:);
+s3_train_dg = train_dg{3}(1:225000,:);
 
 %test set containing last 25% of 300 data
 %ecog data
-s1_test_ecog_cleaned = train_ecog{1}(225001:300000,:)';
-s2_test_ecog_cleaned = train_ecog{2}(225001:300000,:)';
-s3_test_ecog_cleaned = train_ecog{3}(225001:300000,:)';
+s1_test_ecog_cleaned = train_ecog{1}(225001:300000,:);
+s2_test_ecog_cleaned = train_ecog{2}(225001:300000,:);
+s3_test_ecog_cleaned = train_ecog{3}(225001:300000,:);
 %finger dta
-s1_test_dg = train_dg{1}(225001:300000,:)';
-s2_test_dg = train_dg{2}(225001:300000,:)';
-s3_test_dg = train_dg{3}(225001:300000,:)';
+s1_test_dg = train_dg{1}(225001:300000,:);
+s2_test_dg = train_dg{2}(225001:300000,:);
+s3_test_dg = train_dg{3}(225001:300000,:);
 
 %%
-% $\textbf{Answer 1.1} \\$
-% The number of samples in the ECoG recording for each of the 3 subjects is
-% 300,000. This consists of 300s of data sampled at 1000 Hz. Yes, it is the
-% same for all three subjects.
-
-%%
-% $\textbf{Answer 1.1} \\$
-% I used a bandpass filter, wth a passband between 0.15 and 200 Hz.
-
-
-%%
-
-%%
-%testing filter
+% testing filter
 % fs = 1000;                    % Sampling frequency (samples per second)
 % dt = 1/fs;                   % seconds per sample
 % StopTime = 0.25;             % seconds
@@ -91,14 +83,32 @@ s3_test_dg = train_dg{3}(225001:300000,:)';
 
 
 
-%% Extract dataglove and ECoG data 
-% Dataglove should be (samples x 5) array 
-% ECoG should be (samples x channels) array
+%%
+% \textbf{Answer 1.1} \\
+% The number of samples in the ECoG recording for each of the 3 subjects is
+% 300,000. This consists of 300s of data sampled at 1000 Hz. Yes, it is the
+% same for all three subjects.
 
-% Split data into a train and test set (use at least 50% for training)
+%%
+% \textbf{Answer 1.2} \\
+% I used a bandpass filter, with a passband between 0.15 and 200 Hz.
+
 
 %% Get Features
 % run getWindowedFeats_release function
+
+NumWins = @(xLen, winLen, winDisp) floor((xLen-(winLen-winDisp))/(winDisp));
+
+winLen_ms = 100
+winDisp_ms = 50;
+s1_length_ms = 300000;
+s1_number_win = NumWins(s1_length_ms, winLen_ms,winDisp_ms)
+
+%%
+% \textbf{Answer 1.3} \\
+% For a Window length of 100ms and a 50ms over lap we will have 5999
+% windows in the 300s data for each subject.
+
 
 %% Create R matrix
 % run create_R_matrix

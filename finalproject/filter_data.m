@@ -1,6 +1,6 @@
-function clean_data = filter_data_release(raw_eeg)
+function clean_data = filter_data(raw_eeg)
     %
-    % filter_data_release.m
+    % filter_data.m
     %
     % Instructions: Write a filter function to clean underlying data.
     %               The filter type and parameters are up to you.
