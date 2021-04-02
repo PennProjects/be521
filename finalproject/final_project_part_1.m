@@ -105,9 +105,15 @@ s1_length_ms = 300000;
 s1_number_win = NumWins(s1_length_ms, winLen_ms,winOverlap_ms)
 
 %%
-% \textbf{Answer 1.3} \\
+% \textbf{Answer 2.1} \\
 % For a Window length of 100ms and a 50ms over lap we will have 5999
-% windows in the 300s data for each subject.
+% windows in the 300s data for each subject. The 75% taken for training has
+% 4499 windows and the 25 % test set has 1499 windows.
+% \textbf{Answer 2.1} \\
+% Implemented in get_features.m. The features calculated are : Line length,
+% Area, Energy, Mean Voltage (LMP)
+% \textbf{Answer 2.3} \\
+% Implemented in get_windowedFeats.m
 
 
 %% Create R matrix

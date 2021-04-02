@@ -25,3 +25,7 @@ fs_hz = 1000;
 clean_data = filter(d,raw_eeg);
     
 end
+
+
+%https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6051483/ LMP <5Hz so we wont
+%filter that data

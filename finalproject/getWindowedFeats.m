@@ -51,18 +51,28 @@ NumWins =floor((xLen-(window_overlap))/(window_length - window_overlap));
 
 window_disp = window_length-window_overlap;
 
-for i = 1:1
+numnChan = size(reref_data,2),
+features_window = zeros(NumWins,numnChan*4);
+
+for i = 1:NumWins
+    %calcualte start and end index of each window
     win_start_indx = round(1 + ((i-1)*window_disp));
     win_end_indx = round(win_start_indx +window_length-1);
     
     %extractiong data for one window as (samples_in_window x channels) amount of data
-    window_data = filtered_data(win_start_indx : win_end_indx, :);
+    window_data = reref_data(win_start_indx : win_end_indx, :);
     
     %extracting features for each window by calling get_features
     wind_features = get_features(window_data, fs);
+    
+    %saving features for each window, each row is one window with
+    %#channels*#features columns
+    features_window(i,:) = wind_features;
+    
 end    
 
 
-% Finally, return feature matrix
+%Finally, return feature matrix
+all_feats = features_window;
 
 % end

@@ -1,6 +1,6 @@
 function [R]=create_R_matrix(features, N_wind)
     %
-    % get_features.m
+    % create_R_matrix.m
     %
     % Instructions: Write a function to calculate R matrix.             
     %
