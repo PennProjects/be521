@@ -137,30 +137,15 @@ n_wind = 3;
 s1_window_feats = getWindowedFeats(s1_train_ecog_cleaned, fs_hz, win_length_ms, win_overlap_ms);
 s1_R_train = create_R_matrix(s1_window_feats, n_wind);
 
+disp('sub1 completed')
 %subject 2
 s2_window_feats = getWindowedFeats(s2_train_ecog_cleaned, fs_hz, win_length_ms, win_overlap_ms);
 s2_R_train = create_R_matrix(s2_window_feats, n_wind);
 
+disp('sub2 completed')
 %subject 3
 s3_window_feats = getWindowedFeats(s3_train_ecog_cleaned, fs_hz, win_length_ms, win_overlap_ms);
 s3_R_train = create_R_matrix(s3_window_feats, n_wind);
-
-
-%%
-% testing peridogram
-fs = 1000;
-freqs = 0:1:500;
-x = s1_train_ecog_cleaned;
-
-[pxx, f] = periodogram(x,[],freqs,fs);
-pxx_8_12 = pxx(9:13,:);
-f_8_12 = f(9:13,:);
-p = bandpower(pxx_8_12,f_8_12,'psd')
-
-bp_8_12 = bandpower(x)
-
-
-
 
 
 %% Train classifiers (8 points)
@@ -187,10 +172,6 @@ s3_y_train = s3_y_train(1:end-1,:);
 %%
 %calculating f matrix
 
-% s1_f = mldivide((s1_R_train'*s1_R_train),(s1_R_train'*s1_y_train));
-% s2_f = mldivide((s2_R_train'*s2_R_train),(s2_R_train'*s2_y_train));
-% s3_f = mldivide((s3_R_train'*s3_R_train),(s3_R_train'*s3_y_train));
-
 s1_f = (s1_R_train'*s1_R_train)\(s1_R_train'*s1_y_train);
 s2_f = (s2_R_train'*s2_R_train)\(s2_R_train'*s2_y_train);
 s3_f = (s3_R_train'*s3_R_train)\(s3_R_train'*s3_y_train);
@@ -208,13 +189,13 @@ s3_train_pred_y_upsamp = zoh_upsample(s3_train_pred_y,50);
 
 %calculating training correlation coeff
 s1_train_rho = corr(s1_train_pred_y_upsamp, s1_train_dg);
-s1_train_rho = diag(s1_train_rho)';
+s1_train_rho = diag(s1_train_rho)'
 
 s2_train_rho = corr(s2_train_pred_y_upsamp, s2_train_dg);
-s2_train_rho = diag(s2_train_rho)';
+s2_train_rho = diag(s2_train_rho)'
 
 s3_train_rho = corr(s3_train_pred_y_upsamp, s3_train_dg);
-s3_train_rho = diag(s3_train_rho)';
+s3_train_rho = diag(s3_train_rho)'
 
 % Try at least 1 other type of machine learning algorithm, you may choose
 % to loop through the fingers and train a separate classifier for angles 
@@ -240,12 +221,17 @@ s3_train_rho = diag(s3_train_rho)';
 s1_window_feats_test = getWindowedFeats(s1_test_ecog_cleaned, fs_hz, win_length_ms, win_overlap_ms);
 s1_R_test = create_R_matrix(s1_window_feats_test, n_wind);
 
+disp('s1 done')
+
 s2_window_feats_test = getWindowedFeats(s2_test_ecog_cleaned, fs_hz, win_length_ms, win_overlap_ms);
 s2_R_test = create_R_matrix(s2_window_feats_test, n_wind);
+disp('s2 done')
 
 s3_window_feats_test = getWindowedFeats(s3_test_ecog_cleaned, fs_hz, win_length_ms, win_overlap_ms);
 s3_R_test = create_R_matrix(s3_window_feats_test, n_wind);
+disp('s3 done')
 
+%%
 %predicting y for test
 %calculating training error
 s1_test_pred_y = s1_R_test*s1_f;
@@ -259,13 +245,13 @@ s3_test_pred_y_upsamp = zoh_upsample(s3_test_pred_y,50);
 
 %calculating testing set correlation coeff
 s1_test_rho = corr(s1_test_pred_y_upsamp, s1_test_dg);
-s1_test_rho = diag(s1_test_rho)';
+s1_test_rho = diag(s1_test_rho)'
 
 s2_test_rho = corr(s2_test_pred_y_upsamp, s2_test_dg);
-s2_test_rho = diag(s2_test_rho)';
+s2_test_rho = diag(s2_test_rho)'
 
 s3_test_rho = corr(s3_test_pred_y_upsamp, s3_test_dg);
-s3_test_rho = diag(s3_test_rho)';
+s3_test_rho = diag(s3_test_rho)'
 
 
 

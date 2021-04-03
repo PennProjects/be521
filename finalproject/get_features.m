@@ -55,10 +55,10 @@ for i = 1:num_chan
     
     [pxx, f] = periodogram(x,[],freqs,fs);
     pwr_8_12 = bandpower(pxx(9:13),f(9:13),'psd');
-    pwr_18_24 = bandpower(pxx(9:13),f(19:25),'psd');
-    pwr_75_115 = bandpower(pxx(9:13),f(76:116),'psd');
-    pwr_125_159 = bandpower(pxx(9:13),f(126:160),'psd');
-    pwr_159_175 = bandpower(pxx(9:13),f(160:176),'psd');
+    pwr_18_24 = bandpower(pxx(19:25),f(19:25),'psd');
+    pwr_75_115 = bandpower(pxx(76:116),f(76:116),'psd');
+    pwr_125_159 = bandpower(pxx(126:160),f(126:160),'psd');
+    pwr_159_175 = bandpower(pxx(160:176),f(160:176),'psd');
     
     feature_matix(i,:) = [line_length,area, energy, lmp, pwr_8_12, pwr_18_24, pwr_75_115, pwr_125_159, pwr_159_175];
 end
