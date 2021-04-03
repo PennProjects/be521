@@ -209,7 +209,12 @@ s3_f5_y_train = s3_y_train(:,5);
 
 
 %Cubic SVM models
-
+%The following models were made using regressionLearner app of Matlab
+%All the models are Cubic SVM models without PCA and with 5 fold cross
+%validation
+load('cubicSVM_s1_model.mat')
+load('cubicSVM_s2_model.mat')
+load('cubicSVM_s3_model.mat')
 
 
 
