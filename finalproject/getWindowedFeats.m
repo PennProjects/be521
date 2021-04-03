@@ -47,7 +47,7 @@ NumWins =floor((xLen-(window_overlap))/(window_length - window_overlap));
 window_disp = window_length-window_overlap;
 
 numChan = size(reref_data,2);
-numFeats = 9;
+numFeats = 6;
 features_window = zeros(NumWins,numChan*numFeats);
 
 for i = 1:NumWins

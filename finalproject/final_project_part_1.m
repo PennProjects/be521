@@ -14,22 +14,22 @@
 
 %% Start the necessary ieeg.org sessions (0 points)
 
-%fetching data from the ieee server
-addpath(genpath('/Users/jalpanchal/git/be521'));
-
-username = 'jalpanchal';
-passPath = 'jal_ieeglogin.bin';
-
-% Load training ecog from each of three patients
-s1_train_ecog_session = IEEGSession('I521_Sub1_Training_ecog', username, passPath);
-s2_train_ecog_session = IEEGSession('I521_Sub2_Training_ecog', username, passPath);
-s3_train_ecog_session = IEEGSession('I521_Sub3_Training_ecog', username, passPath);
-
-
-% Load training dataglove finger flexion values for each of three patients
-s1_train_dg_session = IEEGSession('I521_Sub1_Training_dg', username, passPath);
-s2_train_dg_session = IEEGSession('I521_Sub2_Training_dg', username, passPath);
-s3_train_dg_session = IEEGSession('I521_Sub3_Training_dg', username, passPath);
+% %fetching data from the ieee server
+% addpath(genpath('/Users/jalpanchal/git/be521'));
+% 
+% username = 'jalpanchal';
+% passPath = 'jal_ieeglogin.bin';
+% 
+% % Load training ecog from each of three patients
+% s1_train_ecog_session = IEEGSession('I521_Sub1_Training_ecog', username, passPath);
+% s2_train_ecog_session = IEEGSession('I521_Sub2_Training_ecog', username, passPath);
+% s3_train_ecog_session = IEEGSession('I521_Sub3_Training_ecog', username, passPath);
+% 
+% 
+% % Load training dataglove finger flexion values for each of three patients
+% s1_train_dg_session = IEEGSession('I521_Sub1_Training_dg', username, passPath);
+% s2_train_dg_session = IEEGSession('I521_Sub2_Training_dg', username, passPath);
+% s3_train_dg_session = IEEGSession('I521_Sub3_Training_dg', username, passPath);
 
 %% Extract dataglove and ECoG data 
 % Dataglove should be (samples x 5) array 
@@ -61,29 +61,6 @@ s2_test_dg = train_dg{2}(225001:300000,:);
 s3_test_dg = train_dg{3}(225001:300000,:);
 
 %%
-% testing filter
-% fs = 1000;                    % Sampling frequency (samples per second)
-% dt = 1/fs;                   % seconds per sample
-% StopTime = 0.25;             % seconds
-% t = (0:dt:StopTime-dt)';     % seconds
-% F = 60;                      % Sine wave frequency (hertz)
-% data = sin(2*pi*F*t);
-% 
-% F2  = 300
-% data2 = sin(2*pi*F2*t);
-% 
-% x= data + data2;
-% subplot(2,1,1)
-% plot(x);
-% 
-% 
-% y = filter_data(x)
-% subplot(2,1,2)
-% plot(y)
-
-
-
-%%
 % \textbf{Answer 1.1} \\
 % The number of samples in the ECoG recording for each of the 3 subjects is
 % 300,000. This consists of 300s of data sampled at 1000 Hz. Yes, it is the
@@ -108,8 +85,9 @@ s1_number_win = NumWins(s1_length_ms, winLen_ms,winOverlap_ms)
 % windows in the 300s data for each subject. The 75% taken for training has
 % 4499 windows and the 25 % test set has 1499 windows.
 % \textbf{Answer 2.2} \\
-% Implemented in get\_features.m. The features calculated are : Line length,
-% Area, Energy, Mean Voltage (LMP)
+% Implemented in get\_features.m. The 6 features calculated are : Line length,
+% Area, Energy, Mean Voltage (LMP), Average power for 75-115 Hz and 125-159
+% Hz
 % \textbf{Answer 2.3} \\
 % Implemented in get\_windowedFeats.m
 % \textbf{Answer 3.1} \\
@@ -211,12 +189,26 @@ s2_window_feats_avg = avg_features(s2_window_feats,3);
 s3_window_feats_avg = avg_features(s3_window_feats,3);
 
 %%
+%training set for each finger
+%We will be creating a different model for each finger for each subject
+%creating models for fingers 1,2,3,5
+s1_f1_y_train = s1_y_train(:,1);
+s1_f2_y_train = s1_y_train(:,2);
+s1_f3_y_train = s1_y_train(:,3);
+s1_f5_y_train = s1_y_train(:,5);
 
-X = s1_window_feats;
-Y = s1_y_train(:,1);
-svmodel_ = fitcsvm(X,Y, 'KernelFunction','rbf');
-Ypred_train_svm = predict(svmodel, X);
-train_error_svm = size(find(Ypred_train_svm~=Y),1)/size(Y,1)
+s2_f1_y_train = s2_y_train(:,1);
+s2_f2_y_train = s2_y_train(:,2);
+s2_f3_y_train = s2_y_train(:,3);
+s2_f5_y_train = s2_y_train(:,5);
+
+s3_f1_y_train = s3_y_train(:,1);
+s3_f2_y_train = s3_y_train(:,2);
+s3_f3_y_train = s3_y_train(:,3);
+s3_f5_y_train = s3_y_train(:,5);
+
+
+%Cubic SVM models
 
 
 
@@ -250,7 +242,7 @@ s3_R_test = create_R_matrix(s3_window_feats_test, n_wind);
 disp('s3 done')
 
 %%
-%predicting y for test
+%predicting y for test usinf linear filter
 %calculating training error
 s1_test_pred_y = s1_R_test*s1_f;
 s2_test_pred_y = s2_R_test*s2_f;
@@ -270,6 +262,26 @@ s2_test_rho = diag(s2_test_rho)'
 
 s3_test_rho = corr(s3_test_pred_y_upsamp, s3_test_dg);
 s3_test_rho = diag(s3_test_rho)'
+
+
+
+
+%%
+%testing cubic SVM models
+%Averaging features from M, M-1 and M-2 windows
+s1_window_feats_test_avg = avg_features(s1_window_feats_test,3);
+s2_window_feats_test_avg = avg_features(s2_window_feats_test,3);
+s3_window_feats_test_avg = avg_features(s3_window_feats_test,3);
+
+%finding predicted value for each finger
+s1_f1_svmpred = cubicSVM_s1_f1.predictFcn(s1_window_feats_test_avg); 
+
+
+%upsampling predicted values
+s1_f1_svmpred_upsamp = zoh_upsample(s1_f1_svmpred,50); 
+
+%calculating correlation coeff for each finger for each subject
+s1_test_rho_svm = corr(s1_f1_svmpred_upsamp, s1_test_dg(:,1))
 
 
 
