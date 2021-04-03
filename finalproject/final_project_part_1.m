@@ -152,7 +152,7 @@ fs = 1000;
 freqs = 0:1:500;
 x = s1_train_ecog_cleaned(:,1);
 
-[pxx, f] = periodogram(x,rectwin(length(x)),length(x),fs);
+[pxx, f] = periodogram(x,[],freqs,fs);
 pxx_8_12 = pxx(9:13);
 f_8_12 = f(9:13);
 % p = bandpower(pxx_8_12,f_8_12,'psd')

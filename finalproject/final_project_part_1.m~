@@ -146,6 +146,24 @@ s3_window_feats = getWindowedFeats(s3_train_ecog_cleaned, fs_hz, win_length_ms, 
 s3_R_train = create_R_matrix(s3_window_feats, n_wind);
 
 
+%%
+% testing peridogram
+fs = 1000;
+freqs = 0:0.1:500;
+x = s1_train_ecog_cleaned(:,1);
+
+[pxx, f] = periodogram(x,[],freqs,fs);
+pxx_8_12 = pxx(9:13);
+f_8_12 = f(9:13);
+% p = bandpower(pxx_8_12,f_8_12,'psd')
+
+p = bandpower(pxx,f,'psd')
+bp_8_12 = bandpower(x)
+
+
+
+
+
 %% Train classifiers (8 points)
 
 
@@ -161,7 +179,7 @@ s3_R_train = create_R_matrix(s3_window_feats, n_wind);
 %downsampling dg data to math windows in R matrix
 %selecting a point every 50ms
 s1_y_train = downsample(s1_train_dg,50);
-s1_y_train = s1_y_train(1:end-1,:);
+s1_y_train = s1_y_train(1:end-1,:); %reducing from 4500 to 4499 samples
 s2_y_train = downsample(s2_train_dg,50);
 s2_y_train = s2_y_train(1:end-1,:);
 s3_y_train = downsample(s3_train_dg,50);
@@ -217,7 +235,7 @@ s3_train_rho = diag(s3_train_rho)';
 % vectors are the same length.
 
 %%
-%testing prediction usig linear filter
+%testing prediction using linear filter
 
 %calculating R matrix for test data
 s1_window_feats_test = getWindowedFeats(s1_test_ecog_cleaned, fs_hz, win_length_ms, win_overlap_ms);
