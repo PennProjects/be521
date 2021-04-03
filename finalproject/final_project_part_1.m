@@ -146,6 +146,24 @@ s3_window_feats = getWindowedFeats(s3_train_ecog_cleaned, fs_hz, win_length_ms, 
 s3_R_train = create_R_matrix(s3_window_feats, n_wind);
 
 
+%%
+% testing peridogram
+fs = 1000;
+freqs = 0:1:500;
+x = s1_train_ecog_cleaned(:,1);
+
+[pxx, f] = periodogram(x,rectwin(length(x)),length(x),fs);
+pxx_8_12 = pxx(9:13);
+f_8_12 = f(9:13);
+% p = bandpower(pxx_8_12,f_8_12,'psd')
+
+p = bandpower(pxx,f,'psd')
+bp_8_12 = bandpower(x)
+
+
+
+
+
 %% Train classifiers (8 points)
 
 
@@ -161,40 +179,22 @@ s3_R_train = create_R_matrix(s3_window_feats, n_wind);
 %downsampling dg data to math windows in R matrix
 %selecting a point every 50ms
 s1_y_train = downsample(s1_train_dg,50);
-s1_y_train = s1_y_train(1:end-1,:);
+s1_y_train = s1_y_train(1:end-1,:); %reducing from 4500 to 4499 samples
 s2_y_train = downsample(s2_train_dg,50);
 s2_y_train = s2_y_train(1:end-1,:);
 s3_y_train = downsample(s3_train_dg,50);
 s3_y_train = s3_y_train(1:end-1,:);
 
-% xLen = size(s1_train_dg,1);
-% window_length = 100; %in ms
-% window_overlap = 50; %in ms
-% NumWins =floor((xLen-(window_overlap))/(window_length - window_overlap));
-% window_disp = window_length-window_overlap;
-
-% s1_y = zeros(size(s1_R,1),5);
-% s2_y = zeros(size(s2_R,1),5);
-% s3_y = zeros(size(s3_R,1),5);
-
-% for i = 1:NumWins
-%     %calcualte start and end index of each window
-%     win_start_indx = round(1 + ((i-1)*window_disp));
-%     win_end_indx = round(win_start_indx +window_length-1);
-%     
-%     %extractiong data for one window as mean(samples_in_window xfingers) 
-%     s1_y(i,:) = mean(s1_train_dg(win_start_indx : win_end_indx, :));
-%     s2_y(i,:) = mean(s2_train_dg(win_start_indx : win_end_indx, :));
-%     s3_y(i,:) = mean(s3_train_dg(win_start_indx : win_end_indx, :));
-% end 
-
-
 %%
 %calculating f matrix
 
-s1_f = mldivide((s1_R_train'*s1_R_train),(s1_R_train'*s1_y_train));
-s2_f = mldivide((s2_R_train'*s2_R_train),(s2_R_train'*s2_y_train));
-s3_f = mldivide((s3_R_train'*s3_R_train),(s3_R_train'*s3_y_train));
+% s1_f = mldivide((s1_R_train'*s1_R_train),(s1_R_train'*s1_y_train));
+% s2_f = mldivide((s2_R_train'*s2_R_train),(s2_R_train'*s2_y_train));
+% s3_f = mldivide((s3_R_train'*s3_R_train),(s3_R_train'*s3_y_train));
+
+s1_f = (s1_R_train'*s1_R_train)\(s1_R_train'*s1_y_train);
+s2_f = (s2_R_train'*s2_R_train)\(s2_R_train'*s2_y_train);
+s3_f = (s3_R_train'*s3_R_train)\(s3_R_train'*s3_y_train);
 
 %%
 %calculating training error
@@ -234,10 +234,41 @@ s3_train_rho = diag(s3_train_rho)';
 % finger separately. Hint: You will want to use zohinterp to ensure both 
 % vectors are the same length.
 
-
-
 %%
-[r,d] = corr(s1_pred_y_up(:,1),s1_train_dg(:,1))
+%testing prediction using linear filter
+
+%calculating R matrix for test data
+s1_window_feats_test = getWindowedFeats(s1_test_ecog_cleaned, fs_hz, win_length_ms, win_overlap_ms);
+s1_R_test = create_R_matrix(s1_window_feats_test, n_wind);
+
+s2_window_feats_test = getWindowedFeats(s2_test_ecog_cleaned, fs_hz, win_length_ms, win_overlap_ms);
+s2_R_test = create_R_matrix(s2_window_feats_test, n_wind);
+
+s3_window_feats_test = getWindowedFeats(s3_test_ecog_cleaned, fs_hz, win_length_ms, win_overlap_ms);
+s3_R_test = create_R_matrix(s3_window_feats_test, n_wind);
+
+%predicting y for test
+%calculating training error
+s1_test_pred_y = s1_R_test*s1_f;
+s2_test_pred_y = s2_R_test*s2_f;
+s3_test_pred_y = s3_R_test*s3_f;
+
+%upsampling testing pred y to 1000 hz signal
+s1_test_pred_y_upsamp = zoh_upsample(s1_test_pred_y,50);
+s2_test_pred_y_upsamp = zoh_upsample(s2_test_pred_y,50);
+s3_test_pred_y_upsamp = zoh_upsample(s3_test_pred_y,50);
+
+%calculating testing set correlation coeff
+s1_test_rho = corr(s1_test_pred_y_upsamp, s1_test_dg);
+s1_test_rho = diag(s1_test_rho)';
+
+s2_test_rho = corr(s2_test_pred_y_upsamp, s2_test_dg);
+s2_test_rho = diag(s2_test_rho)';
+
+s3_test_rho = corr(s3_test_pred_y_upsamp, s3_test_dg);
+s3_test_rho = diag(s3_test_rho)';
+
+
 
 %%
 function [x_upsampled] = zoh_upsample(x,factor)

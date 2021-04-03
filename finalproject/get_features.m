@@ -29,8 +29,17 @@ EnergyFn = @(x) sum(x.^2);
 %running average called lmp in kubanek2009
 LmpFn = @(x) mean(x);
 
+%calculating band power for different frequency bands as specified by
+%kubanek2009
+%8–12 Hz, 18–24 Hz, 75–115 Hz, 125–159 Hz, 159–175 Hz
+pwr_8_12_Fn = @(x) bandpower(x,1000, [8,12]);
+pwr_18_24_Fn = @(x) bandpower(x,1000, [18,24]);
+pwr_75_115_Fn = @(x) bandpower(x,1000, [75,115]);
+pwr_125_159_Fn = @(x) bandpower(x,1000, [125,159]);
+pwr_159_175_Fn = @(x) bandpower(x,1000, [159,175]);
+
 num_chan = size(clean_data,2);
-num_feats = 4;
+num_feats = 9;
 
 feature_matix = zeros(num_chan,num_feats);
 for i = 1:num_chan
@@ -39,10 +48,16 @@ for i = 1:num_chan
     area = AreaFn(x);
     energy = EnergyFn(x);
     lmp = LmpFn(x);
+    pwr_8_12 = pwr_8_12_Fn(x);
+    pwr_18_24 = pwr_18_24_Fn(x);
+    pwr_75_115 = pwr_75_115_Fn(x);
+    pwr_125_159 = pwr_125_159_Fn(x);
+    pwr_159_175 = pwr_159_175_Fn(x);
     
-    feature_matix(i,:) = [line_length,area, energy, lmp];
+    feature_matix(i,:) = [line_length,area, energy, lmp, pwr_8_12, pwr_18_24, pwr_75_115, pwr_125_159, pwr_159_175];
 end
 
 features = reshape(feature_matix',[],1)';
 end
 
+%https://raphaelvallat.com/bandpower.html %getting band power

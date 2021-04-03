@@ -46,8 +46,9 @@ NumWins =floor((xLen-(window_overlap))/(window_length - window_overlap));
 
 window_disp = window_length-window_overlap;
 
-numnChan = size(reref_data,2);
-features_window = zeros(NumWins,numnChan*4);
+numChan = size(reref_data,2);
+numFeats = 9;
+features_window = zeros(NumWins,numChan*numFeats);
 
 for i = 1:NumWins
     %calcualte start and end index of each window
