@@ -34,16 +34,8 @@ LmpFn = @(x) mean(x);
 %8–12 Hz, 18–24 Hz, 75–115 Hz, 125–159 Hz, 159–175 Hz
 freqs = 0:1:500;
 
-% Using bandpower calculation over 60 channels takes a lot of time so this was
-% not used
-% pwr_8_12_Fn = @(x) bandpower(x,1000, [8,12]);
-% pwr_18_24_Fn = @(x) bandpower(x,1000, [18,24]);
-% pwr_75_115_Fn = @(x) bandpower(x,1000, [75,115]);
-% pwr_125_159_Fn = @(x) bandpower(x,1000, [125,159]);
-% pwr_159_175_Fn = @(x) bandpower(x,1000, [159,175]);
-
 num_chan = size(clean_data,2);
-num_feats = 9;
+num_feats = 6;
 
 feature_matix = zeros(num_chan,num_feats);
 for i = 1:num_chan
@@ -54,16 +46,14 @@ for i = 1:num_chan
     lmp = LmpFn(x);
     
     [pxx, f] = periodogram(x,[],freqs,fs);
-    pwr_8_12 = bandpower(pxx(9:13),f(9:13),'psd');
-    pwr_18_24 = bandpower(pxx(19:25),f(19:25),'psd');
+%     pwr_8_12 = bandpower(pxx(9:13),f(9:13),'psd');
+%     pwr_18_24 = bandpower(pxx(19:25),f(19:25),'psd');
     pwr_75_115 = bandpower(pxx(76:116),f(76:116),'psd');
     pwr_125_159 = bandpower(pxx(126:160),f(126:160),'psd');
-    pwr_159_175 = bandpower(pxx(160:176),f(160:176),'psd');
+%     pwr_159_175 = bandpower(pxx(160:176),f(160:176),'psd');
     
-    feature_matix(i,:) = [line_length,area, energy, lmp, pwr_8_12, pwr_18_24, pwr_75_115, pwr_125_159, pwr_159_175];
+    feature_matix(i,:) = [line_length,area, energy, lmp, pwr_75_115, pwr_125_159];
 end
 
 features = reshape(feature_matix',[],1)';
 end
-
-%https://raphaelvallat.com/bandpower.html %getting band power

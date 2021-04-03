@@ -137,31 +137,15 @@ n_wind = 3;
 s1_window_feats = getWindowedFeats(s1_train_ecog_cleaned, fs_hz, win_length_ms, win_overlap_ms);
 s1_R_train = create_R_matrix(s1_window_feats, n_wind);
 
+disp('sub1 completed')
 %subject 2
 s2_window_feats = getWindowedFeats(s2_train_ecog_cleaned, fs_hz, win_length_ms, win_overlap_ms);
 s2_R_train = create_R_matrix(s2_window_feats, n_wind);
 
+disp('sub2 completed')
 %subject 3
 s3_window_feats = getWindowedFeats(s3_train_ecog_cleaned, fs_hz, win_length_ms, win_overlap_ms);
 s3_R_train = create_R_matrix(s3_window_feats, n_wind);
-
-
-%%
-% testing peridogram
-fs = 1000;
-freqs = 0:0.1:500;
-x = s1_train_ecog_cleaned(:,1);
-
-[pxx, f] = periodogram(x,[],freqs,fs);
-pxx_8_12 = pxx(9:13);
-f_8_12 = f(9:13);
-% p = bandpower(pxx_8_12,f_8_12,'psd')
-
-p = bandpower(pxx,f,'psd')
-bp_8_12 = bandpower(x)
-
-
-
 
 
 %% Train classifiers (8 points)
@@ -188,10 +172,6 @@ s3_y_train = s3_y_train(1:end-1,:);
 %%
 %calculating f matrix
 
-% s1_f = mldivide((s1_R_train'*s1_R_train),(s1_R_train'*s1_y_train));
-% s2_f = mldivide((s2_R_train'*s2_R_train),(s2_R_train'*s2_y_train));
-% s3_f = mldivide((s3_R_train'*s3_R_train),(s3_R_train'*s3_y_train));
-
 s1_f = (s1_R_train'*s1_R_train)\(s1_R_train'*s1_y_train);
 s2_f = (s2_R_train'*s2_R_train)\(s2_R_train'*s2_y_train);
 s3_f = (s3_R_train'*s3_R_train)\(s3_R_train'*s3_y_train);
@@ -209,17 +189,30 @@ s3_train_pred_y_upsamp = zoh_upsample(s3_train_pred_y,50);
 
 %calculating training correlation coeff
 s1_train_rho = corr(s1_train_pred_y_upsamp, s1_train_dg);
-s1_train_rho = diag(s1_train_rho)';
+s1_train_rho = diag(s1_train_rho)'
 
 s2_train_rho = corr(s2_train_pred_y_upsamp, s2_train_dg);
-s2_train_rho = diag(s2_train_rho)';
+s2_train_rho = diag(s2_train_rho)'
 
 s3_train_rho = corr(s3_train_pred_y_upsamp, s3_train_dg);
-s3_train_rho = diag(s3_train_rho)';
+s3_train_rho = diag(s3_train_rho)'
 
 % Try at least 1 other type of machine learning algorithm, you may choose
 % to loop through the fingers and train a separate classifier for angles 
 % corresponding to each finger
+
+
+%%
+%To build a ML model we will first create new features from 100 ms before
+%the activity
+%Averaging features from M, M-1 and M-2 windows
+
+X = s1_window_feats;
+Y = s1_y_train(:,1);
+svmodel_ = fitcsvm(X,Y, 'KernelFunction','rbf');
+Ypred_train_svm = predict(svmodel, X);
+train_error_svm = size(find(Ypred_train_svm~=Y),1)/size(Y,1)
+
 
 
 
@@ -241,12 +234,17 @@ s3_train_rho = diag(s3_train_rho)';
 s1_window_feats_test = getWindowedFeats(s1_test_ecog_cleaned, fs_hz, win_length_ms, win_overlap_ms);
 s1_R_test = create_R_matrix(s1_window_feats_test, n_wind);
 
+disp('s1 done')
+
 s2_window_feats_test = getWindowedFeats(s2_test_ecog_cleaned, fs_hz, win_length_ms, win_overlap_ms);
 s2_R_test = create_R_matrix(s2_window_feats_test, n_wind);
+disp('s2 done')
 
 s3_window_feats_test = getWindowedFeats(s3_test_ecog_cleaned, fs_hz, win_length_ms, win_overlap_ms);
 s3_R_test = create_R_matrix(s3_window_feats_test, n_wind);
+disp('s3 done')
 
+%%
 %predicting y for test
 %calculating training error
 s1_test_pred_y = s1_R_test*s1_f;
@@ -260,17 +258,18 @@ s3_test_pred_y_upsamp = zoh_upsample(s3_test_pred_y,50);
 
 %calculating testing set correlation coeff
 s1_test_rho = corr(s1_test_pred_y_upsamp, s1_test_dg);
-s1_test_rho = diag(s1_test_rho)';
+s1_test_rho = diag(s1_test_rho)'
 
 s2_test_rho = corr(s2_test_pred_y_upsamp, s2_test_dg);
-s2_test_rho = diag(s2_test_rho)';
+s2_test_rho = diag(s2_test_rho)'
 
 s3_test_rho = corr(s3_test_pred_y_upsamp, s3_test_dg);
-s3_test_rho = diag(s3_test_rho)';
+s3_test_rho = diag(s3_test_rho)'
 
 
 
 %%
+%Fucntion to upsample from windows to 1 kHz
 function [x_upsampled] = zoh_upsample(x,factor)
     x_sz = size(x,1);
     x_up_sz = (x_sz)*factor;
@@ -286,5 +285,23 @@ function [x_upsampled] = zoh_upsample(x,factor)
     
     x_upsampled = [x_upsampled;x_upsampled(end-factor+1 : end,:)];
     
+end
+
+function [feature_matrix] = avg_features(features, N_wind)
+
+    num_win = size(features,1);
+    num_features = size(features,2);
+
+    %duplicationg the first 2 time window rows to calculate N-1 window feature
+    %values for the first 2 time windows
+    features_append = [features(1:N_wind-1, :);features];
+    
+    feature_matrix = zeros(num_win, num_features*N_wind);
+    %Averaging features from M, M-1 and M-2 windows
+    
+for i = 1:num_win
+        feature_matrix(i,:) = reshape(features_append(i:i+N_wind-1,:),1,[]);
+end
+
 end
 

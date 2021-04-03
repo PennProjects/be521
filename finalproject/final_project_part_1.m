@@ -202,6 +202,24 @@ s3_train_rho = diag(s3_train_rho)'
 % corresponding to each finger
 
 
+%%
+%To build a ML model we will first create new features from 100 ms before
+%the activity
+%Averaging features from M, M-1 and M-2 windows
+s1_window_feats_avg = avg_features(s1_window_feats,3);
+s2_window_feats_avg = avg_features(s2_window_feats,3);
+s3_window_feats_avg = avg_features(s3_window_feats,3);
+
+%%
+
+X = s1_window_feats;
+Y = s1_y_train(:,1);
+svmodel_ = fitcsvm(X,Y, 'KernelFunction','rbf');
+Ypred_train_svm = predict(svmodel, X);
+train_error_svm = size(find(Ypred_train_svm~=Y),1)/size(Y,1)
+
+
+
 
 % Try a form of either feature or prediction post-processing to try and
 % improve underlying data or predictions.
@@ -256,6 +274,7 @@ s3_test_rho = diag(s3_test_rho)'
 
 
 %%
+%Fucntion to upsample from windows to 1 kHz
 function [x_upsampled] = zoh_upsample(x,factor)
     x_sz = size(x,1);
     x_up_sz = (x_sz)*factor;
@@ -271,5 +290,23 @@ function [x_upsampled] = zoh_upsample(x,factor)
     
     x_upsampled = [x_upsampled;x_upsampled(end-factor+1 : end,:)];
     
+end
+
+function [feature_matrix] = avg_features(features, N_wind)
+
+    num_win = size(features,1);
+    num_features = size(features,2);
+
+    %duplicationg the first 2 time window rows to calculate M-1 window feature
+    %values for the first 2 time windows
+    features_append = [features(1:N_wind-1, :);features];
+    
+    feature_matrix = zeros(num_win, num_features);
+    %Averaging features from M, M-1 and M-2 windows
+    
+    for i = 1:num_win
+        feature_matrix(i,:) = mean(features_append(i:i+N_wind-1,:));
+    end
+
 end
 
