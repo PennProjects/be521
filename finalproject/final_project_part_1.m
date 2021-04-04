@@ -306,7 +306,7 @@ s3_test_rho_svm = diag(s3_test_rho_svm)'
 
 %%
 %plot correlation coeff
-fugure();
+figure();
 subplot(3,1,1)
 temp_ = [s1_train_rho(1:3), s1_train_rho(5)];
 plot(temp_,'o-', 'LineWidth',2);
