@@ -298,11 +298,33 @@ s1_svmpred_upsamp = zoh_upsample(s1_svmpred,50);
 s2_svmpred_upsamp = zoh_upsample(s2_svmpred,50);
 s3_svmpred_upsamp = zoh_upsample(s3_svmpred,50);
 
+%%
 
 %calculating correlation coeff for fingers 1,2,3 &5   for each subject for
 %SVM
-temp_ = [s1_test_dg(:,1:3), s1_test_dg(:,5)]
-s1_test_rho_svm = corr(s1_svmpred_upsamp, temp_)
+temp_ = [s1_test_dg(:,1:3), s1_test_dg(:,5)];
+s1_test_rho_svm = corr(s1_svmpred_upsamp, temp_);
+s1_test_rho_svm = diag(s1_test_rho_svm)'
+
+temp_ = [s2_test_dg(:,1:3), s2_test_dg(:,5)];
+s2_test_rho_svm = corr(s2_svmpred_upsamp, temp_);
+s2_test_rho_svm = diag(s2_test_rho_svm)'
+
+temp_ = [s3_test_dg(:,1:3), s3_test_dg(:,5)];
+s3_test_rho_svm = corr(s3_svmpred_upsamp, temp_);
+s3_test_rho_svm = diag(s3_test_rho_svm)'
+
+%%
+%plot correlation coeff
+
+temp_ = [s1_train_rho(1:3), s1_train_rho(5)];
+plot(temp_,'o-', 'LineWidth',2);
+hold on
+temp_ = [s1_test_rho(1:3), s1_test_rho(5)];
+plot(temp_,'o-', 'LineWidth',2);
+plot(s1_test_rho_svm, 'o-', 
+xticks([1 2 3 4])
+xticklabels({'thumb','index','middle','little'})
 
 
 

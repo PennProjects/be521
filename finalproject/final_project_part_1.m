@@ -128,15 +128,10 @@ s3_R_train = create_R_matrix(s3_window_feats, n_wind);
 
 %% Train classifiers (8 points)
 
-
-
 % Classifier 1: Get angle predictions using optimal linear decoding. That is, 
 % calculate the linear filter (i.e. the weights matrix) as defined by 
 % Equation 1 for all 5 finger angles.
 
-
-
-%%
 %first we will create the target matrix y for each subject
 %downsampling dg data to math windows in R matrix
 %selecting a point every 50ms
@@ -147,15 +142,13 @@ s2_y_train = s2_y_train(1:end-1,:);
 s3_y_train = downsample(s3_train_dg,50);
 s3_y_train = s3_y_train(1:end-1,:);
 
-%%
 %calculating f matrix
-
 s1_f = (s1_R_train'*s1_R_train)\(s1_R_train'*s1_y_train);
 s2_f = (s2_R_train'*s2_R_train)\(s2_R_train'*s2_y_train);
 s3_f = (s3_R_train'*s3_R_train)\(s3_R_train'*s3_y_train);
 
 %%
-%calculating training error
+%calculating training error for linear filter
 s1_train_pred_y = s1_R_train*s1_f;
 s2_train_pred_y = s2_R_train*s2_f;
 s3_train_pred_y = s3_R_train*s3_f;
@@ -221,7 +214,6 @@ load('cubicSVM_s3_model.mat')
 % finger separately. Hint: You will want to use zohinterp to ensure both 
 % vectors are the same length.
 
-%%
 %testing prediction using linear filter
 
 %calculating R matrix for test data
@@ -260,11 +252,8 @@ s2_test_rho = diag(s2_test_rho)'
 s3_test_rho = corr(s3_test_pred_y_upsamp, s3_test_dg);
 s3_test_rho = diag(s3_test_rho)'
 
-
-
-
 %%
-%testing cubic SVM models
+%testing cubic SVM models on test set
 %Averaging features from M, M-1 and M-2 windows
 s1_window_feats_test_avg = avg_features(s1_window_feats_test,3);
 s2_window_feats_test_avg = avg_features(s2_window_feats_test,3);
@@ -292,13 +281,11 @@ s3_f5_svmpred = cubicSVM_s3_f5.predictFcn(s3_window_feats_test_avg);
 
 s3_svmpred = [s3_f1_svmpred,s3_f2_svmpred,s3_f3_svmpred,s3_f5_svmpred];
 
-%%
 %upsampling predicted values
 s1_svmpred_upsamp = zoh_upsample(s1_svmpred,50);
 s2_svmpred_upsamp = zoh_upsample(s2_svmpred,50);
 s3_svmpred_upsamp = zoh_upsample(s3_svmpred,50);
 
-%%
 
 %calculating correlation coeff for fingers 1,2,3 &5   for each subject for
 %SVM
@@ -313,6 +300,55 @@ s2_test_rho_svm = diag(s2_test_rho_svm)'
 temp_ = [s3_test_dg(:,1:3), s3_test_dg(:,5)];
 s3_test_rho_svm = corr(s3_svmpred_upsamp, temp_);
 s3_test_rho_svm = diag(s3_test_rho_svm)'
+
+%%
+%plot correlation coeff
+fugure();
+subplot(3,1,1)
+temp_ = [s1_train_rho(1:3), s1_train_rho(5)];
+plot(temp_,'o-', 'LineWidth',2);
+hold on
+temp_ = [s1_test_rho(1:3), s1_test_rho(5)];
+plot(temp_,'o-', 'LineWidth',2);
+plot(s1_test_rho_svm, 'o-', 'LineWidth',2);
+xticks([1 2 3 4])
+xticklabels({'thumb','index','middle','little'})
+legend('linear train', 'linear test','cubic SVM')
+title('Subject 1')
+xlabel('Fingers')
+ylabel('Correlation Coefficient')
+
+subplot(3,1,2)
+temp_ = [s2_train_rho(1:3), s2_train_rho(5)];
+plot(temp_,'o-', 'LineWidth',2);
+hold on
+temp_ = [s2_test_rho(1:3), s2_test_rho(5)];
+plot(temp_,'o-', 'LineWidth',2);
+plot(s2_test_rho_svm, 'o-', 'LineWidth',2);
+xticks([1 2 3 4])
+xticklabels({'thumb','index','middle','little'})
+legend('linear train', 'linear test','cubic SVM')
+title('Subject 2')
+xlabel('Fingers')
+ylabel('Correlation Coefficient')
+
+subplot(3,1,3)
+temp_ = [s3_train_rho(1:3), s3_train_rho(5)];
+plot(temp_,'o-', 'LineWidth',2);
+hold on
+temp_ = [s3_test_rho(1:3), s3_test_rho(5)];
+plot(temp_,'o-', 'LineWidth',2);
+plot(s3_test_rho_svm, 'o-', 'LineWidth',2);
+xticks([1 2 3 4])
+xticklabels({'thumb','index','middle','little'})
+legend('linear train', 'linear test','cubic SVM')
+title('Subject 3')
+xlabel('Fingers')
+ylabel('Correlation Coefficient')
+
+suptitle('Comparing correlation coefficients')
+
+
 
 %%
 %Fucntion to upsample from windows to 1 kHz

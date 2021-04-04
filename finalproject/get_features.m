@@ -32,6 +32,8 @@ LmpFn = @(x) mean(x);
 %calculating band power for different frequency bands as specified by
 %kubanek2009
 %8–12 Hz, 18–24 Hz, 75–115 Hz, 125–159 Hz, 159–175 Hz
+%finally only 75-115 and 125-1589 Hz bands were selected based on results
+%from kubanek2009
 freqs = 0:1:500;
 
 num_chan = size(clean_data,2);
