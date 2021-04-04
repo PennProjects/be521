@@ -175,12 +175,12 @@ s2_train_rho = diag(s2_train_rho)'
 s3_train_rho = corr(s3_train_pred_y_upsamp, s3_train_dg);
 s3_train_rho = diag(s3_train_rho)'
 
+
+%%
 % Try at least 1 other type of machine learning algorithm, you may choose
 % to loop through the fingers and train a separate classifier for angles 
 % corresponding to each finger
 
-
-%%
 %To build a ML model we will first create new features from 100 ms before
 %the activity
 %Averaging features from M, M-1 and M-2 windows
@@ -188,7 +188,6 @@ s1_window_feats_avg = avg_features(s1_window_feats,3);
 s2_window_feats_avg = avg_features(s2_window_feats,3);
 s3_window_feats_avg = avg_features(s3_window_feats,3);
 
-%%
 %training set for each finger
 %We will be creating a different model for each finger for each subject
 %creating models for fingers 1,2,3,5
@@ -210,17 +209,10 @@ s3_f5_y_train = s3_y_train(:,5);
 
 %Cubic SVM models
 %The following models were made using regressionLearner app of Matlab
-%All the models are Cubic SVM models without PCA and with 5 fold cross
-%validation
+%All the models are Cubic SVM models without PCA and with 5 fold cross-validation
 load('cubicSVM_s1_model.mat')
 load('cubicSVM_s2_model.mat')
 load('cubicSVM_s3_model.mat')
-
-
-
-% Try a form of either feature or prediction post-processing to try and
-% improve underlying data or predictions.
-
 
 
 %% Correlate data to get test accuracy and make figures (2 point)
@@ -247,7 +239,7 @@ s3_R_test = create_R_matrix(s3_window_feats_test, n_wind);
 disp('s3 done')
 
 %%
-%predicting y for test usinf linear filter
+%predicting y for test using linear filter
 %calculating training error
 s1_test_pred_y = s1_R_test*s1_f;
 s2_test_pred_y = s2_R_test*s2_f;
@@ -278,17 +270,49 @@ s1_window_feats_test_avg = avg_features(s1_window_feats_test,3);
 s2_window_feats_test_avg = avg_features(s2_window_feats_test,3);
 s3_window_feats_test_avg = avg_features(s3_window_feats_test,3);
 
-%finding predicted value for each finger
-s1_f1_svmpred = cubicSVM_s1_f1.predictFcn(s1_window_feats_test_avg); 
+%finding predicted value for each finger for each subject
+s1_f1_svmpred = cubicSVM_s1_f1.predictFcn(s1_window_feats_test_avg);
+s1_f2_svmpred = cubicSVM_s1_f2.predictFcn(s1_window_feats_test_avg); 
+s1_f3_svmpred = cubicSVM_s1_f3.predictFcn(s1_window_feats_test_avg); 
+s1_f5_svmpred = cubicSVM_s1_f5.predictFcn(s1_window_feats_test_avg);
 
+s1_svmpred = [s1_f1_svmpred,s1_f2_svmpred,s1_f3_svmpred,s1_f5_svmpred];
 
+s2_f1_svmpred = cubicSVM_s2_f1.predictFcn(s2_window_feats_test_avg);
+s2_f2_svmpred = cubicSVM_s2_f2.predictFcn(s2_window_feats_test_avg);
+s2_f3_svmpred = cubicSVM_s2_f3.predictFcn(s2_window_feats_test_avg);
+s2_f5_svmpred = cubicSVM_s2_f5.predictFcn(s2_window_feats_test_avg);
+
+s2_svmpred = [s2_f1_svmpred,s2_f2_svmpred,s2_f3_svmpred,s2_f5_svmpred];
+
+s3_f1_svmpred = cubicSVM_s3_f1.predictFcn(s3_window_feats_test_avg);
+s3_f2_svmpred = cubicSVM_s3_f2.predictFcn(s3_window_feats_test_avg);
+s3_f3_svmpred = cubicSVM_s3_f3.predictFcn(s3_window_feats_test_avg);
+s3_f5_svmpred = cubicSVM_s3_f5.predictFcn(s3_window_feats_test_avg);
+
+s3_svmpred = [s3_f1_svmpred,s3_f2_svmpred,s3_f3_svmpred,s3_f5_svmpred];
+
+%%
 %upsampling predicted values
-s1_f1_svmpred_upsamp = zoh_upsample(s1_f1_svmpred,50); 
+s1_svmpred_upsamp = zoh_upsample(s1_svmpred,50);
+s2_svmpred_upsamp = zoh_upsample(s2_svmpred,50);
+s3_svmpred_upsamp = zoh_upsample(s3_svmpred,50);
 
-%calculating correlation coeff for each finger for each subject
-s1_test_rho_svm = corr(s1_f1_svmpred_upsamp, s1_test_dg(:,1))
+%%
 
+%calculating correlation coeff for fingers 1,2,3 &5   for each subject for
+%SVM
+temp_ = [s1_test_dg(:,1:3), s1_test_dg(:,5)];
+s1_test_rho_svm = corr(s1_svmpred_upsamp, temp_);
+s1_test_rho_svm = diag(s1_test_rho_svm)'
 
+temp_ = [s2_test_dg(:,1:3), s2_test_dg(:,5)];
+s2_test_rho_svm = corr(s2_svmpred_upsamp, temp_);
+s2_test_rho_svm = diag(s2_test_rho_svm)'
+
+temp_ = [s3_test_dg(:,1:3), s3_test_dg(:,5)];
+s3_test_rho_svm = corr(s3_svmpred_upsamp, temp_);
+s3_test_rho_svm = diag(s3_test_rho_svm)'
 
 %%
 %Fucntion to upsample from windows to 1 kHz
