@@ -64,7 +64,8 @@ s3_test_dg = train_dg{3}(225001:300000,:);
 % \textbf{Answer 1.1} \\
 % The number of samples in the ECoG recording for each of the 3 subjects is
 % 300,000. This consists of 300s of data sampled at 1000 Hz. Yes, it is the
-% same for all three subjects.
+% same for all three subjects. I used 75\% of the data (225000 samples) as
+% the test set and 25\% of the data (75000 samples) as the test set.
 % \textbf{Answer 1.2} \\
 % I used a bandpass filter, with a passband between 0.15 and 200 Hz.
 
@@ -87,9 +88,10 @@ s1_number_win = NumWins(s1_length_ms, winLen_ms,winOverlap_ms)
 % \textbf{Answer 2.2} \\
 % Implemented in get\_features.m. The 6 features calculated are : Line length,
 % Area, Energy, Mean Voltage (LMP), Average power for 75-115 Hz and 125-159
-% Hz
+% Hz.
 % \textbf{Answer 2.3} \\
-% Implemented in get\_windowedFeats.m
+% Implemented in get\_windowedFeats.m. It returns a matrix of size (windows
+% x 6*channels)
 % \textbf{Answer 3.1} \\
 % The dimension of R matrix for subject 1 would be 5999 x 1117 when we include the 1's columns.
 % Else it would be 5999 x 1116. Number of columns  = 1+N*6*62
@@ -99,7 +101,8 @@ s1_number_win = NumWins(s1_length_ms, winLen_ms,winOverlap_ms)
 %% Create R matrix
 
 % \textbf{Answer 3.2} \\
-% Testing create\_r\_matrix with testRFunction.mat gives a value of 25.4668
+% Testing create\_r\_matrix with testRFunction.mat gives a value of
+% 25.4668.
 load('testRfunction.mat')
 R = create_R_matrix(testR_features,N_wind);
 test_R = mean(mean(R))
@@ -348,6 +351,90 @@ ylabel('Correlation Coefficient')
 
 suptitle('Comparing correlation coefficients')
 
+%%
+% \textbf{Answer 4.1} \\
+% Implemented in final\_project\_part1.m.
+% \textbf{Answer 4.2} \\
+% Implemented a Cubic SVM regression model using regressionLearner app of
+% matlab. I did not use PCA and applied cross-validation using 5 folds.
+% using this tool I made 1 model for each of the 4 fingers (1,23 and 5) fro
+% each subject, giving 12 models. these were saved in a mat file and
+% reloaded for further use.
+% \textbf{Answer 4.3} \\
+% The correlation coefficients for Subject 1:
+% \begin{enumerate}
+% \item Linear Decoder training:
+% \begin{enumerate}
+% \item Thumb : 0.6647
+% \item Index : 0.7488
+% \item Middle : 0.6359
+% \item Little : 0.6835
+% \end{enumerate}
+% \item Linear Decoder testing:
+% \begin{enumerate}
+% \item Thumb : 0.4135
+% \item Index : 0.5301
+% \item Middle : 0.0095
+% \item Little : 0.0920
+% \end{enumerate}
+% \item Cubic SVM testing:
+% \begin{enumerate}
+% \item Thumb : 0.2189
+% \item Index : 0.5538
+% \item Middle : 0.0091
+% \item Little : 0.1359
+% \end{enumerate}
+% \end{enumerate}
+% 
+% The correlation coefficients for Subject 2:
+% \begin{enumerate}
+% \item Linear Decoder training:
+% \begin{enumerate}
+% \item Thumb : 0.6987
+% \item Index : 0.6186
+% \item Middle : 0.6519
+% \item Little : 0.5957
+% \end{enumerate}
+% \item Linear Decoder testing:
+% \begin{enumerate}
+% \item Thumb : 0.4042
+% \item Index : 0.1995
+% \item Middle : 0.1966
+% \item Little : 0.3251
+% \end{enumerate}
+% \item Cubic SVM testing:
+% \begin{enumerate}
+% \item Thumb : 0.4008
+% \item Index : 0.1882
+% \item Middle : 0.2448
+% \item Little : 0.2155
+% \end{enumerate}
+% \end{enumerate}
+% 
+% The correlation coefficients for Subject 3:
+% \begin{enumerate}
+% \item Linear Decoder training:
+% \begin{enumerate}
+% \item Thumb : 0.8411
+% \item Index : 0.8169
+% \item Middle : 0.7782
+% \item Little : 0.7512
+% \end{enumerate}
+% \item Linear Decoder testing:
+% \begin{enumerate}
+% \item Thumb : 0.4792
+% \item Index : 0.2631
+% \item Middle : 0.3221
+% \item Little : 0.4605
+% \end{enumerate}
+% \item Cubic SVM testing:
+% \begin{enumerate}
+% \item Thumb : 0.4717
+% \item Index : 0.2499
+% \item Middle : 0.2685
+% \item Little : 0.4391
+% \end{enumerate}
+% \end{enumerate}
 
 
 %%

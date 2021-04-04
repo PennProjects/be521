@@ -64,7 +64,8 @@ s3_test_dg = train_dg{3}(225001:300000,:);
 % \textbf{Answer 1.1} \\
 % The number of samples in the ECoG recording for each of the 3 subjects is
 % 300,000. This consists of 300s of data sampled at 1000 Hz. Yes, it is the
-% same for all three subjects.
+% same for all three subjects. I used 75\% of the data (225000 samples) as
+% the test set and 25\% of the data (75000 samples) as the test set.
 % \textbf{Answer 1.2} \\
 % I used a bandpass filter, with a passband between 0.15 and 200 Hz.
 
@@ -87,9 +88,10 @@ s1_number_win = NumWins(s1_length_ms, winLen_ms,winOverlap_ms)
 % \textbf{Answer 2.2} \\
 % Implemented in get\_features.m. The 6 features calculated are : Line length,
 % Area, Energy, Mean Voltage (LMP), Average power for 75-115 Hz and 125-159
-% Hz
+% Hz.
 % \textbf{Answer 2.3} \\
-% Implemented in get\_windowedFeats.m
+% Implemented in get\_windowedFeats.m. It returns a matrix of size (windows
+% x 6*channels)
 % \textbf{Answer 3.1} \\
 % The dimension of R matrix for subject 1 would be 5999 x 1117 when we include the 1's columns.
 % Else it would be 5999 x 1116. Number of columns  = 1+N*6*62
@@ -99,7 +101,8 @@ s1_number_win = NumWins(s1_length_ms, winLen_ms,winOverlap_ms)
 %% Create R matrix
 
 % \textbf{Answer 3.2} \\
-% Testing create\_r\_matrix with testRFunction.mat gives a value of 25.4668
+% Testing create\_r\_matrix with testRFunction.mat gives a value of
+% 25.4668.
 load('testRfunction.mat')
 R = create_R_matrix(testR_features,N_wind);
 test_R = mean(mean(R))
@@ -128,15 +131,10 @@ s3_R_train = create_R_matrix(s3_window_feats, n_wind);
 
 %% Train classifiers (8 points)
 
-
-
 % Classifier 1: Get angle predictions using optimal linear decoding. That is, 
 % calculate the linear filter (i.e. the weights matrix) as defined by 
 % Equation 1 for all 5 finger angles.
 
-
-
-%%
 %first we will create the target matrix y for each subject
 %downsampling dg data to math windows in R matrix
 %selecting a point every 50ms
@@ -147,15 +145,13 @@ s2_y_train = s2_y_train(1:end-1,:);
 s3_y_train = downsample(s3_train_dg,50);
 s3_y_train = s3_y_train(1:end-1,:);
 
-%%
 %calculating f matrix
-
 s1_f = (s1_R_train'*s1_R_train)\(s1_R_train'*s1_y_train);
 s2_f = (s2_R_train'*s2_R_train)\(s2_R_train'*s2_y_train);
 s3_f = (s3_R_train'*s3_R_train)\(s3_R_train'*s3_y_train);
 
 %%
-%calculating training error
+%calculating training error for linear filter
 s1_train_pred_y = s1_R_train*s1_f;
 s2_train_pred_y = s2_R_train*s2_f;
 s3_train_pred_y = s3_R_train*s3_f;
@@ -221,7 +217,6 @@ load('cubicSVM_s3_model.mat')
 % finger separately. Hint: You will want to use zohinterp to ensure both 
 % vectors are the same length.
 
-%%
 %testing prediction using linear filter
 
 %calculating R matrix for test data
@@ -260,11 +255,8 @@ s2_test_rho = diag(s2_test_rho)'
 s3_test_rho = corr(s3_test_pred_y_upsamp, s3_test_dg);
 s3_test_rho = diag(s3_test_rho)'
 
-
-
-
 %%
-%testing cubic SVM models
+%testing cubic SVM models on test set
 %Averaging features from M, M-1 and M-2 windows
 s1_window_feats_test_avg = avg_features(s1_window_feats_test,3);
 s2_window_feats_test_avg = avg_features(s2_window_feats_test,3);
@@ -292,13 +284,11 @@ s3_f5_svmpred = cubicSVM_s3_f5.predictFcn(s3_window_feats_test_avg);
 
 s3_svmpred = [s3_f1_svmpred,s3_f2_svmpred,s3_f3_svmpred,s3_f5_svmpred];
 
-%%
 %upsampling predicted values
 s1_svmpred_upsamp = zoh_upsample(s1_svmpred,50);
 s2_svmpred_upsamp = zoh_upsample(s2_svmpred,50);
 s3_svmpred_upsamp = zoh_upsample(s3_svmpred,50);
 
-%%
 
 %calculating correlation coeff for fingers 1,2,3 &5   for each subject for
 %SVM
@@ -316,17 +306,68 @@ s3_test_rho_svm = diag(s3_test_rho_svm)'
 
 %%
 %plot correlation coeff
-
+fugure();
+subplot(3,1,1)
 temp_ = [s1_train_rho(1:3), s1_train_rho(5)];
 plot(temp_,'o-', 'LineWidth',2);
 hold on
 temp_ = [s1_test_rho(1:3), s1_test_rho(5)];
 plot(temp_,'o-', 'LineWidth',2);
-plot(s1_test_rho_svm, 'o-', 
+plot(s1_test_rho_svm, 'o-', 'LineWidth',2);
 xticks([1 2 3 4])
 xticklabels({'thumb','index','middle','little'})
+legend('linear train', 'linear test','cubic SVM')
+title('Subject 1')
+xlabel('Fingers')
+ylabel('Correlation Coefficient')
 
+subplot(3,1,2)
+temp_ = [s2_train_rho(1:3), s2_train_rho(5)];
+plot(temp_,'o-', 'LineWidth',2);
+hold on
+temp_ = [s2_test_rho(1:3), s2_test_rho(5)];
+plot(temp_,'o-', 'LineWidth',2);
+plot(s2_test_rho_svm, 'o-', 'LineWidth',2);
+xticks([1 2 3 4])
+xticklabels({'thumb','index','middle','little'})
+legend('linear train', 'linear test','cubic SVM')
+title('Subject 2')
+xlabel('Fingers')
+ylabel('Correlation Coefficient')
 
+subplot(3,1,3)
+temp_ = [s3_train_rho(1:3), s3_train_rho(5)];
+plot(temp_,'o-', 'LineWidth',2);
+hold on
+temp_ = [s3_test_rho(1:3), s3_test_rho(5)];
+plot(temp_,'o-', 'LineWidth',2);
+plot(s3_test_rho_svm, 'o-', 'LineWidth',2);
+xticks([1 2 3 4])
+xticklabels({'thumb','index','middle','little'})
+legend('linear train', 'linear test','cubic SVM')
+title('Subject 3')
+xlabel('Fingers')
+ylabel('Correlation Coefficient')
+
+suptitle('Comparing correlation coefficients')
+
+%%
+% \textbf{Answer 4.1} \\
+% Implemented in final\_project\_part1.m.
+% \textbf{Answer 4.2} \\
+% Implemented a Cubic SVM regression model using regressionLearner app of
+% matlab. I did not use PCA and applied cross-validation using 5 folds.
+% using this tool I made 1 model for each of the 4 fingers (1,23 and 5) fro
+% each subject, giving 12 models. these were saved in a mat file and
+% reloaded for further use.
+% \textbf{Answer 4.3} \\
+% The correlation coeffcients for :
+% \begin{enumerate}
+% \item Linear Decoder training:
+% \begin{enumerate}
+%
+% \end{enumerate}
+% \end{enumerate}
 
 %%
 %Fucntion to upsample from windows to 1 kHz
