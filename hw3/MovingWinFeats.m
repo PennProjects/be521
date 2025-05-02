@@ -45,7 +45,6 @@ end
 %%Constructing a matrix with each row having elements of 1 window
 x_windows = reshape(x_windows',winLen*1e-3*fs, [])';
 
-
 %%Computing feature for each window
 feature_values = [];
 for i = 1:NumWins

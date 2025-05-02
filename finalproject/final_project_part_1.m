@@ -116,13 +116,15 @@ n_wind = 3;
 
 %subject 1
 s1_window_feats = getWindowedFeats(s1_train_ecog_cleaned, fs_hz, win_length_ms, win_overlap_ms);
+%%
 s1_R_train = create_R_matrix(s1_window_feats, n_wind);
-
+%%
 disp('sub1 completed')
 %subject 2
 s2_window_feats = getWindowedFeats(s2_train_ecog_cleaned, fs_hz, win_length_ms, win_overlap_ms);
+%%
 s2_R_train = create_R_matrix(s2_window_feats, n_wind);
-
+%%
 disp('sub2 completed')
 %subject 3
 s3_window_feats = getWindowedFeats(s3_train_ecog_cleaned, fs_hz, win_length_ms, win_overlap_ms);
@@ -183,7 +185,7 @@ s3_train_rho = diag(s3_train_rho)'
 s1_window_feats_avg = avg_features(s1_window_feats,3);
 s2_window_feats_avg = avg_features(s2_window_feats,3);
 s3_window_feats_avg = avg_features(s3_window_feats,3);
-
+%%
 %training set for each finger
 %We will be creating a different model for each finger for each subject
 %creating models for fingers 1,2,3,5
@@ -202,7 +204,7 @@ s3_f2_y_train = s3_y_train(:,2);
 s3_f3_y_train = s3_y_train(:,3);
 s3_f5_y_train = s3_y_train(:,5);
 
-
+%%
 %Cubic SVM models
 %The following models were made using regressionLearner app of Matlab
 %All the models are Cubic SVM models without PCA and with 5 fold cross-validation
